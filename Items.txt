@@ -1,0 +1,35 @@
+0,Iron scrap
+1,Titanium scrap
+2,Battery
+3,Ion battery
+4,Computer
+5,Super computer
+6,Quantum computer
+7,Engin
+8,ion engin
+9,Right speed engin
+10,Solar panel
+11,Reactor
+12,Fusion reactor
+13,Lens
+14,High precision lens
+15,Autonomous optimized lens
+16,Enhanced laser*
+17,Ultra high power laser
+18,Iridium debri
+19,Semiconductor
+20,Cooling pipe
+21,Copper
+22,Radioactive material
+23,Steel ingot
+24,Titanium ingot
+25,Pratina
+26,Gold debri
+27,Silver scrap
+28,Optical fiber
+29,Anomaly material
+30,High power magnetron
+31,Pratina ingot
+32,Gold ingot
+33,Silver ingot
+34,Spatial anomaly
