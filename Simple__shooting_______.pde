@@ -5,7 +5,6 @@
  * @date 2020/09/30(α1.00)2020/11/23(β1.00)\(^o^)/
  */
 
-
 PImage Mouse;
 PImage Mouse2;
 PImage ITMS[];
@@ -461,13 +460,12 @@ void draw() {
     text(year1+"/"+month1+"/"+day1+" "+hour1+":"+minute1, 260, 240);
     text(year2+"/"+month2+"/"+day2+" "+hour2+":"+minute2, 260, 280);
     text(year3+"/"+month3+"/"+day3+" "+hour3+":"+minute3, 260, 320);
-    fill(0, 255, 0);
-     textSize(150);
-      fill(219, 80, 245);
-      text("Simple Shooting", -360, 200);
-     textSize(150);
-      fill(93,95,167);
-      text("PLAY NOW!",-360,700);
+    fill(0, 255, 255);
+     textSize(100);
+      pushStyle();
+      textAlign(CENTER);
+      text("Simple Shooting", width*0.25, 150);
+      popStyle();
       
     if (scene==-2) {
       fill(rgb[1]);
@@ -625,7 +623,7 @@ void draw() {
         i=0;
         HG=1;
       }
-    }
+    }else
     if (HG==1) {
       fill(rgb[10]);
       rect(200, 144, 50, 26);
@@ -3481,127 +3479,11 @@ void draw() {
         text("EXP+"+W/100, 270, 500);
         EXP+=level;
         if (Charpter==0)a[0]=0;
-        if ((a[0]==0)&&(a[1]==0)) {
+        if (a[0]==a[1]) {
           Charpter=Charpter+1;
           a[0]=a[0]+1;
           a[1]=0;
         };
-        if ((a[0]==1)&&(a[1]==1)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==2)&&(a[1]==2)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==3)&&(a[1]==3)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==4)&&(a[1]==4)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==5)&&(a[1]==5)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==6)&&(a[1]==6)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==7)&&(a[1]==7)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==8)&&(a[1]==8)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==9)&&(a[1]==9)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==10)&&(a[1]==10)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==11)&&(a[1]==11)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==12)&&(a[1]==12)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==13)&&(a[1]==13)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-          CEF();
-        }
-        if ((a[0]==14)&&(a[1]==14)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==15)&&(a[1]==15)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==16)&&(a[1]==16)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==17)&&(a[1]==17)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==18)&&(a[1]==18)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        }
-        if ((a[0]==19)&&(a[1]==19)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==20)&&(a[1]==20)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==21)&&(a[1]==21)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==22)&&(a[1]==22)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        };
-        if ((a[0]==23)&&(a[1]==23)) {
-          Charpter=Charpter+1;
-          a[0]=a[0]+1;
-          a[1]=0;
-        }
       }
       if (Time>=Gt+7) {
         data_save(0);
