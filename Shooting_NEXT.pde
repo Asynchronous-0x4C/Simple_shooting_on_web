@@ -373,6 +373,7 @@ void PUP() {
   }
 }
 void mousePressed() {
+  mousePress=true;
   if (mouseX>=400&&500>=mouseX&&mouseY>=327+HAU&&343+HAU>=mouseY&&items[2]>=2&&items[18]>=1&&scene2==-1&&scene==1) {
     items[2]=items[2]-2;
     items[18]=items[18]-1;

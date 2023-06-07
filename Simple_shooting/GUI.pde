@@ -3,9 +3,9 @@ abstract class GameComponent{
   
   abstract void update();
   
-  abstract void display();
+  abstract void display(PGraphics g);
   
-  abstract void displayShadow();
+  abstract void displayShadow(PGraphics g);
 }
 
 class ComponentManager{
@@ -21,9 +21,11 @@ class ComponentManager{
   
   void display(){
     main.beginDraw();
-    for(GameComponent c:components)c.display();
+    for(GameComponent c:components)c.display(main);
     main.endDraw();
-    for(GameComponent c:components)c.displayShadow();
+    shadow.beginDraw();
+    for(GameComponent c:components)c.displayShadow(shadow);
+    shadow.endDraw();
   }
   
   ComponentManager add(GameComponent c){
@@ -68,33 +70,33 @@ class Button extends GameComponent{
     if(mousePress&&hover)event.select();
   }
   
-  void display(){
-    main.rectMode(CORNER);
-    main.noStroke();
+  void display(PGraphics g){
+    g.rectMode(CORNER);
+    g.noStroke();
     if(hover){
-      main.fill(60,60,60,200);
+      g.fill(60,60,60,200);
     }else{
-      main.fill(120,120,120,180);
+      g.fill(120,120,120,180);
     }
-    main.rect(x,y,w,h);
+    g.rect(x,y,w,h);
     if(hover){
-      main.rect(x-7,y,3.5,h);
-      main.fill(200,200,200);
+      g.rect(x-7,y,3.5,h);
+      g.fill(200,200,200);
     }else{
-      main.fill(220,220,220);
+      g.fill(220,220,220);
     }
-    main.textFont(font);
-    main.textSize(h*0.75);
-    main.textAlign(CENTER);
-    main.text(label,x+w*0.5,y+h*0.77);
+    g.textFont(font);
+    g.textSize(h*0.75);
+    g.textAlign(CENTER);
+    g.text(label,x+w*0.5,y+h*0.77);
   }
   
-  void displayShadow(){
-    rectMode(CORNER);
-    noStroke();
-    fill(170);
-    rect(x+5,y+5,w,h);
-    if(hover)rect(x-2,y+5,3.5,h);
+  void displayShadow(PGraphics g){
+    g.rectMode(CORNER);
+    g.noStroke();
+    g.fill(170);
+    g.rect(x+5,y+5,w,h);
+    if(hover)g.rect(x-2,y+5,3.5,h);
   }
 }
 
@@ -128,19 +130,19 @@ class FlowText extends GameComponent{
     
   }
   
-  void display(){
-    main.textFont(font);
-    main.textSize(size);
-    main.textAlign(style);
-    main.fill(textColor);
-    main.text(label,position.x,position.y);
+  void display(PGraphics g){
+    g.textFont(font);
+    g.textSize(size);
+    g.textAlign(style);
+    g.fill(textColor);
+    g.text(label,position.x,position.y);
   }
   
-  void displayShadow(){
-    textFont(font);
-    textSize(size);
-    textAlign(style);
-    fill(shadowColor);
-    text(label,position.x+z,position.y+z);
+  void displayShadow(PGraphics g){
+    g.textFont(font);
+    g.textSize(size);
+    g.textAlign(style);
+    g.fill(shadowColor);
+    g.text(label,position.x+z,position.y+z);
   }
 }

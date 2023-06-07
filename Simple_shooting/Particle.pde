@@ -3,7 +3,6 @@ import java.util.function.*;
 abstract class Particle extends Entity{
   float maxLife;
   float life;
-  float size;
   float angle;
 }
 
@@ -24,25 +23,25 @@ class MenuParticle extends Particle{
     life-=1;
   }
   
-  void display(){
-    main.pushMatrix();
-    main.translate(position.x,position.y);
-    main.rotate(angle);
-    main.noStroke();
-    main.rectMode(CENTER);
-    main.fill(128,168,168,round(200*(life/maxLife)));
-    main.rect(0,0,size,size,size*0.3);
-    main.popMatrix();
+  void display(PGraphics g){
+    g.pushMatrix();
+    g.translate(position.x,position.y);
+    g.rotate(angle);
+    g.noStroke();
+    g.rectMode(CENTER);
+    g.fill(128,168,168,round(200*(life/maxLife)));
+    g.rect(0,0,size,size,size*0.3);
+    g.popMatrix();
   }
   
-  void displayShadow(){
-    pushMatrix();
-    noStroke();
-    translate(position.x+3,position.y+3);
-    rotate(angle);
-    fill(160,round(200*(life/maxLife)));
-    rect(0,0,size,size,size*0.3);
-    popMatrix();
+  void displayShadow(PGraphics g){
+    g.pushMatrix();
+    g.noStroke();
+    g.translate(position.x+3,position.y+3);
+    g.rotate(angle);
+    g.fill(160,round(200*(life/maxLife)));
+    g.rect(-3,-3,size,size,size*0.3);
+    g.popMatrix();
   }
 }
 
@@ -100,8 +99,10 @@ class MenuParticleGenerator extends ParticleGenerator{
   
   void display(){
     main.beginDraw();
-    for(Particle p:particle)p.display();
+    for(Particle p:particle)p.display(main);
     main.endDraw();
-    for(Particle p:particle)p.displayShadow();
+    shadow.beginDraw();
+    for(Particle p:particle)p.displayShadow(shadow);
+    shadow.endDraw();
   }
 }

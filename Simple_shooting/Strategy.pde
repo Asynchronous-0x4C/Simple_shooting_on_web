@@ -107,20 +107,37 @@ class MenuStrategy extends Strategy{
 }
 
 class StageStrategy extends Strategy{
-  ArrayList<Entity> entities=new ArrayList<Entity>();
+  ArrayList<Entity> entities;
+  ArrayList<Bullet> bulletList;
+  Player player;
   
   StageStrategy(){
-    super("menu","stage");entities.add(new Enemy(color(0,0,255,200),20));
+    super("menu","stage");
+    init();
+    entities.add(new Enemy(color(0,0,255,200),color(150,150,155),20,bulletList));
+    player=new Player(new PVector(width*0.5,height-40),bulletList);
+    entities.add(player);
+  }
+  
+  void init(){
+    entities=new ArrayList<Entity>();
+    bulletList=new ArrayList<Bullet>();
   }
   
   void update(){
-    
+    for(Entity e:entities)e.update();
+    for(Bullet b:bulletList)b.update();
+    player.setTarget(new PVector(mouseX,mouseY));
   }
   
   void display(){
     main.beginDraw();
-    for(Entity e:entities)e.display();
+    for(Entity e:entities)e.display(main);
+    for(Bullet b:bulletList)b.display(main);
     main.endDraw();
-    for(Entity e:entities)e.displayShadow();
+    shadow.beginDraw();
+    for(Entity e:entities)e.displayShadow(shadow);
+    for(Bullet b:bulletList)b.displayShadow(shadow);
+    shadow.endDraw();
   }
 }

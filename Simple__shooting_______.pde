@@ -5,6 +5,7 @@
  * @date 2020/09/30(α1.00)2020/11/23(β1.00)\(^o^)/
  */
 
+float vertualMouseX=0;
 PImage Mouse;
 PImage Mouse2;
 PImage ITMS[];
@@ -118,6 +119,8 @@ ArrayList<Bullet34> eneBullets34;
 ArrayList<Enemy35> enemies35;
 ArrayList<Bullet35> myBullets35;
 ArrayList<Bullet35> eneBullets35;
+boolean mousePress=false;
+boolean skillButton=false;
 boolean saving=false;
 boolean HUP=false;
 boolean SKC[];
@@ -327,8 +330,8 @@ void setup() {
       Itemgets[I][I2]=false;
     }
   }
-  skill[0]='t';
-  skill[1]='b';
+  skill[0]='a';
+  skill[1]='s';
   skill[2]='c';
   skill[3]='g';
   skill[4]='n';
@@ -1154,7 +1157,7 @@ void draw() {
     text(NOWtime, 0-(width/2-320)+5, height-(height/2-320)-5);
     fill(0, 0, 255);
     text("LEVEL"+LEVEL, 30-textWidth(str(LEVEL)), 27);
-    text("EXP"+level+"/"+LEVEL*100, 195, 27);
+    text("EXP"+nf(level,0,2)+"/"+LEVEL*100, 195, 27);
     SP=LEVEL*5;
     fill(0);
     stroke(0, 255, 255);
@@ -1906,15 +1909,21 @@ void draw() {
   }
   if (scene2==-1&&scene==1) {
     background(0, 100);
-    translate(HAM, HAU);
+    fill(0,200);
+    stroke(0,255,0);
+    rectMode(CORNER);
     if (width<1600) {
-      HAM=constrain(HAM, -(1600-width), 0);
+      HAM=constrain(HAM, width-1600, 0);
       if (keyPressed&&keyCode==LEFT) {
         HAM=HAM+2.5;
       }
       if (keyPressed&&keyCode==RIGHT) {
         HAM=HAM-2.5;
       }
+      rect(width-20,height-40,20,20);
+      if(width-20<mouseX&&mouseX<width&&height-40<mouseY&&mouseY<height-20)HAM-=2.5;
+      rect(width-60,height-40,20,20);
+      if(width-60<mouseX&&mouseX<width-40&&height-40<mouseY&&mouseY<height-20)HAM+=2.5;
       HAM=constrain(HAM, -(1600-width), 0);
     }
     if (height<960) {
@@ -1925,8 +1934,14 @@ void draw() {
       if (keyPressed&&keyCode==DOWN) {
         HAU=HAU-2.5;
       }
+      rect(width-40,height-20,20,20);
+      if(width-40<mouseX&&mouseX<width-20&&height-20<mouseY&&mouseY<height)HAU-=2.5;
+      rect(width-40,height-60,20,20);
+      if(width-40<mouseX&&mouseX<width-20&&height-60<mouseY&&mouseY<height-40)HAU+=2.5;
       HAU=constrain(HAU, -(1520-height), 0);
     }
+    rectMode(CENTER);
+    translate(HAM, HAU);
     switch(HL) {
     case 1:
       {
@@ -3147,8 +3162,8 @@ void draw() {
     Mir=false;
     Zer=false;
     G=GH;
-    ATK=3+floor(LEVEL/6)+atk;
-    DEF=floor(LEVEL/10)+def;
+    ATK=3+floor(LEVEL/6.0)+atk;
+    DEF=floor(LEVEL/10.0)+def;
     if (CATK>0)ATK=CATK;
     if (CDEF>0)DEF=CDEF;
     H=G;
@@ -3254,7 +3269,7 @@ void draw() {
     strokeWeight(1);
     //getSurface().setCursor(Mouse2, 1, 1);
     if (NV==true) {
-      background(200);
+      background(100);
     } else {
       background(0);
     }
@@ -3295,7 +3310,7 @@ void draw() {
         ellipse(22, 22, 35, 35);
         fill(126, 0, 255);
         textSize(11);
-        text("Cearful", 44, 44);
+        text("Careful", 44, 44);
       }
       if (DP>=15&&DP<30) {
         noStroke();
@@ -3362,18 +3377,58 @@ void draw() {
           ENEMY(0.07, 0.001, 0, 0.002, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.001, 0.004, 0.004, 0.004, 0.004, 0.007, 0.001, 0.002, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0.003, 0.0009, 0.001);
         }
       }
+      boolean onButton=false;
+      if(skillButton){
+        keyPressed=false;
+        key=-1;
+      }
+      textAlign(CENTER);
+      textSize(20);
+      fill(100,100);
+      stroke(0,255,0);
+      rect(20,height-220,40,40);
+      fill(200);
+      text("A",20,height-210);
+      if(0<mouseX&&mouseX<40&&height-240<mouseY&&mouseY<height-200){
+        onButton=true;
+        if(mousePress){
+          keyPressed=true;
+          skillButton=true;
+          key='a';
+        }
+      }
+      if(Charpter>=15){
+        fill(100,100);
+        stroke(0,255,0);
+        rect(20,height-280,40,40);
+        fill(200);
+        text("N",20,height-270);
+        if(0<mouseX&&mouseX<40&&height-300<mouseY&&mouseY<height-260){
+          onButton=true;
+          if(mousePress){
+            keyPressed=true;
+            skillButton=true;
+            key='n';
+          }
+        }
+      }
+      if(!onButton){
+        vertualMouseX=mouseX;
+      }
+      textAlign(LEFT);
+      noStroke();
       textSize(11);
       fill(0, 255, 50, Vol2);
-      text("score"+floor(W), width-(210+textWidth(str(W))), 30);
+      text("score"+floor(W), width-(220+textWidth(str(W))), 30);
       fill(0, 255, 50, Vol2);
-      text("HP"+floor(H), width-(145+textWidth(str(H))), 30);
+      text("HP"+floor(H), width-(155+textWidth(str(H))), 30);
       fill(127, 188, 206, Vol2); 
       text("SP"+floor(SP/20), width-(155+textWidth(str(floor(SP/20)))), 40);
       fill(255, 200, 10, Vol2);
       text("Energy"+floor(Enerugy/2), width-(180+textWidth(str(floor(Enerugy)))), 50);
       if (scene>=3&&scene!=7&&scene!=12&&scene!=17) {
         fill(0, 255, 50);
-        text("Time"+(Gt-Time), width/2, 30);
+        text("Time"+nf(Gt-Time,0,4), width/2, 30);
       }
     }
     if ((scene==7||scene==12||scene==17)&&menu==0) {
@@ -3627,7 +3682,13 @@ void draw() {
         G=G+1;
       }
       if (menu==0) {
-        if (scene==22)W+=10-floor(LEVEL/10);
+        if (scene==22){
+          W+=max(0,10-floor(LEVEL/10.0));
+        }else if(scene==27){
+          W+=max(0,17.5-floor(LEVEL/10.0));
+        }else if(scene==32){
+          W+=max(0,25-floor(LEVEL/10.0));
+        }
         if (SP<=LEVEL*100&&AA!=1&&AA!=5) {
           SP=SP+0.5;
         }
@@ -3866,14 +3927,17 @@ void draw() {
           AA=0;
           BB=0;
         }
-        if (Charpter>=15&&keyPressed&&key==skill[4]&&NT==0&&NC==0&&SP>=10&&!VSCR) {
-          NV=true;
-          NC=1;
+        if (Charpter>=15&&keyPressed&&key==skill[4]&&!VSCR) {
+          if(!NV&&NT==0&&SP>=10){
+            NV=true;
+          }else{
+            NT=0;
+            NV=false;
+          }
         }
-        if (NC==1&&NT>=600||SP<1) {
+        if (NT>=600||SP<1) {
           NT=0;
           NV=false;
-          NC=0;
         }
         if (NV==true) {
           fill(#000000);
@@ -5008,6 +5072,7 @@ void draw() {
         }
       }
     }
+  mousePress=false;
   }
 
   class Myself {
@@ -5068,7 +5133,7 @@ void draw() {
     void update() {
       if (menu==0) {
         isDead = false;
-        float dmx = mouseX - loc.x;
+        float dmx = vertualMouseX - loc.x;
         if (keyPressed&&keyCode==RIGHT)dmx=8;
         if (keyPressed&&keyCode==LEFT)dmx=-8;
         if (keyPressed&&keyCode==DOWN) {
@@ -8382,7 +8447,7 @@ void draw() {
             ITC=ITC+1;
             itget[4]=true;
           }
-          if (Item<=3) {
+          if (Item<=9) {
             items[20]=items[20]+1;
             igt[20]=0;
             Gitem[20]=Gitem[20]+1;
@@ -8921,7 +8986,7 @@ void draw() {
           if (EC[6]==1) {
             CEF();
           }
-          if (Item<4) {
+          if (Item<6) {
             items[20]=items[20]+1;
             itget[20]=true;
             Sitem[20]=Sitem[20]+1;
@@ -8935,6 +9000,11 @@ void draw() {
             items[1]=items[1]+1;
             itget[1]=true;
             Sitem[1]=Sitem[1]+1;
+          }
+          if (Item<10) {
+            items[19]=items[19]+1;
+            itget[19]=true;
+            Sitem[19]=Sitem[19]+1;
           }
           isDead7 = true;
           b.isDead = true;
@@ -9208,7 +9278,7 @@ void draw() {
           dethlevel=dethlevel+1;
           if (dethlevel>=2)Time=Gt;
           BA=BA-1;
-          if (Item<20) {
+          if (Item<50) {
             items[20]=items[20]+1;
             itget[20]=true;
             Gitem[20]=Gitem[20]+1;
@@ -11185,15 +11255,15 @@ void draw() {
           if (EC[27]==1) {
             CEF();
           }
-          if (Item<4) {
-            items[25]=items[19]+1;
-            itget[10]=true;
-            Sitem[30]=Sitem[9]+1;
+          if (Item<16) {
+            items[19]=items[19]+1;
+            itget[19]=true;
+            Sitem[19]=Sitem[19]+1;
           }
           if (Item>=8&&Item<13) {
-            items[20]=items[5]+1;
-            itget[26]=true;
-            Sitem[22]=Sitem[24]+1;
+            items[20]=items[20]+1;
+            itget[20]=true;
+            Sitem[20]=Sitem[20]+1;
           }
           if (Item>=13&&Item<53) {
             items[1]=items[1]+1;
