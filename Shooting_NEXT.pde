@@ -374,6 +374,7 @@ void PUP() {
 }
 void mousePressed() {
   mousePress=true;
+  if(pPress)return;
   if (mouseX>=400&&500>=mouseX&&mouseY>=327+HAU&&343+HAU>=mouseY&&items[2]>=2&&items[18]>=1&&scene2==-1&&scene==1) {
     items[2]=items[2]-2;
     items[18]=items[18]-1;
@@ -404,6 +405,10 @@ void mousePressed() {
   if (mouseX>=403&&503>=mouseX&&mouseY>=617+HAU&&633+HAU>=mouseY&&items[26]>=10&&scene2==-1&&scene==1) {
     items[26]=items[26]-10;
     items[32]=items[32]+1;
+  }
+  if (mouseX>=402&&508>=mouseX&&mouseY>=657+HAU&&673+HAU>=mouseY&&items[27]>=10&&scene2==-1&&scene==1) {
+    items[26]=items[26]-10;
+    items[33]=items[33]+1;
   }
 
   for (int SK=0; SK<10; SK++) {

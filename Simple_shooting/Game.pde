@@ -32,7 +32,7 @@ abstract class Entity{
   
   abstract void displayShadow(PGraphics g);
   
-  void Collision(){}
+  void Collision(Entity e){}
 }
 
 abstract class Agent extends Entity{
@@ -76,7 +76,7 @@ class Enemy extends Agent{
     g.rect(position.x+3,position.y+3,size,size);
   }
   
-  void Collision(){
+  void Collision(Entity e){
     
   }
 }
@@ -97,7 +97,7 @@ class Bullet extends Entity{
     vel.set(velocity);
     vel.normalize();
     vel.mult(parent.colliderSize*0.5);
-    position.sub(vel);
+    position.add(vel);
     speed=velocity.mag();
     angle=atan2(velocity.y,velocity.x);
     isMine=parent instanceof Player;
@@ -130,12 +130,17 @@ class Bullet extends Entity{
 
 class Player extends Agent{
   PVector targetPoint;
+  HashMap<String,mutFloat> status=new HashMap<String,mutFloat>();
   
   Player(PVector position,ArrayList<Bullet> bulletList){
     this.bulletList=bulletList;
     targetPoint=new PVector(position.x,position.y);
     this.position=position;
     colliderSize=size=25;
+    status.put("HP",new mutFloat(100f));
+    status.put("Attack",new mutFloat(1f));
+    status.put("Defence",new mutFloat(0f));
+    status.put("cooltime",new mutFloat(10f));
   }
   
   void setTarget(PVector position){
@@ -143,11 +148,15 @@ class Player extends Agent{
   }
   
   void update(){
-    position.x+=(targetPoint.x-position.x)*0.3;if(mousePress)shot();
+    position.x+=(targetPoint.x-position.x)*0.3;if(mousePressed)shot();
   }
   
   void shot(){
-    bulletList.add(new Bullet(color(0,0,255,150),color(130,130,170),new PVector(0,-15),this));
+    --status.get("cooltime").mut_float;
+    if(status.get("cooltime").mut_float<=0){
+      status.get("cooltime").mut_float=status.get("cooltime").getDefault();
+      bulletList.add(new Bullet(color(0,0,255,150),color(130,130,170),new PVector(0,-15),this));
+    }
   }
   
   void display(PGraphics g){
@@ -160,5 +169,9 @@ class Player extends Agent{
     g.noStroke();
     g.fill(160,165,160);
     g.ellipse(position.x+3,position.y+3,size,size);
+  }
+  
+  void Collision(Entity e){
+    
   }
 }

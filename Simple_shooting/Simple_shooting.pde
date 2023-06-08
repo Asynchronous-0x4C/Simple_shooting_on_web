@@ -47,3 +47,16 @@ void updateEvent(){
 void mousePressed(){
   mousePress=true;
 }
+
+class mutFloat{
+  private float default_float;
+  float mut_float;
+  
+  mutFloat(float value){
+    default_float=mut_float=value;
+  }
+  
+  float getDefault(){
+    return default_float;
+  }
+}

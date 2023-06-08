@@ -120,6 +120,7 @@ ArrayList<Enemy35> enemies35;
 ArrayList<Bullet35> myBullets35;
 ArrayList<Bullet35> eneBullets35;
 boolean mousePress=false;
+boolean pPress=false;
 boolean skillButton=false;
 boolean saving=false;
 boolean HUP=false;
@@ -250,7 +251,7 @@ int q=0;
 boolean fullsc;
 
 void setup() {
-  size(innerWidth-25,innerHeight-34);
+  size(innerWidth-1,innerHeight-1);
   frameRate(60);
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
@@ -446,15 +447,7 @@ void draw() {
     fill(0, 255, 206);
     stroke(0, 255, 206);
     textSize(20);
-    if (minute()>=10&&second()>=10) {
-      NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+second();
-    } else if (minute()<10&&second()>=10) {
-      NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+"0"+minute()+":"+second();
-    } else if (minute()>=10&&second()<10) {
-      NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+"0"+second();
-    } else if (minute()<10&&second()<10) {
-      NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+"0"+minute()+":"+"0"+second();
-    }
+    NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+nf(minute(),2)+":"+nf(second(),2);
     translate(0, 0);
     text("Ver'β.16.20  "+NOWtime, 0-(width/2-320)+5, height-(height/2-320)-5);
     //getSurface().setCursor(Mouse, 1, 1);
@@ -2287,7 +2280,7 @@ void draw() {
       cG[1]=0;
       cB[1]=0;
     }
-    if (mouseX>=500+HAM&&740+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePressed&&menu<=0&&menu>-7)
+    if (mouseX>=500+HAM&&740+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePress&&menu<=0&&menu>-7)
     {
       switch(AL) {
       case 1:
@@ -2464,7 +2457,7 @@ void draw() {
       cG[2]=0;
       cB[2]=0;
     }
-    if (mouseX>=1010+HAM&&1250+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePressed&&menu<=0&&menu>-7)
+    if (mouseX>=1010+HAM&&1250+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePress&&menu<=0&&menu>-7)
     {
       switch(DL) {
       case 1:
@@ -3268,7 +3261,7 @@ void draw() {
     }
     strokeWeight(1);
     //getSurface().setCursor(Mouse2, 1, 1);
-    if (NV==true) {
+    if (NV) {
       background(100);
     } else {
       background(0);
@@ -3391,7 +3384,7 @@ void draw() {
       text("A",20,height-210);
       if(0<mouseX&&mouseX<40&&height-240<mouseY&&mouseY<height-200){
         onButton=true;
-        if(mousePress){
+        if(!pPress&&mousePress){
           keyPressed=true;
           skillButton=true;
           key='a';
@@ -3405,7 +3398,7 @@ void draw() {
         text("N",20,height-270);
         if(0<mouseX&&mouseX<40&&height-300<mouseY&&mouseY<height-260){
           onButton=true;
-          if(mousePress){
+          if(!pPress&&mousePress){
             keyPressed=true;
             skillButton=true;
             key='n';
@@ -3930,16 +3923,13 @@ void draw() {
         if (Charpter>=15&&keyPressed&&key==skill[4]&&!VSCR) {
           if(!NV&&NT==0&&SP>=10){
             NV=true;
-          }else{
-            NT=0;
-            NV=false;
           }
         }
         if (NT>=600||SP<1) {
           NT=0;
           NV=false;
         }
-        if (NV==true) {
+        if (NV) {
           fill(#000000);
           textSize(17);
           text("Night vision mode", width/2+65, height-5);
@@ -5072,6 +5062,7 @@ void draw() {
         }
       }
     }
+  pPress=mousePress;
   mousePress=false;
   }
 
@@ -5096,7 +5087,7 @@ void draw() {
         if (IT==false&&H>0) {
           fill(255, 0, 0);
         }
-        if (IT==true&&H>0) {
+        if (IT&&H>0) {
           fill(0, 255, 0);
         }
         if (H<0||menu==-10) {
@@ -8647,7 +8638,7 @@ void draw() {
       loc5.y=constrain(loc5.y, 0, height/2);
       loc5.x+=noisex;
       loc5.y+=noisey;
-      if (scene!=7||DETH==true) {
+      if (scene!=7||DETH) {
         isDead5=true;
         DP=DP-15;
       }
@@ -8785,7 +8776,7 @@ void draw() {
       } else {
         RXS2=RX2;
       }
-      if (scene!=12||DETH==true) {
+      if (scene!=12||DETH) {
         isDead6=true;
         DP=DP-25;
       }
@@ -9005,6 +8996,13 @@ void draw() {
             items[19]=items[19]+1;
             itget[19]=true;
             Sitem[19]=Sitem[19]+1;
+          }
+          if (Item>=87) {
+            items[27]=items[27]+1;
+            igt[27]=0;
+            Gitem[27]=Gitem[27]+1;
+            ITC=ITC+1;
+            itget[27]=true;
           }
           isDead7 = true;
           b.isDead = true;
@@ -9439,7 +9437,7 @@ void draw() {
     }
     void display10() {
       noFill();
-      if (NV==true) {
+      if (NV) {
         stroke(10, 255, 255);
       } else {
         noStroke();
@@ -9476,7 +9474,7 @@ void draw() {
       }
       for (Bullet b : myBullets) {
         if ((loc10.x - size10 / 2 <= b.loc.x && b.loc.x <= loc10.x + size10 / 2)
-          && (loc10.y - size10 / 2 <= b.loc.y && b.loc.y <= loc10.y + size10 / 2)&&NV==true) {
+          && (loc10.y - size10 / 2 <= b.loc.y && b.loc.y <= loc10.y + size10 / 2)) {
           HP=HP-(ATK-2);
           W=W+60;
           b.isDead=true;
@@ -9494,11 +9492,11 @@ void draw() {
           if (EC[10]==1) {
             CEF();
           }
-          if (Item<5) {
+          if (Item<10) {
             items[13]=items[13]+1;
             itget[13]=true;
           }
-          if (Item>=5&&Item<8) {
+          if (Item>=5&&Item<16) {
             items[28]=items[28]+1;
             itget[28]=true;
           }
@@ -10594,7 +10592,7 @@ void draw() {
     }
     void display21() {
       noFill();
-      if (NV==true) {
+      if (NV) {
         stroke(255, 255, 255);
       } else {
         noStroke();
@@ -10631,7 +10629,7 @@ void draw() {
       }
       for (Bullet b : myBullets) {
         if ((loc21.x - size21 / 2 <= b.loc.x && b.loc.x <= loc21.x + size21 / 2)
-          && (loc21.y - size21 / 2 <= b.loc.y && b.loc.y <= loc21.y + size21 / 2)&&NV==true) {
+          && (loc21.y - size21 / 2 <= b.loc.y && b.loc.y <= loc21.y + size21 / 2)) {
           HP=HP-(ATK-2);
           W=W+60;
           b.isDead=true;
