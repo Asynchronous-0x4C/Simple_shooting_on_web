@@ -30,7 +30,7 @@ abstract class Entity{
   
   abstract void display(PGraphics g);
   
-  abstract void displayShadow(PGraphics g);
+  abstract void displayShadow();
   
   void Collision(Entity e){}
 }
@@ -69,11 +69,11 @@ class Enemy extends Agent{
     g.rect(position.x,position.y,size,size);
   }
   
-  void displayShadow(PGraphics g){
-    g.rectMode(CENTER);
-    g.noStroke();
-    g.fill(shadowColor);
-    g.rect(position.x+3,position.y+3,size,size);
+  void displayShadow(){
+    rectMode(CENTER);
+    noStroke();
+    fill(shadowColor);
+    rect(position.x+3,position.y+3,size,size);
   }
   
   void Collision(Entity e){
@@ -97,14 +97,16 @@ class Bullet extends Entity{
     vel.set(velocity);
     vel.normalize();
     vel.mult(parent.colliderSize*0.5);
-    position.add(vel);
+    position.x+=vel.x;
+    position.y+=vel.y;
     speed=velocity.mag();
     angle=atan2(velocity.y,velocity.x);
     isMine=parent instanceof Player;
   }
   
   void update(){
-    position.add(velocity);
+    position.x+=velocity.x;
+    position.y+=velocity.y;
   }
   
   void display(PGraphics g){
@@ -113,18 +115,18 @@ class Bullet extends Entity{
     g.pushMatrix();
     g.translate(position.x,position.y);
     g.rotate(angle);
-    g.rect(0,0,speed,3,0.5);
+    g.rect(0,0,speed,3);
     g.popMatrix();
   }
   
-  void displayShadow(PGraphics g){
-    g.noStroke();
-    g.fill(shadowColor);
-    g.pushMatrix();
-    g.translate(position.x+3,position.y+3);
-    g.rotate(angle);
-    g.rect(0,0,speed,3,0.5);
-    g.popMatrix();
+  void displayShadow(){
+    noStroke();
+    fill(shadowColor);
+    pushMatrix();
+    translate(position.x+3,position.y+3);
+    rotate(angle);
+    rect(0,0,speed,3);
+    popMatrix();
   }
 }
 
@@ -165,10 +167,10 @@ class Player extends Agent{
     g.ellipse(position.x,position.y,size,size);
   }
   
-  void displayShadow(PGraphics g){
-    g.noStroke();
-    g.fill(160,165,160);
-    g.ellipse(position.x+3,position.y+3,size,size);
+  void displayShadow(){
+    noStroke();
+    fill(160,165,160);
+    ellipse(position.x+3,position.y+3,size,size);
   }
   
   void Collision(Entity e){

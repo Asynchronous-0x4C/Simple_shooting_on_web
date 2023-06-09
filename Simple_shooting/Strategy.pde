@@ -135,9 +135,7 @@ class StageStrategy extends Strategy{
     for(Entity e:entities)e.display(main);
     for(Bullet b:bulletList)b.display(main);
     main.endDraw();
-    shadow.beginDraw();
-    for(Entity e:entities)e.displayShadow(shadow);
-    for(Bullet b:bulletList)b.displayShadow(shadow);
-    shadow.endDraw();
+    for(Entity e:entities)e.displayShadow();
+    for(Bullet b:bulletList)b.displayShadow();
   }
 }

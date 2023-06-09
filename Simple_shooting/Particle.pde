@@ -18,7 +18,8 @@ class MenuParticle extends Particle{
   }
   
   void update(){
-    position.add(velocity);
+    position.x+=velocity.x;
+    position.y+=velocity.y;
     angle+=radians(velocity.magSq());
     life-=1;
   }
@@ -34,14 +35,14 @@ class MenuParticle extends Particle{
     g.popMatrix();
   }
   
-  void displayShadow(PGraphics g){
-    g.pushMatrix();
-    g.noStroke();
-    g.translate(position.x+3,position.y+3);
-    g.rotate(angle);
-    g.fill(160,round(200*(life/maxLife)));
-    g.rect(-3,-3,size,size,size*0.3);
-    g.popMatrix();
+  void displayShadow(){
+    pushMatrix();
+    noStroke();
+    translate(position.x+3,position.y+3);
+    rotate(angle);
+    fill(160,round(200*(life/maxLife)));
+    rect(-3,-3,size,size,size*0.3);
+    popMatrix();
   }
 }
 
@@ -101,8 +102,6 @@ class MenuParticleGenerator extends ParticleGenerator{
     main.beginDraw();
     for(Particle p:particle)p.display(main);
     main.endDraw();
-    shadow.beginDraw();
-    for(Particle p:particle)p.displayShadow(shadow);
-    shadow.endDraw();
+    for(Particle p:particle)p.displayShadow();
   }
 }
