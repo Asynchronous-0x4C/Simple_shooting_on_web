@@ -10,7 +10,7 @@ class MenuParticle extends Particle{
   
   MenuParticle(ParticleGenerator g){
     position=g.range.getRandomPoint();
-    velocity=g.velocity.get();
+    movement=new Movement(g.velocity.get(),new PVector(0,0),-1);
     maxLife=g.life.get();
     life=maxLife;
     size=6;
@@ -18,21 +18,21 @@ class MenuParticle extends Particle{
   }
   
   void update(){
-    position.x+=velocity.x;
-    position.y+=velocity.y;
-    angle+=radians(velocity.magSq());
+    movement.update();
+    position.add(movement.velocity);
+    angle+=radians(movement.velocity.magSq());
     life-=1;
   }
   
-  void display(PGraphics g){
-    g.pushMatrix();
-    g.translate(position.x,position.y);
-    g.rotate(angle);
-    g.noStroke();
-    g.rectMode(CENTER);
-    g.fill(128,168,168,round(200*(life/maxLife)));
-    g.rect(0,0,size,size,size*0.3);
-    g.popMatrix();
+  void display(){
+    pushMatrix();
+    translate(position.x,position.y);
+    rotate(angle);
+    noStroke();
+    rectMode(CENTER);
+    fill(128,168,168,round(200*(life/maxLife)));
+    rect(0,0,size,size,size*0.3);
+    popMatrix();
   }
   
   void displayShadow(){
@@ -73,6 +73,8 @@ abstract class ParticleGenerator{
   abstract void update();
   
   abstract void display();
+  
+  abstract void displayShadow();
 }
 
 class MenuParticleGenerator extends ParticleGenerator{
@@ -99,9 +101,10 @@ class MenuParticleGenerator extends ParticleGenerator{
   }
   
   void display(){
-    main.beginDraw();
-    for(Particle p:particle)p.display(main);
-    main.endDraw();
+    for(Particle p:particle)p.display();
+  }
+  
+  void displayShadow(){
     for(Particle p:particle)p.displayShadow();
   }
 }

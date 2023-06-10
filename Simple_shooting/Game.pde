@@ -19,7 +19,7 @@ class PlayerController extends Controller{
 
 abstract class Entity{
   PVector position=new PVector();
-  PVector velocity=new PVector();
+  Movement movement=new Movement();
   color bodyColor;
   color shadowColor;
   float size;
@@ -28,7 +28,7 @@ abstract class Entity{
   
   abstract void update();
   
-  abstract void display(PGraphics g);
+  abstract void display();
   
   abstract void displayShadow();
   
@@ -54,19 +54,29 @@ class Enemy extends Agent{
     this.shadowColor=shadowColor;
     this.size=size;
     accel=new PVector();
-    colliderSize=size*1.4142;position=new PVector(100,100);velocity=new PVector(0,0);
+    colliderSize=size*1.4142;position=new PVector(100,100);movement=new Movement(new PVector(0,0),new PVector(0,0.1),5);
+  }
+  
+  Enemy setPosition(PVector position){
+    this.position=position;
+    return this;
+  }
+  
+  Enemy setMovement(Movement movement){
+    this.movement=movement;
+    return this;
   }
   
   void update(){
-    velocity.add(accel.x*0.016,accel.y*0.016);
-    position.add(velocity);
+    movement.update();
+    position.add(movement.velocity);
   }
   
-  void display(PGraphics g){
-    g.rectMode(CENTER);
-    g.noStroke();
-    g.fill(bodyColor);
-    g.rect(position.x,position.y,size,size);
+  void display(){
+    rectMode(CENTER);
+    noStroke();
+    fill(bodyColor);
+    rect(position.x,position.y,size,size);
   }
   
   void displayShadow(){
@@ -90,7 +100,7 @@ class Bullet extends Entity{
   Bullet(color bodyColor,color shadowColor,PVector velocity,Agent parent){
     this.bodyColor=bodyColor;
     this.shadowColor=shadowColor;
-    this.velocity.set(velocity.x,velocity.y);
+    movement=new Movement(velocity,new PVector(0,0),-1);
     this.parent=parent;
     position.set(parent.position.x,parent.position.y);
     PVector vel=new PVector();
@@ -105,18 +115,18 @@ class Bullet extends Entity{
   }
   
   void update(){
-    position.x+=velocity.x;
-    position.y+=velocity.y;
+    movement.update();
+    position.add(movement.velocity);
   }
   
-  void display(PGraphics g){
-    g.noStroke();
-    g.fill(bodyColor);
-    g.pushMatrix();
-    g.translate(position.x,position.y);
-    g.rotate(angle);
-    g.rect(0,0,speed,3);
-    g.popMatrix();
+  void display(){
+    noStroke();
+    fill(bodyColor);
+    pushMatrix();
+    translate(position.x,position.y);
+    rotate(angle);
+    rect(0,0,speed,3);
+    popMatrix();
   }
   
   void displayShadow(){
@@ -161,10 +171,10 @@ class Player extends Agent{
     }
   }
   
-  void display(PGraphics g){
-    g.noStroke();
-    g.fill(0,200,0,150);
-    g.ellipse(position.x,position.y,size,size);
+  void display(){
+    noStroke();
+    fill(0,200,0,150);
+    ellipse(position.x,position.y,size,size);
   }
   
   void displayShadow(){
@@ -174,6 +184,13 @@ class Player extends Agent{
   }
   
   void Collision(Entity e){
+    
+  }
+}
+
+class GameSystem{
+  
+  GameSystem(){
     
   }
 }

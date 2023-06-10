@@ -17,6 +17,8 @@ abstract class Strategy{
   abstract void update();
   
   abstract void display();
+  
+  abstract void displayShadow();
 }
 
 void initStrategy(){
@@ -73,6 +75,11 @@ class StartStrategy extends Strategy{
     UImanager.display();
     particleGen.display();
   }
+  
+  void displayShadow(){
+    UImanager.displayShadow();
+    particleGen.displayShadow();
+  }
 }
 
 class MenuStrategy extends Strategy{
@@ -104,6 +111,10 @@ class MenuStrategy extends Strategy{
   void display(){
     UImanager.display();
   }
+  
+  void displayShadow(){
+    UImanager.displayShadow();
+  }
 }
 
 class StageStrategy extends Strategy{
@@ -131,10 +142,11 @@ class StageStrategy extends Strategy{
   }
   
   void display(){
-    main.beginDraw();
-    for(Entity e:entities)e.display(main);
-    for(Bullet b:bulletList)b.display(main);
-    main.endDraw();
+    for(Entity e:entities)e.display();
+    for(Bullet b:bulletList)b.display();
+  }
+  
+  void displayShadow(){
     for(Entity e:entities)e.displayShadow();
     for(Bullet b:bulletList)b.displayShadow();
   }

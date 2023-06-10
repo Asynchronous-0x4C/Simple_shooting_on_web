@@ -10,11 +10,8 @@ HashMap<Integer,PFont> fonts=new HashMap<Integer,PFont>();
 int stageNumber=0;
 int chapter=0;
 
-PGraphicsOpenGL main;
-
 void setup(){
   size(1280,720,P2D);
-  main=(PGraphicsOpenGL)createGraphics(width,height,P2D);
   //frameRate(60);
   initStrategy();
   nowStrategy=strategies.get("start");
@@ -25,13 +22,10 @@ void setup(){
 }
 
 void draw(){
-  main.beginDraw();
-  main.background(100,100,95,0);
-  main.endDraw();
   background(190,190,185);
   nowStrategy.update();
+  nowStrategy.displayShadow();
   nowStrategy.display();
-  image(main,0,0);
   updateEvent();
 }
 
@@ -43,7 +37,7 @@ void mousePressed(){
   mousePress=true;
 }
 
-class mutFloat{
+class mutFloat{//mutable float
   private float default_float;
   float mut_float;
   

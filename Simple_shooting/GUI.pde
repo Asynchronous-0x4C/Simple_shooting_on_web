@@ -3,7 +3,7 @@ abstract class GameComponent{
   
   abstract void update();
   
-  abstract void display(PGraphics g);
+  abstract void display();
   
   abstract void displayShadow();
 }
@@ -20,9 +20,10 @@ class ComponentManager{
   }
   
   void display(){
-    main.beginDraw();
-    for(GameComponent c:components)c.display(main);
-    main.endDraw();
+    for(GameComponent c:components)c.display();
+  }
+  
+  void displayShadow(){
     for(GameComponent c:components)c.displayShadow();
   }
   
@@ -68,25 +69,25 @@ class Button extends GameComponent{
     if(mousePress&&hover)event.select();
   }
   
-  void display(PGraphics g){
-    g.rectMode(CORNER);
-    g.noStroke();
+  void display(){
+    rectMode(CORNER);
+    noStroke();
     if(hover){
-      g.fill(60,60,60,200);
+      fill(60,60,60,200);
     }else{
-      g.fill(120,120,120,180);
+      fill(120,120,120,180);
     }
-    g.rect(x,y,w,h);
+    rect(x,y,w,h);
     if(hover){
-      g.rect(x-7,y,3.5,h);
-      g.fill(200,200,200);
+      rect(x-7,y,3.5,h);
+      fill(200,200,200);
     }else{
-      g.fill(220,220,220);
+      fill(220,220,220);
     }
-    g.textFont(font);
-    g.textSize(h*0.75);
-    g.textAlign(CENTER);
-    g.text(label,x+w*0.5,y+h*0.77);
+    textFont(font);
+    textSize(h*0.75);
+    textAlign(CENTER);
+    text(label,x+w*0.5,y+h*0.77);
   }
   
   void displayShadow(){
@@ -128,12 +129,12 @@ class FlowText extends GameComponent{
     
   }
   
-  void display(PGraphics g){
-    g.textFont(font);
-    g.textSize(size);
-    g.textAlign(style);
-    g.fill(textColor);
-    g.text(label,position.x,position.y);
+  void display(){
+    textFont(font);
+    textSize(size);
+    textAlign(style);
+    fill(textColor);
+    text(label,position.x,position.y);
   }
   
   void displayShadow(){
