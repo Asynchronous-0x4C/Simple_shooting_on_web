@@ -34,7 +34,7 @@ class ComponentManager{
 }
 
 interface ButtonEvent{
-  void select();
+  void select(Button b);
 }
 
 class Button extends GameComponent{
@@ -66,7 +66,7 @@ class Button extends GameComponent{
   
   void update(){
     hover=(x<mouseX&&mouseX<x+w&&y<mouseY&&mouseY<y+h);
-    if(mousePress&&hover)event.select();
+    if(mousePress&&hover)event.select(this);
   }
   
   void display(){

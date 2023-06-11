@@ -1,4 +1,4 @@
-//
+import java.util.Comparator;
 
 HashMap<String,Strategy> strategies=new HashMap<String,Strategy>();
 Strategy nowStrategy;
@@ -7,12 +7,13 @@ boolean mousePress=false;
 
 HashMap<Integer,PFont> fonts=new HashMap<Integer,PFont>();
 
+JSONObject saveData;
+
 int stageNumber=0;
 int chapter=0;
 
 void setup(){
   size(1280,720,P2D);
-  //frameRate(60);
   initStrategy();
   nowStrategy=strategies.get("start");
   for(int i=0;i<10;i++){

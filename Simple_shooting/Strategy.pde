@@ -31,6 +31,8 @@ void initStrategy(){
 class StartStrategy extends Strategy{
   MenuParticleGenerator particleGen;
   
+  final JSONObject defaultData=JSONObject.parse("{\"date\":{\"year\":null,\"month\":null,\"date\":null,\"hour\":null,\"minute\":null},\"progress\":1,\"level\":5,\"exp\":0}");
+  
   StartStrategy(){
     super("","start");
     particleGen=new MenuParticleGenerator(new Rectangle(0,height,width,20),
@@ -43,11 +45,18 @@ class StartStrategy extends Strategy{
         Float get(){
           return random(240,300);
         }
-      });
+      }
+    );
     for(int i=0;i<3;i++){
       UImanager.add(
         new Button(width*0.5-100,height*0.5-55+i*40,200,30).setEvent(new ButtonEvent(){
-          void select(){
+          void select(Button b){
+            String num=b.label.split(" ")[1];
+            saveData=loadJSONObject("./data/save/save"+num+".json");
+            if(saveData==null){
+              saveData=defaultData;
+              saveJSONObject(saveData,"./data/save/save"+num+".json");
+            }
             nowStrategy=strategies.get("menu");
           }
         }).setLabel("Save "+(i+1))
@@ -55,7 +64,7 @@ class StartStrategy extends Strategy{
     }
     UImanager.add(
       new Button(width*0.5-100,height*0.5+65,200,30).setEvent(new ButtonEvent(){
-        void select(){
+        void select(Button b){
           exit();
         }
       }).setLabel("Exit")
@@ -88,7 +97,7 @@ class MenuStrategy extends Strategy{
     super("start","menu");
     UImanager.add(
       new Button(100,20,250,30).setEvent(new ButtonEvent(){
-        void select(){
+        void select(Button b){
           exit();
         }
       }).setLabel("Config")
@@ -96,7 +105,7 @@ class MenuStrategy extends Strategy{
     for(int i=0;i<10;i++){
       UImanager.add(
         new Button(100,120+i*60,250,30).setEvent(new ButtonEvent(){
-          void select(){
+          void select(Button b){
             nowStrategy=strategies.get("stage");
           }
         }).setLabel("stage "+(i+1))
@@ -118,36 +127,26 @@ class MenuStrategy extends Strategy{
 }
 
 class StageStrategy extends Strategy{
-  ArrayList<Entity> entities;
-  ArrayList<Bullet> bulletList;
-  Player player;
+  GameSystem system;
   
   StageStrategy(){
     super("menu","stage");
     init();
-    entities.add(new Enemy(color(0,0,255,200),color(150,150,155),20,bulletList));
-    player=new Player(new PVector(width*0.5,height-40),bulletList);
-    entities.add(player);
   }
   
   void init(){
-    entities=new ArrayList<Entity>();
-    bulletList=new ArrayList<Bullet>();
+    system=new GameSystem();
   }
   
   void update(){
-    for(Entity e:entities)e.update();
-    for(Bullet b:bulletList)b.update();
-    player.setTarget(new PVector(mouseX,mouseY));
+    system.update();
   }
   
   void display(){
-    for(Entity e:entities)e.display();
-    for(Bullet b:bulletList)b.display();
+    system.display();
   }
   
   void displayShadow(){
-    for(Entity e:entities)e.displayShadow();
-    for(Bullet b:bulletList)b.displayShadow();
+    system.displayShadow();
   }
 }

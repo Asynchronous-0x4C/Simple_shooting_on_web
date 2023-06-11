@@ -1,0 +1,15 @@
+{
+  "time":60,
+  "countDown":false,
+  "main":[
+    {
+      "time":0,
+      "list":[
+        {
+          "name":"NormalEnemy",
+          "freq":0.04
+        }
+      ]
+    }
+  ]
+}
