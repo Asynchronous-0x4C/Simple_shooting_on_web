@@ -3,7 +3,6 @@ import java.util.function.*;
 abstract class Particle extends Entity{
   float maxLife;
   float life;
-  float angle;
 }
 
 class MenuParticle extends Particle{
@@ -25,42 +24,25 @@ class MenuParticle extends Particle{
   }
   
   void display(){
+    noStroke();
+    rectMode(CENTER);
     pushMatrix();
     translate(position.x,position.y);
     rotate(angle);
-    noStroke();
-    rectMode(CENTER);
     fill(128,168,168,round(200*(life/maxLife)));
     rect(0,0,size,size,size*0.3);
     popMatrix();
   }
   
   void displayShadow(){
-    pushMatrix();
     noStroke();
+    rectMode(CENTER);
+    pushMatrix();
     translate(position.x+3,position.y+3);
     rotate(angle);
     fill(160,round(200*(life/maxLife)));
-    rect(-3,-3,size,size,size*0.3);
+    rect(0,0,size,size,size*0.3);
     popMatrix();
-  }
-}
-
-class Rectangle{
-  float x;
-  float y;
-  float dx;
-  float dy;
-  
-  Rectangle(float x,float y,float dx,float dy){
-    this.x=x;
-    this.y=y;
-    this.dx=dx;
-    this.dy=dy;
-  }
-  
-  PVector getRandomPoint(){
-    return new PVector(x+random(0,dx),y+random(0,dy));
   }
 }
 

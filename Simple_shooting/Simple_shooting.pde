@@ -1,11 +1,19 @@
+/*Debug
+ *1.Duplicate name function
+ *2.Space behind Generics
+ */
+
 import java.util.Comparator;
+
+import java.lang.reflect.*;
+
+Simple_shooting ref_applet;
 
 HashMap<String,Strategy> strategies=new HashMap<String,Strategy>();
 Strategy nowStrategy;
+GameSystem gameSystem;
 
 boolean mousePress=false;
-
-HashMap<Integer,PFont> fonts=new HashMap<Integer,PFont>();
 
 JSONObject saveData;
 
@@ -14,12 +22,10 @@ int chapter=0;
 
 void setup(){
   size(1280,720,P2D);
+  ref_applet=this;
+  initAudio();
   initStrategy();
   nowStrategy=strategies.get("start");
-  for(int i=0;i<10;i++){
-    fonts.put(5+i*5,createFont("SansSerif.plain",5+i*5));
-  }
-  fonts.put(100,createFont("SansSerif.plain",100));
 }
 
 void draw(){
@@ -49,4 +55,28 @@ class mutFloat{//mutable float
   float getDefault(){
     return default_float;
   }
+}
+
+PVector vectorRotate(PVector p,float angle){
+  return new PVector(p.x*cos(angle)-p.y*sin(angle),p.y*cos(angle)+p.x*sin(angle));
+}
+
+float length(float x,float y){
+  return sqrt(x*x+y*y);
+}
+
+float sqDist(PVector a,PVector b){
+  float x=b.x-a.x;
+  float y=b.y-a.y;
+  return x*x+y*y;
+}
+
+boolean ellipseDistFunc(PVector position,float x,float y,PVector point){
+  PVector relative=new PVector((point.x-position.x)/x,(point.y-position.y)/y);
+  return relative.mag()-1<=0;
+}
+
+boolean roundRectDistFunc(PVector p,float x,float y, float radius) {
+  PVector d = new PVector(abs(p.x)-x,abs(p.y)-y);
+  return min(max(d.x, d.y), 0.0) + length(max(d.x,0.0),max(d.y,0.0))- radius<=0;
 }

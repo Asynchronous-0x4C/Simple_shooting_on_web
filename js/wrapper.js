@@ -47,12 +47,20 @@ class JSONObject{
     return this.json[name];
   }
 
+  getString(name){
+    return this.json[name];
+  }
+
+  getBoolean(name){
+    return this.json[name];
+  }
+
   getJSONObject(name){
     return new JSONObject(this.json[name]);
   }
 
   getJSONArray(name){
-    return this.json[name];
+    return new JSONArray(this.json[name]);
   }
 }
 
@@ -63,10 +71,55 @@ class JSONArray{
   }
 
   getJSONArray(index){
-    return this.json[index];
+    return new JSONArray(this.json[index]);
   }
 
   getJSONObject(index){
-    return this.json[index];
+    return new JSONObject(this.json[index]);
+  }
+
+  size(){
+    return this.json.length;
+  }
+}
+
+class InstanceFactory{
+  
+  constructor(s){
+    this.applet=s;
+    this.constructors=[];
+  }
+  
+  contains(name){
+    return this.constructors.includes(name);
+  }
+  
+  putConstructor(name){
+    this.constructors.push(name);
+  }
+  
+  getInstance(name,bulletList){
+    return eval("new this.applet."+name+"(bulletList)");
+  }
+}
+
+function initAudio(){
+  
+}
+
+class Sound{
+
+  constructor(path){
+    this.audio=new Audio();
+    this.audio.preload = "auto";
+    this.audio.src=path;
+    this.audio.load();
+
+  }
+
+  play(){
+    this.audio.currentTime = 0;
+    this.audio.loop = false;
+    this.audio.play();
   }
 }

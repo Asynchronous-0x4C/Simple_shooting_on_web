@@ -18,3 +18,19 @@ display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロール
 body{
   margin: 0px;
 }
+
+@font-face { 
+  font-family: "OpenSans-Regular"; 
+
+  src: url("../Simple_shooting/data/font/OpenSans-Regular.ttf") format("truetype") 
+}
+
+span{
+  font-family: "OpenSans-Regular";
+}
+
+#fullScreen{
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}

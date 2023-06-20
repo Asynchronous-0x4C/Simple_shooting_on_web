@@ -251,7 +251,7 @@ int q=0;
 boolean fullsc;
 
 void setup() {
-  size(innerWidth-1,innerHeight-1);
+  size(innerWidth+1,innerHeight+1);
   frameRate(60);
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
@@ -323,7 +323,7 @@ void setup() {
   Sitem=new int[50];
 
   for (int q=0; q<35; q++) {
-    String ms="ITEM"+q+".png";
+    String ms="./data/ITEM"+q+".png";
     ITMS[q]=loadImage(ms);
   }
   for (int I=0; I<50; I++) {

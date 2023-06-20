@@ -1,4 +1,5 @@
 abstract class GameComponent{
+  String font_name="font/OpenSans-Regular.ttf";
   PFont font;
   
   abstract void update();
@@ -51,7 +52,7 @@ class Button extends GameComponent{
     this.y=y;
     this.w=w;
     this.h=h;
-    font=createFont("SansSerif.plain",h*0.75);
+    this.font=createFont(font_name,h*0.75,true);
   }
   
   Button setEvent(ButtonEvent e){
@@ -106,7 +107,6 @@ class FlowText extends GameComponent{
   color textColor;
   color shadowColor;
   PVector position;
-  PFont font;
   
   int style=CENTER;
   
@@ -117,11 +117,17 @@ class FlowText extends GameComponent{
     this.textColor=textColor;
     this.shadowColor=shadowColor;
     this.position=position;
-    font=fonts.containsKey((int)size)?fonts.get((int)size):createFont("SansSerif.plain",size);
+    this.font=createFont(font_name,size,true);
   }
   
   FlowText setStyle(int style){
     this.style=style;
+    return this;
+  }
+  
+  FlowText setFont(String name){
+    font_name=name;
+    this.font=createFont(name,size,true);
     return this;
   }
   
@@ -130,7 +136,7 @@ class FlowText extends GameComponent{
   }
   
   void display(){
-    textFont(font);
+    if(font!=null)textFont(font);
     textSize(size);
     textAlign(style);
     fill(textColor);
@@ -138,10 +144,49 @@ class FlowText extends GameComponent{
   }
   
   void displayShadow(){
-    textFont(font);
+    if(font!=null)textFont(font);
     textSize(size);
     textAlign(style);
     fill(shadowColor);
     text(label,position.x+z,position.y+z);
+  }
+}
+
+class DynamicFlowText extends FlowText{
+  Supplier<String> supplier;
+  
+  DynamicFlowText(Supplier<String> supplier,PVector position,float size,float z,color textColor,color shadowColor){
+    super("",position,size,z,textColor,shadowColor);
+    this.supplier=supplier;
+  }
+  
+  void update(){
+    label=supplier.get();
+  }
+}
+
+class StageUI{
+  ArrayList<GameComponent> components=new ArrayList<GameComponent>();
+  GameSystem system;
+  
+  StageUI(GameSystem s){
+    this.system=s;
+    components.add(new DynamicFlowText(new Supplier<String>(){
+      String get(){
+        return nf(max(0.0,s.stage.time),1,2);
+      }
+    },new PVector(width*0.5,20),20,3,system.stage.countDown?color(200,50,50,200):color(50,50,50,200),color(150,150,150)));
+  }
+  
+  void update(){
+    for(GameComponent c:components)c.update();
+  }
+  
+  void display(){
+    for(GameComponent c:components)c.display();
+  }
+  
+  void displayShadow(){
+    for(GameComponent c:components)c.displayShadow();
   }
 }
