@@ -23,9 +23,9 @@ class InstanceFactory{
     }
   }
   
-  Entity getInstance(String name,ArrayList<Bullet> bulletList){
+  Entity getInstance(String name,ArrayList<Entity> entityList){
     try{
-      return (Entity)constructors.get(name).newInstance(applet,bulletList);
+      return (Entity)constructors.get(name).newInstance(applet,entityList);
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -52,4 +52,8 @@ class Sound{
 void stop(){
   minim.stop();
   super.stop();
+}
+
+long getNanoSeconds(){
+  return System.nanoTime();
 }

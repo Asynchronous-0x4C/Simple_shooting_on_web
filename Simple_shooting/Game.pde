@@ -21,10 +21,13 @@ abstract class Entity{
   PVector position=new PVector();
   Movement movement=new Movement();
   Collider collider;
-  color bodyColor;
-  color shadowColor;
+  Material material;
   float angle;
   float size;
+  
+  mutFloat HP=new mutFloat(1);
+  mutFloat Attack=new mutFloat(1);
+  mutFloat Defence=new mutFloat(0);
   
   boolean isDead=false;
   
@@ -38,6 +41,28 @@ abstract class Entity{
     return this;
   }
   
+  Entity setVelocity(PVector v){
+    movement.setVelocity(v);
+    return this;
+  }
+  
+  Entity setLimitSpeed(float s){
+    movement.setLimitSpeed(s);
+    return this;
+  }
+  
+  void setHP(float f){
+    HP=new mutFloat(f);
+  }
+  
+  void setAttack(float f){
+    Attack=new mutFloat(f);
+  }
+  
+  void setDefence(float f){
+    Defence=new mutFloat(f);
+  }
+  
   abstract void update();
   
   abstract void display();
@@ -45,10 +70,12 @@ abstract class Entity{
   abstract void displayShadow();
   
   void Collision(Entity e){}
+  
+  void deadEvent(){}
 }
 
 abstract class Agent extends Entity{
-  ArrayList<Bullet> bulletList;
+  ArrayList<Entity> entityList;
   Controller controller;
   
   void setController(Controller c){
@@ -58,18 +85,19 @@ abstract class Agent extends Entity{
 
 abstract class Enemy extends Agent{
   
-  Enemy(color bodyColor,color shadowColor,float size,ArrayList<Bullet> bulletList){
-    this.bulletList=bulletList;
-    this.bodyColor=bodyColor;
-    this.shadowColor=shadowColor;
+  Enemy(Color bodyColor,float size,ArrayList<Entity> entityList){
+    this.entityList=entityList;
+    material=new Material(bodyColor,new Color(0));
     this.size=size;
-    collider=new Circle(position,size*1.4142,0);
+    collider=new Rectangle(position,new PVector(size,size),0);
     movement=new Movement(new PVector(0,0),new PVector(0,0.1),3);
   }
   
   void update(){
     movement.update();
-    position.add(movement.velocity);
+    PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
+    vel.mult(fpsMag);
+    position.add(vel);
     if(height<position.y-size*0.5)isDead=true;
   }
   
@@ -79,18 +107,18 @@ abstract class Enemy extends Agent{
     rotate(angle);
     rectMode(CENTER);
     noStroke();
-    fill(bodyColor);
+    fill_by_color(material.getSurface());
     rect(0,0,size,size);
     popMatrix();
   }
   
   void displayShadow(){
     pushMatrix();
-    translate(position.x+3,position.y+3);
+    translate(position.x+material.z_height,position.y+material.z_height);
     rotate(angle);
     rectMode(CENTER);
     noStroke();
-    fill(shadowColor);
+    fill_by_color(material.getShadow());
     rect(0,0,size,size);
     popMatrix();
   }
@@ -98,10 +126,38 @@ abstract class Enemy extends Agent{
   void Collision(Entity e){
     if(e instanceof Bullet){
       Bullet b=(Bullet)e;
-      if(b.isMine)return;
+      if(!b.isMine)return;
+      HP.mut_float-=calcDamage(b.Attack.mut_float,Defence.mut_float);
+      if(HP.mut_float<=0){
+        isDead=true;
+        deadEvent();
+      }
     }else if(e instanceof Player){
       isDead=true;
+      deadEvent();
     }
+  }
+  
+  void deadEvent(){
+    GameSystem s=getGameSystem();
+    if(s==null)return;
+    s.nextEntity.add(new EntityParticleGenerator(this,
+      new Supplier<PVector>(){
+        PVector get(){
+          PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
+          vel.mult(fpsMag);
+          float speed=random(-1.5,1.5);
+          float angle=random(0,TWO_PI);
+          return new PVector(cos(angle)*speed+vel.x,sin(angle)*speed+vel.y);
+        }
+      },
+      new Supplier<Float>(){
+        Float get(){
+          return random(30,60);
+        }
+      }
+      ).generate(floor(size*0.25))
+    );
   }
 }
 
@@ -111,9 +167,10 @@ class Bullet extends Entity{
   float speed;
   float angle;
   
-  Bullet(color bodyColor,color shadowColor,PVector velocity,Agent parent){
-    this.bodyColor=bodyColor;
-    this.shadowColor=shadowColor;
+  boolean hitBullet=false;
+  
+  Bullet(Color bodyColor,PVector velocity,Agent parent){
+    material=new Material(bodyColor,bodyColor);
     movement=new Movement(velocity,new PVector(0,0),-1);
     this.parent=parent;
     position.set(parent.position.x,parent.position.y);
@@ -131,7 +188,9 @@ class Bullet extends Entity{
   
   void update(){
     movement.update();
-    position.add(movement.velocity);
+    PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
+    vel.mult(fpsMag);
+    position.add(vel);
     if(position.x-movement.velocity.x<0||width<position.x+movement.velocity.x||position.y-movement.velocity.y<0||width<position.y+movement.velocity.y)isDead=true;
   }
   
@@ -139,9 +198,9 @@ class Bullet extends Entity{
     pushMatrix();
     rectMode(CENTER);
     noStroke();
-    fill(bodyColor);
+    fill_by_color(material.getSurface());
     translate(position.x,position.y);
-    rotate(angle);//FIXME rotate() doesn't work on Processing.js
+    rotate(angle);
     rect(0,0,speed*1.5,3);
     popMatrix();
   }
@@ -150,11 +209,60 @@ class Bullet extends Entity{
     pushMatrix();
     rectMode(CENTER);
     noStroke();
-    fill(shadowColor);
-    translate(position.x+3,position.y+3);
+    fill_by_color(material.getShadow());
+    translate(position.x+material.z_height,position.y+material.z_height);
     rotate(angle);
     rect(0,0,speed*1.5,3);
     popMatrix();
+  }
+  
+  void Collision(Entity e){
+    if(e instanceof Player){
+      Player p=(Player)e;
+      if(!isMine){
+        isDead=true;
+        deadEvent();
+      }
+    }else if(e instanceof Enemy){
+      Enemy _e=(Enemy)e;
+      if(isMine){
+        isDead=true;
+        deadEvent();
+      }
+    }else if(e instanceof Bullet){
+      Bullet b=(Bullet)e;
+      if(isMine!=b.isMine){
+        HP.mut_float-=b.Attack.mut_float*(isMine?0.5:1);
+        if(HP.mut_float<=0){
+          isDead=true;
+          hitBullet=true;
+          deadEvent();
+        }
+      }
+    }
+  }
+  
+  void deadEvent(){
+    if(!hitBullet)return;
+    GameSystem s=getGameSystem();
+    if(s==null)return;
+    s.nextEntity.add(new EntityParticleGenerator(this,
+      new Supplier<PVector>(){
+        PVector get(){
+          PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
+          vel.mult(fpsMag);
+          float speed=random(-1.5,1.5);
+          float angle=random(0,TWO_PI);
+          return new PVector(cos(angle)*speed+vel.x*0.25,sin(angle)*speed+vel.y*0.25);
+        }
+      },
+      new Supplier<Float>(){
+        Float get(){
+          return random(30,60);
+        }
+      }
+      ).generate(floor(2))
+    );
   }
 }
 
@@ -162,16 +270,17 @@ class Player extends Agent{
   PVector targetPoint;
   HashMap<String,mutFloat> status=new HashMap<String,mutFloat>();
   
-  Player(PVector position,ArrayList<Bullet> bulletList){
-    this.bulletList=bulletList;
+  Player(PVector position,ArrayList<Entity> entityList){
+    this.entityList=entityList;
     targetPoint=new PVector(position.x,position.y);
     this.position=position;
     size=25;
     collider=new Circle(position,size,0);
-    status.put("HP",new mutFloat(100f));
+    status.put("HP",new mutFloat(1f));
     status.put("Attack",new mutFloat(1f));
     status.put("Defence",new mutFloat(0f));
     status.put("cooltime",new mutFloat(10f));
+    material=new Material(new Color(0,200,0,150),new Color(0));
   }
   
   void setTarget(PVector position){
@@ -179,31 +288,64 @@ class Player extends Agent{
   }
   
   void update(){
-    position.x+=(targetPoint.x-position.x)*0.3;if(mousePressed)shot();
+    position.x+=(targetPoint.x-position.x)*min(1f,0.3*fpsMag);
+    status.get("cooltime").mut_float-=fpsMag;
+    if(mousePressed)shot();
+    if(status.get("HP").mut_float<=0){
+      isDead=true;
+      deadEvent();
+    }
   }
   
   void shot(){
-    --status.get("cooltime").mut_float;
     if(status.get("cooltime").mut_float<=0){
       status.get("cooltime").mut_float=status.get("cooltime").getDefault();
-      bulletList.add(new Bullet(color(0,0,255,150),color(130,130,170),new PVector(0,-15),this));
+      entityList.add(new Bullet(new Color(0,0,255,150),new PVector(0,-15),this));
     }
   }
   
   void display(){
     noStroke();
-    fill(0,200,0,150);
+    fill_by_color(material.getSurface());
     ellipse(position.x,position.y,size,size);
   }
   
   void displayShadow(){
     noStroke();
-    fill(160,165,160);
+    fill_by_color(material.getShadow());
     ellipse(position.x+3,position.y+3,size,size);
   }
   
   void Collision(Entity e){
-    
+    if(e instanceof Bullet){
+      Bullet b=(Bullet)e;
+      if(!b.isMine){
+        status.get("HP").mut_float-=calcDamage(b.Attack.mut_float,status.get("Defence").mut_float);
+      }
+    }else if(e instanceof Enemy){
+      Enemy _e=(Enemy)e;
+      status.get("HP").mut_float-=calcDamage(_e.Attack.mut_float*2,status.get("Defence").mut_float);
+    }
+  }
+  
+  void deadEvent(){
+    GameSystem s=getGameSystem();
+    if(s==null)return;
+    s.nextEntity.add(new EntityParticleGenerator(this,
+      new Supplier<PVector>(){
+        PVector get(){
+          float speed=random(-1.5,1.5);
+          float angle=random(0,TWO_PI);
+          return new PVector(cos(angle)*speed,sin(angle)*speed);
+        }
+      },
+      new Supplier<Float>(){
+        Float get(){
+          return random(30,60);
+        }
+      }
+      ).generate(6)
+    );
   }
 }
 
@@ -212,11 +354,11 @@ boolean colliderCollision(Collider a,Collider b){
     float size=a.size.x+b.size.x;
     return sqDist(a.position,b.position)<=size*size;
   }else if(a instanceof Circle&&b instanceof Rectangle){
-    return roundRectDistFunc(vectorRotate(new PVector(a.position.x-b.position.x,a.position.y-b.position.y),-b.angle),b.size.x,b.size.y,a.size.x*0.25);
+    return roundRectDistFunc(vectorRotate(new PVector(a.position.x-b.position.x,a.position.y-b.position.y),-b.angle),b.size.x*0.5,b.size.y*0.5,a.size.x*0.5);
   }else if(a instanceof Rectangle&&b instanceof Circle){
-    return roundRectDistFunc(vectorRotate(new PVector(b.position.x-a.position.x,b.position.y-a.position.y),-a.angle),a.size.x,a.size.y,b.size.x*0.25);
+    return roundRectDistFunc(vectorRotate(new PVector(b.position.x-a.position.x,b.position.y-a.position.y),-a.angle),a.size.x*0.5,a.size.y*0.5,b.size.x*0.5);
   }else if(a instanceof Rectangle&&b instanceof Rectangle){
-    
+    return roundRectDistFunc(new PVector(b.position.x-a.position.x,b.position.y-a.position.y),(a.size.x+b.size.x)*0.5,(a.size.y+b.size.y)*0.5,0f);
   }
   return false;
 }
@@ -273,7 +415,8 @@ class Stage{
   }
   
   void update(){
-    time-=1.0/60.0;
+    if(!system.gameState.equals("shooting"))return;
+    time-=1.0/fps;
     if(time<=0){
       end=true;
       return;
@@ -287,8 +430,8 @@ class Stage{
       for(String s:enemyMap.get(enemyIndex).keySet()){
         float freq=enemyMap.get(enemyIndex).get(s);
         if(sum<rand&&rand<=sum+freq){
-          Entity e=factory.getInstance(s,system.bulletList);
-          system.entities.add(e.setPosition(new PVector(random(e.size*0.5,width-e.size*0.5),-e.size*2)));
+          Entity e=factory.getInstance(s,system.nextEntity);
+          system.entities.add(e.setPosition(new PVector(random(e.size*0.5,width-e.size*0.5),-e.size*2.0)));
           break;
         }
         sum+=freq;
@@ -318,21 +461,27 @@ class TimeSchedule{
 }
 
 class GameSystem{
+  ArrayList<Entity> nextEntity=new ArrayList<Entity>();
   ArrayList<Entity> entities;
-  ArrayList<Bullet> bulletList;
   Player player;
   Stage stage;
   StageUI ui;
   
+  String gameState="";
+  float gameMag=1;
+  float resultTime=0;
+  
   GameSystem(){
     init();
-    player=new Player(new PVector(width*0.5,height-40),bulletList);
     entities.add(player);
   }
   
   void init(){
+    gameState="shooting";
+    gameMag=1;
+    resultTime=0;
+    player=new Player(new PVector(width*0.5,height-40),nextEntity);
     entities=new ArrayList<Entity>();
-    bulletList=new ArrayList<Bullet>();
     stage=new Stage(this);
     ui=new StageUI(this);
   }
@@ -343,40 +492,48 @@ class GameSystem{
   }
   
   void update(){
+    float tempMag=fpsMag;
+    if(gameState.equals("clear")||gameState.equals("fail")){
+      resultTime+=fpsMag;
+      gameMag*=0.9;
+      fpsMag*=gameMag;
+    }
     stage.update();
     ui.update();
-    ArrayList<Entity> nextEntity=new ArrayList<Entity>();
     for(Entity e:entities){
       e.update();
       if(!e.isDead)nextEntity.add(e);
     }
-    entities=nextEntity;
-    ArrayList<Bullet> nextBullet=new ArrayList<Bullet>();
-    for(Bullet b:bulletList){
-      b.update();
-      if(!b.isDead)nextBullet.add(b);
-    }
-    bulletList.clear();
-    bulletList.addAll(nextBullet);
+    entities.clear();
+    entities.addAll(nextEntity);
+    nextEntity.clear();
     player.setTarget(new PVector(mouseX,mouseY));
-    collision();
+    if(gameState.equals("shooting")){
+      collision();
+    }
+    fpsMag=tempMag;
+    if(player.isDead){
+      gameState="fail";
+    }else if(stage.time<=0){
+      gameState="clear";
+    }
+    if(resultTime>85){
+      endState=gameState;
+      setNextStrategy(strategies.get("result"));
+    }
   }
   
   void collision(){
-    for(Bullet b:bulletList){
-      if(b.isMine){
-        for(Entity e:entities){
-          if(e instanceof Enemy){
-            Enemy enemy=(Enemy)e;
-            if(colliderCollision(enemy.collider,b.collider)){
-              b.isDead=true;
-              e.isDead=true;
-            }
-          }
+    for(int i=0;i<entities.size();i++){
+      Entity e=entities.get(i);
+      for(int j=i;j<entities.size();j++){
+        Entity _e=entities.get(j);
+        if(e==_e||(e instanceof Enemy)){
+          continue;
         }
-      }else{
-        if(colliderCollision(player.collider,b.collider)){
-          b.isDead=true;
+        if(colliderCollision(e.collider,_e.collider)){
+          e.Collision(_e);
+          _e.Collision(e);
         }
       }
     }
@@ -384,13 +541,21 @@ class GameSystem{
   
   void display(){
     for(Entity e:entities)e.display();
-    for(Bullet b:bulletList)b.display();
     ui.display();
+    if(resultTime>60){
+      noStroke();
+      fill(205,205,210);
+      rectMode(CORNER);
+      for(int i=0;i<16;i++){
+        for(int j=0;j<9;j++){
+          if((resultTime-60f)>=i+j)rect(width/16f*i,height/9f*j,width/16f,height/9f);
+        }
+      }
+    }
   }
   
   void displayShadow(){
     for(Entity e:entities)e.displayShadow();
-    for(Bullet b:bulletList)b.displayShadow();
     ui.displayShadow();
   }
 }

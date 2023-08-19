@@ -17,27 +17,67 @@ boolean mousePress=false;
 
 JSONObject saveData;
 
+long pTime;
+float fps=60;
+float fpsMag=1;
+
 int stageNumber=0;
 int chapter=0;
+
+String endState="";
+
+Color lightColor=new Color(255,255,255);
+Color backgroundAlbedo=new Color(190,190,185);
+
+int lightingUpdateCount=0;
 
 void setup(){
   size(1280,720,P2D);
   ref_applet=this;
   initAudio();
   initStrategy();
-  nowStrategy=strategies.get("start");
+  setNextStrategy(strategies.get("start"));
+  pTime=getNanoSeconds();
 }
 
 void draw(){
-  background(190,190,185);
   nowStrategy.update();
+  bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
   nowStrategy.displayShadow();
   nowStrategy.display();
   updateEvent();
 }
 
+void resetBackground(){
+  backgroundAlbedo.set_f(190,190,185);
+  lightingUpdateCount++;
+}
+
+void setBackground(float r,float g,float b){
+  backgroundAlbedo.set_f(r,g,b);
+  lightingUpdateCount++;
+}
+
+void resetLight(){
+  lightColor.set_f(255,255,255);
+  lightingUpdateCount++;
+}
+
+void setLight(float r,float g,float b){
+  lightColor.set_f(r,g,b);
+  lightingUpdateCount++;
+}
+
+void setNextStrategy(Strategy s){
+  nowStrategy=s;
+  nowStrategy.init();
+}
+
 void updateEvent(){
   mousePress=false;
+  fps=1000000000f/(getNanoSeconds()-pTime);
+  fpsMag=60f/fps;
+  pTime=getNanoSeconds();
 }
 
 void mousePressed(){
@@ -79,4 +119,25 @@ boolean ellipseDistFunc(PVector position,float x,float y,PVector point){
 boolean roundRectDistFunc(PVector p,float x,float y, float radius) {
   PVector d = new PVector(abs(p.x)-x,abs(p.y)-y);
   return min(max(d.x, d.y), 0.0) + length(max(d.x,0.0),max(d.y,0.0))- radius<=0;
+}
+
+GameSystem getGameSystem(){
+  if(!(nowStrategy instanceof StageStrategy))return null;
+  return ((StageStrategy)nowStrategy).system;
+}
+
+void bg_by_color(Color c){
+  background(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+void fill_by_color(Color c){
+  fill(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+void stroke_by_color(Color c){
+  stroke(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+float ease(float x){
+  return 2.0/(1+pow(2.718281828,-x))-1.0;
 }

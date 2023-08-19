@@ -8,8 +8,8 @@ abstract class ShotEnemy extends Enemy{
   float cooltime=0f;
   float shotRange=200;
   
-  ShotEnemy(color bodyColor,color shadowColor,float size,ArrayList<Bullet> bulletList){
-    super(bodyColor,shadowColor,size,bulletList);
+  ShotEnemy(Color bodyColor,float size,ArrayList<Entity> entityList){
+    super(bodyColor,size,entityList);
   }
   
   ShotEnemy setCooltime(float f){
@@ -29,7 +29,7 @@ abstract class ShotEnemy extends Enemy{
   
   void update(){
     super.update();
-    --cooltime;
+    cooltime-=fpsMag;
     if(cooltime<=0&&ellipseDistFunc(position,shotRange,shotRange*3,gameSystem.player.position)&&predicate.test(this)){
       shot();
       cooltime=maxCooltime;
@@ -41,18 +41,21 @@ abstract class ShotEnemy extends Enemy{
 
 class NormalEnemy extends ShotEnemy{
   
-  NormalEnemy(ArrayList<Bullet> bulletList){
-    super(color(0,0,255,200),color(150,150,155),20,bulletList);
+  NormalEnemy(ArrayList<Entity> entityList){
+    super(new Color(0,0,255,200),20,entityList);
+    setHP(2);
   }
   
   void shot(){
-    bulletList.add(new NormalBullet(new PVector(0,6),this));
+    entityList.add(new NormalBullet(new PVector(0,6),this));
   }
 }
 
 class SpecialAttackEnemy extends Enemy{
   
-  SpecialAttackEnemy(ArrayList<Bullet> bulletList){
-    super(color(255,255,0,200),color(155,155,150),20,bulletList);
+  SpecialAttackEnemy(ArrayList<Entity> entityList){
+    super(new Color(255,255,0,200),20,entityList);
+    setLimitSpeed(6);
+    setHP(3);
   }
 }

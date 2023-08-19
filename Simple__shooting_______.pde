@@ -251,7 +251,7 @@ int q=0;
 boolean fullsc;
 
 void setup() {
-  size(innerWidth+1,innerHeight+1);
+  size(1280,720);
   frameRate(60);
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
@@ -1168,8 +1168,8 @@ void draw() {
         String ms="";
         noFill();
         stroke(RGB[m], RGBA[m]);
-        rect(320+width/2-120, 0+m*31, -240, 30);
-        if (mouseX>=width-240&&mouseX<=width&&mouseY>=height/2-335+m*31&&mouseY<=height/2-305+m*31) {
+        rect(320+width/2-120, 30+m*31, -240, 30);
+        if (mouseX>=width-240&&mouseX<=width&&mouseY>=height/2-305+m*31&&mouseY<=height/2-275+m*31) {
           RGB[m]=color(255, 255, 255);
           RGBA[m]=200;
           if (mousePressed) {
@@ -1276,10 +1276,10 @@ void draw() {
           ms="Stage31~40";
           break;
         case 9:
-          ms="Stage0";
+          ms="Stage41~50";
           break;
         }
-        text(ms, 320+width/2-230, 5+m*31);
+        text(ms, 320+width/2-230, 35+m*31);
       }
     }
     for (int q=0; q<3; q++) {
@@ -1365,7 +1365,7 @@ void draw() {
             ms="stage31~40";
             break;
           case 3:
-            ms="Stage0";
+            ms="Stage41^50";
             break;
           }
           break;
@@ -1425,6 +1425,18 @@ void draw() {
                 RTT=0;
                 scene2=1;
                 break;
+              case 3:
+                scene=-1;
+                SCENE=0;
+                RTT=0;
+                scene2=2;
+                break;
+              case 4:
+                scene=-1;
+                SCENE=0;
+                RTT=0;
+                scene2=3;
+                break;
               }
               break;
             case 6:
@@ -1445,13 +1457,13 @@ void draw() {
                 scene=-1;
                 SCENE=0;
                 RTT=0;
-                scene2=1;
+                scene2=3;
                 break;
               case 3:
                 scene=-1;
                 SCENE=0;
                 RTT=0;
-                scene2=2;
+                scene2=4;
                 break;
               }
               break;
@@ -3373,7 +3385,7 @@ void draw() {
       boolean onButton=false;
       if(skillButton){
         keyPressed=false;
-        key=-1;
+        key=(char)-1;
       }
       textAlign(CENTER);
       textSize(20);

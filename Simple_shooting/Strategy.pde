@@ -28,6 +28,7 @@ void initStrategy(){
   strategies.put("start",new StartStrategy());
   strategies.put("menu",new MenuStrategy());
   strategies.put("stage",new StageStrategy());
+  strategies.put("result",new ResultStrategy());
 }
 
 class StartStrategy extends Strategy{
@@ -35,7 +36,7 @@ class StartStrategy extends Strategy{
   
   StartStrategy(){
     super("","start");
-    particleGen=new MenuParticleGenerator(new Rectangle(new PVector(0,height),new PVector(width,20),0),
+    particleGen=new MenuParticleGenerator(new Rectangle(new PVector(width*0.5,height+10),new PVector(width,20),0),
       new Supplier<PVector>(){
         PVector get(){
           return new PVector(0,-random(1.0,1.2));
@@ -53,7 +54,7 @@ class StartStrategy extends Strategy{
           void select(Button b){
             String num=b.label.split(" ")[1];
             saveData=loadJSONObject("./data/save/save"+num+".json");
-            nowStrategy=strategies.get("menu");
+            setNextStrategy(strategies.get("menu"));
           }
         }).setLabel("Save "+(i+1))
       );
@@ -72,9 +73,9 @@ class StartStrategy extends Strategy{
         }
       }).setLabel("Exit")
     );
-    UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,color(100,100,100,200),color(150,150,155)));
-    UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,color(200,100,100,200),color(150,150,155)).setStyle(LEFT));
-    UImanager.add(new FlowText("! This is test !",new PVector(width*0.5,150),20,2,color(255,100,100,200),color(160,150,150)));
+    UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,new Color(100,100,100,200)));
+    UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
+    UImanager.add(new FlowText("! This is test !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
   }
   
   void update(){
@@ -98,6 +99,10 @@ class MenuStrategy extends Strategy{
   
   MenuStrategy(){
     super("start","menu");
+  }
+  
+  void init(){
+    UImanager.clear();
     UImanager.add(
       new Button(100,20,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
@@ -110,8 +115,7 @@ class MenuStrategy extends Strategy{
         new Button(100,120+i*60,250,30).setEvent(new ButtonEvent(){
           void select(Button b){
             stageNumber=int(b.label.split(" ")[1]);
-            nowStrategy=strategies.get("stage");
-            nowStrategy.init();
+            setNextStrategy(strategies.get("stage"));
           }
         }).setLabel("stage "+(i+1))
       );
@@ -154,5 +158,39 @@ class StageStrategy extends Strategy{
   
   void displayShadow(){
     system.displayShadow();
+  }
+}
+
+class ResultStrategy extends Strategy{
+  
+  ResultStrategy(){
+    super("stage","result");
+  }
+  
+  void init(){
+    resetLight();
+    setBackground(205,205,210);
+    UImanager.clear();
+    UImanager.add(
+      new Button(width*0.5-125,height-50,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          resetBackground();
+          setNextStrategy(strategies.get("menu"));
+        }
+      }).setLabel("OK")
+    );
+    UImanager.add(new FlowText(endState.equals("clear")?"Stage clear!":"Game over.",new PVector(width*0.5,100),75,3,new Color(100,100,100,200)));
+  }
+  
+  void update(){
+    UImanager.update();
+  }
+  
+  void display(){
+    UImanager.display();
+  }
+  
+  void displayShadow(){
+    UImanager.displayShadow();
   }
 }

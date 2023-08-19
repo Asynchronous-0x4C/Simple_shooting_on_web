@@ -3,13 +3,23 @@
 <head>
   <meta charset="utf-8">
   <title>Re:Simple_shooting</title>
-  <meta name="viewport" content="width=1600">
   <meta name="keywords" content="">
   <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <meta http-equiv="content-language" content="ja" />
   <link rel="stylesheet" href="../css/app.css?v=1.0">
   <script src="../js/wrapper.js"></script>
   <script src="../js/processing.min.js"></script>
+  <script>
+    window.addEventListener("load",function(){
+        let canvas=document.getElementById("app");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        setTimeout(()=>{
+          Processing.instances[0].setup();
+        },20);
+    });
+  </script>
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
   <![endif]-->

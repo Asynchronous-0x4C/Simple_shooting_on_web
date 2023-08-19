@@ -98,8 +98,8 @@ class InstanceFactory{
     this.constructors.push(name);
   }
   
-  getInstance(name,bulletList){
-    return eval("new this.applet."+name+"(bulletList)");
+  getInstance(name,entityList){
+    return eval("new this.applet."+name+"(entityList)");
   }
 }
 
@@ -122,4 +122,8 @@ class Sound{
     this.audio.loop = false;
     this.audio.play();
   }
+}
+
+function getNanoSeconds(){
+  return performance.now()*1000000.0;
 }
