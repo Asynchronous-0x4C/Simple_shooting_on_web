@@ -251,7 +251,7 @@ int q=0;
 boolean fullsc;
 
 void setup() {
-  size(1280,720);
+  size(innerWidth-1,innerHeight-1);
   frameRate(60);
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);

@@ -2,6 +2,9 @@ import ddf.minim.*;
 
 Minim minim;
 
+final int innerWidth=1280;
+final int innerHeight=720;
+
 class InstanceFactory{
   HashMap<String,Constructor> constructors=new HashMap<String,Constructor>();
   Simple_shooting applet;

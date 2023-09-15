@@ -39,20 +39,20 @@ class JSONObject{
     return JSON.stringify(this.json);
   }
 
-  getInt(name){
-    return this.json[name];
+  getInt(name,init){
+    return this.json[name]==null?init:this.json[name];
   }
 
-  getFloat(name){
-    return this.json[name];
+  getFloat(name,init){
+    return this.json[name]==null?init:this.json[name];
   }
 
-  getString(name){
-    return this.json[name];
+  getString(name,init){
+    return this.json[name]==null?init:this.json[name];
   }
 
-  getBoolean(name){
-    return this.json[name];
+  getBoolean(name,init){
+    return this.json[name]==null?init:this.json[name];
   }
 
   getJSONObject(name){
@@ -79,7 +79,7 @@ class JSONArray{
   }
 
   size(){
-    return this.json.length;
+    return this.json==undefined?0:Object.keys(this.json).length;
   }
 }
 

@@ -22,17 +22,24 @@ float fps=60;
 float fpsMag=1;
 
 int stageNumber=0;
-int chapter=0;
+int chapter=1;
 
+JSONObject stageData;
+String loadedPath="";
 String endState="";
+int endScore=0;
 
 Color lightColor=new Color(255,255,255);
 Color backgroundAlbedo=new Color(190,190,185);
 
 int lightingUpdateCount=0;
 
+void settings(){
+  size(innerWidth-1,innerHeight-1,P2D);
+}
+
 void setup(){
-  size(1280,720,P2D);
+  settings();
   ref_applet=this;
   initAudio();
   initStrategy();

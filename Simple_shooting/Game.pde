@@ -141,6 +141,7 @@ abstract class Enemy extends Agent{
   void deadEvent(){
     GameSystem s=getGameSystem();
     if(s==null)return;
+    s.score+=round(HP.default_float*max(Attack.default_float,1)*50);
     s.nextEntity.add(new EntityParticleGenerator(this,
       new Supplier<PVector>(){
         PVector get(){
@@ -246,6 +247,7 @@ class Bullet extends Entity{
     if(!hitBullet)return;
     GameSystem s=getGameSystem();
     if(s==null)return;
+    if(!isMine)s.score+=round(Attack.default_float*movement.velocity.mag()*0.5);
     s.nextEntity.add(new EntityParticleGenerator(this,
       new Supplier<PVector>(){
         PVector get(){
@@ -321,10 +323,12 @@ class Player extends Agent{
       Bullet b=(Bullet)e;
       if(!b.isMine){
         status.get("HP").mut_float-=calcDamage(b.Attack.mut_float,status.get("Defence").mut_float);
+        status.get("HP").mut_float=max(0,status.get("HP").mut_float);
       }
     }else if(e instanceof Enemy){
       Enemy _e=(Enemy)e;
       status.get("HP").mut_float-=calcDamage(_e.Attack.mut_float*2,status.get("Defence").mut_float);
+      status.get("HP").mut_float=max(0,status.get("HP").mut_float);
     }
   }
   
@@ -389,10 +393,12 @@ class Stage{
   
   void loadStage(String path){
     factory=new InstanceFactory(ref_applet);
-    JSONObject obj=loadJSONObject(path);
-    maxTime=obj.getFloat("time");
-    countDown=obj.getBoolean("countDown");
-    JSONArray arr=obj.getJSONArray("main");
+    if(!loadedPath.equals(path)){
+      stageData=loadJSONObject(path);
+    }
+    maxTime=stageData.getFloat("time");
+    countDown=stageData.getBoolean("countDown");
+    JSONArray arr=stageData.getJSONArray("main");
     for(int i=0;i<arr.size();i++){
       JSONObject arr_obj=arr.getJSONObject(i);
       times.add(arr_obj.getFloat("time"));
@@ -406,6 +412,7 @@ class Stage{
         enemyMap.get(i).put(spownData.getString("name"),spownData.getFloat("freq"));
       }
     }
+    loadedPath=path;
   }
   
   void init(){
@@ -467,6 +474,8 @@ class GameSystem{
   Stage stage;
   StageUI ui;
   
+  int score=0;
+  
   String gameState="";
   float gameMag=1;
   float resultTime=0;
@@ -478,6 +487,7 @@ class GameSystem{
   
   void init(){
     gameState="shooting";
+    score=0;
     gameMag=1;
     resultTime=0;
     player=new Player(new PVector(width*0.5,height-40),nextEntity);
@@ -516,9 +526,11 @@ class GameSystem{
       gameState="fail";
     }else if(stage.time<=0){
       gameState="clear";
+      if(chapter<stageNumber)chapter=stageNumber;
     }
     if(resultTime>85){
       endState=gameState;
+      endScore=score;
       setNextStrategy(strategies.get("result"));
     }
   }

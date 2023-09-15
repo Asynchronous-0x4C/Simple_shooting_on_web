@@ -1,11 +1,11 @@
 {
-  "time":60,
+  "time":50,
   "countDown":false,
   "light":"default",
   "background":"default",
   "mission":[
     {
-      "name":"survive_60",
+      "name":"survive_50",
       "attribute":"must"
     },
     {
@@ -23,24 +23,20 @@
   ],
   "main":[
     {
-      "time":60,
+      "time":50,
       "list":[
         {
-          "name":"NormalEnemy",
+          "name":"SpecialAttackEnemy",
           "freq":0.02
         }
       ]
     },
     {
-      "time":30,
+      "time":20,
       "list":[
         {
           "name":"NormalEnemy",
-          "freq":0.02
-        },
-        {
-          "name":"SpecialAttackEnemy",
-          "freq":0.02
+          "freq":0.04
         }
       ]
     }

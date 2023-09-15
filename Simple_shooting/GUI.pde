@@ -2,32 +2,75 @@ abstract class GameComponent{
   String font_name="font/OpenSans-Regular.ttf";
   PFont font;
   
+  PVector position;
+  PVector size;
+  
+  boolean hover;
+  
+  boolean active=true;
+  
   Material material;
+  
+  final void handleUpdate(){
+    if(!active)return;
+    update();
+  }
   
   abstract void update();
   
+  final void handleDisplay(){
+    if(!active)return;
+    display();
+  }
+  
   abstract void display();
   
+  final void handleDisplayShadow(){
+    if(!active)return;
+    displayShadow();
+  }
+  
   abstract void displayShadow();
+  
+  GameComponent setActive(boolean a){
+    active=a;
+    return this;
+  }
+  
+  GameComponent setColor(Color c){
+    material.setAlbedo(c);
+    return this;
+  }
+  
+  boolean isHover(){
+    return (position.x<mouseX&&mouseX<position.x+size.x&&position.y<mouseY&&mouseY<position.y+size.y);
+  }
 }
 
-class ComponentManager{
+class ComponentManager extends GameComponent{
   ArrayList<GameComponent> components=new ArrayList<GameComponent>();
+  
+  int scrollDist=0;
   
   ComponentManager(){
     
   }
   
+  ComponentManager setScrollDistance(int d){
+    scrollDist=d;
+    return this;
+  }
+  
   void update(){
-    for(GameComponent c:components)c.update();
+    for(GameComponent c:components)c.handleUpdate();
   }
   
   void display(){
-    for(GameComponent c:components)c.display();
+    for(GameComponent c:components)c.handleDisplay();
   }
   
   void displayShadow(){
-    for(GameComponent c:components)c.displayShadow();
+    for(GameComponent c:components)c.handleDisplayShadow();
   }
   
   ComponentManager add(GameComponent c){
@@ -46,14 +89,9 @@ interface ButtonEvent{
 }
 
 class Button extends GameComponent{
-  float x;
-  float y;
-  float w;
-  float h;
   PVector offset=new PVector();
   String label = "";
   ButtonEvent event;
-  boolean hover;
   
   float hoverTime=0;
   float offsetDist=3;
@@ -62,10 +100,8 @@ class Button extends GameComponent{
   Material hoverMaterial;
 
   Button(float x,float y,float w,float h){
-    this.x=x;
-    this.y=y;
-    this.w=w;
-    this.h=h;
+    position=new PVector(x,y);
+    size=new PVector(w,h);
     this.font=createFont(font_name,h*0.75,true);
     material=new Material(new Color(120,120,120,180),new Color(0)).setZ_height(5);
     hoverMaterial=new Material(new Color(60,60,60,200),new Color(0));
@@ -82,7 +118,7 @@ class Button extends GameComponent{
   }
   
   void update(){
-    hover=(x<mouseX&&mouseX<x+w&&y<mouseY&&mouseY<y+h);
+    hover=isHover();
     if(hover){
       hoverTime+=fpsMag;
       hoverTime=min(hoverTime,hoverMaxTime);
@@ -101,38 +137,167 @@ class Button extends GameComponent{
     rectMode(CORNER);
     noStroke();
     fill_by_color(hover?hoverMaterial.getSurface():material.getSurface());
-    rect(x+offset.x,y+offset.y,w,h);
+    rect(position.x+offset.x,position.y+offset.y,size.x,size.y);
     if(hover){
-      rect(x-7+offset.x,y+offset.y,3.5,h);
+      rect(position.x-7+offset.x,position.y+offset.y,3.5,size.y);
       fill(200,200,200);
     }else{
       fill(220,220,220);
     }
     textFont(font);
-    textSize(h*0.75);
+    textSize(size.y*0.75);
     textAlign(CENTER);
-    text(label,x+w*0.5+offset.x,y+h*0.77+offset.y);
+    text(label,position.x+size.x*0.5+offset.x,position.y+size.y*0.77+offset.y);
   }
   
   void displayShadow(){
     rectMode(CORNER);
     noStroke();
     fill_by_color(hover?hoverMaterial.getShadow():material.getShadow());
-    rect(x+material.z_height+offset.x,y+material.z_height+offset.y,w,h);
-    if(hover)rect(x-7+material.z_height+offset.x,y+material.z_height+offset.y,3.5,h);
+    rect(position.x+material.z_height+offset.x,position.y+material.z_height+offset.y,size.x,size.y);
+    if(hover)rect(position.x-7+material.z_height+offset.x,position.y+material.z_height+offset.y,3.5,size.y);
+  }
+  
+  Button setHoverColor(Color c){
+    hoverMaterial.setAlbedo(c);
+    return this;
+  }
+}
+
+class ScrollBar extends GameComponent{
+  float maxLength;
+  float displayLength;
+  
+  ScrollBar(float max,float disp,PVector pos,PVector size){
+    
+  }
+  
+  void update(){
+    
+  }
+  
+  void display(){
+    
+  }
+  
+  void displayShadow(){
+    
+  }
+}
+
+class FlowTextBox extends GameComponent{
+  String text_content="";
+  int text_size=15;
+  
+  Material textMaterial;
+  
+  FlowTextBox(PVector position,PVector size,int text_size,Color body,Color text){
+    material=new Material(body,new Color(0)).setZ_height(5);
+    textMaterial=new Material(text,new Color(0)).setZ_height(5);
+    this.text_size=text_size;
+    this.position=position;
+    this.size=size;
+  }
+  
+  FlowTextBox setText(String t){
+    text_content=t;
+    return this;
+  }
+  
+  void update(){
+  }
+  
+  void display(){
+    fill_by_color(material.getSurface());
+    rectMode(CORNER);
+    rect(position.x,position.y,size.x,size.y);
+    fill_by_color(textMaterial.getSurface());
+    textAlign(LEFT);
+    textSize(text_size);
+    text(text_content,position.x,position.y,size.x,size.y);
+  }
+  
+  void displayShadow(){
+    fill_by_color(material.getShadow());
+    rectMode(CORNER);
+    rect(position.x+material.z_height,position.y+material.z_height,size.x,size.y);
+    fill_by_color(textMaterial.getShadow());
+    textAlign(LEFT);
+    textSize(text_size);
+    text(text_content,position.x+material.z_height,position.y+material.z_height,size.x,size.y);
+  }
+}
+
+class MissionTextBox extends FlowTextBox{
+  HashMap<String,Mission> missions=new HashMap<String,Mission>();
+  Material unachieved;
+  Material achieved;
+  
+  final String[] attribs={"must","bonus","challenge","hard_challenge"};
+  
+  MissionTextBox(PVector position,PVector size,int text_size,Color body,Color text){
+    super(position,size,text_size,body,text);
+    unachieved=new Material(new Color(255,0,0,150),new Color(0));
+    achieved=new Material(new Color(0,240,50,150),new Color(0));
+  }
+  
+  MissionTextBox setData(String name,String attr,boolean clear){
+    missions.put(attr,new Mission(name,attr,clear));
+    return this;
+  }
+  
+  MissionTextBox clearData(){
+    missions.clear();
+    return this;
+  }
+  
+  void display(){
+    super.display();
+    int offset=text_size*3;
+    textLeading(text_size+2);
+    for(String s:attribs){
+      if(!missions.containsKey(s))continue;
+      Mission m=missions.get(s);
+      fill_by_color((m.clear?achieved:unachieved).getSurface());
+      text("  "+m.attribute+"\n  "+m.name,position.x,position.y+offset);
+      offset+=text_size*2.5;
+    }
+  }
+  
+  void displayShadow(){
+    super.displayShadow();
+    int offset=text_size*3;
+    textLeading(text_size);
+    for(String s:attribs){
+      if(!missions.containsKey(s))continue;
+      Mission m=missions.get(s);
+      fill_by_color((m.clear?achieved:unachieved).getShadow());
+      text("  "+m.attribute+"\n  "+m.name,position.x+material.z_height,position.y+offset+material.z_height);
+      offset+=text_size*2.5;
+    }
+  }
+  
+  class Mission{
+    String name;
+    String attribute;
+    boolean clear;
+    
+    Mission(String name,String attr,boolean clear){
+      this.name=name;
+      attribute=attr;
+      this.clear=clear;
+    }
   }
 }
 
 class FlowText extends GameComponent{
   String label;
-  float size;
-  PVector position;
   
   int style=CENTER;
   
   FlowText(String text,PVector position,float size,float z,Color textColor){
     this.label=text;
-    this.size=size;
+    this.size=new PVector(size,0);
     material=new Material(textColor,new Color(0)).setZ_height(z);
     this.position=position;
     this.font=createFont(font_name,size,true);
@@ -145,7 +310,7 @@ class FlowText extends GameComponent{
   
   FlowText setFont(String name){
     font_name=name;
-    this.font=createFont(name,size,true);
+    this.font=createFont(name,size.x,true);
     return this;
   }
   
@@ -155,7 +320,7 @@ class FlowText extends GameComponent{
   
   void display(){
     if(font!=null)textFont(font);
-    textSize(size);
+    textSize(size.x);
     textAlign(style);
     fill_by_color(material.getSurface());
     text(label,position.x,position.y);
@@ -163,7 +328,7 @@ class FlowText extends GameComponent{
   
   void displayShadow(){
     if(font!=null)textFont(font);
-    textSize(size);
+    textSize(size.x);
     textAlign(style);
     fill_by_color(material.getShadow());
     text(label,position.x+material.z_height,position.y+material.z_height);
@@ -225,6 +390,8 @@ class StageUI{
   ArrayList<GameComponent> components=new ArrayList<GameComponent>();
   GameSystem system;
   
+  int UIscore=0;
+  
   StageUI(GameSystem s){
     this.system=s;
     components.add(new DynamicFlowText(new Supplier<String>(){
@@ -243,17 +410,23 @@ class StageUI{
         return new Rectangle(new PVector(width-230+100*hp,30),new PVector(200*hp,15),1);
       }
     },3,new Color(0,255,0,150)));
+    components.add(new DynamicFlowText(new Supplier<String>(){
+      String get(){
+        UIscore+=round(max((system.score-UIscore)*0.1,(system.score-UIscore)>0?1:0));
+        return "Score :"+UIscore;
+      }
+    },new PVector(width-400,20),20,3,new Color(0,255,255,150)));
   }
   
   void update(){
-    for(GameComponent c:components)c.update();
+    for(GameComponent c:components)c.handleUpdate();
   }
   
   void display(){
-    for(GameComponent c:components)c.display();
+    for(GameComponent c:components)c.handleDisplay();
   }
   
   void displayShadow(){
-    for(GameComponent c:components)c.displayShadow();
+    for(GameComponent c:components)c.handleDisplayShadow();
   }
 }

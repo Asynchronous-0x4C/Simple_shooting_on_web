@@ -8,5 +8,10 @@
   },
   "progress":1,
   "level":5,
-  "exp":0
+  "exp":0,
+  "mission":[
+    {
+      "must":true
+    }
+  ]
 }

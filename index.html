@@ -9,7 +9,7 @@ function hideScrollBar()
 <head>
   <meta name="google-site-verification" content="wYEzmGGDFQV2liMM59lABdtS5muiqGE_r2Hs-MA-n5Y" />
   <meta charset="utf-8">
-  <meta name="viewport" content="width=1280,height=720">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="keywords" content="">
   <meta name="description" content="シンプルなシューティングゲーム">
   <meta http-equiv="content-language" content="ja" />
@@ -21,31 +21,12 @@ function hideScrollBar()
       setSize();
 			document.getElementById('fullScreen').addEventListener('click', function(){
 				document.body.requestFullscreen();
-        setSize();
         setTimeout(()=>{
           Processing.instances[0].setup();
         },20);
         document.getElementById("fullScreen").remove();
 			});
     });
-
-    function setSize(){
-      const wrapper=document.getElementById("wrapper");
-      const height=Math.min(1.0,(9.0/16.0)/(innerHeight/innerWidth))*720.0;
-      console.log(height);
-      wrapper.style.width="1280px";
-      wrapper.style.height=height+"px";
-      const child=document.head.children;
-      for(let i=0;i<child.length;i++){
-        const name=child.item(i).getAttribute("name");
-        if(name==="viewport"){
-          const viewport=child.item(i);
-          const width=Math.max(1.0,(9.0/16.0)/(innerHeight/innerWidth))*1280.0;
-          console.log(width);
-          viewport.setAttribute("content","width="+width+",height=720");
-        }
-      }
-    }
   </script>
   <script src="js/processing.min.js"></script>
   <!--[if lt IE 9]>
@@ -53,21 +34,6 @@ function hideScrollBar()
   <![endif]-->
 </head>
 <body>
-  <style>
-    .main{
-      height: 100vh;
-      width: 100vw;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    #app{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
   <script>
   </script>
   <div id="wrapper" class="main">
