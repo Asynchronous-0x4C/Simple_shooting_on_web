@@ -45,6 +45,11 @@ abstract class GameComponent{
   boolean isHover(){
     return (position.x<mouseX&&mouseX<position.x+size.x&&position.y<mouseY&&mouseY<position.y+size.y);
   }
+  
+  GameComponent setEmission(Color c){
+    material.setEmission(c);
+    return this;
+  }
 }
 
 class ComponentManager extends GameComponent{

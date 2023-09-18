@@ -33,4 +33,57 @@ span{
   position: absolute;
   top: 20px;
   left: 20px;
+  display: block;
+  color: #0000ff;
+  background-color: #000000;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0px;
+  border-color: #00ff00;
+}
+
+#reload{
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  display: block;
+  color: #0000ff;
+  background-color: #000000;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0px;
+  border-color: #00ff00;
+}
+
+#re-fullScreen{
+  position: absolute;
+  top: 30px;
+  left: 10px;
+  width: 75px;
+  height: 25px;
+  display: block;
+  color: #ffffff;
+  background-color: rgba(120, 120, 120, 0.7);
+  border-style: none;
+}
+
+#re-fullScreen:hover{
+  background-color: rgba(60, 60, 60, 0.7);
+}
+
+#re-reload{
+  position: absolute;
+  top: 70px;
+  left: 10px;
+  width: 75px;
+  height: 25px;
+  display: block;
+  color: #ffffff;
+  background-color: rgba(120, 120, 120, 0.7);
+  border-style: none;
+  box-shadow: #000000;
+}
+
+#re-reload:hover{
+  background-color: rgba(60, 60, 60, 0.7);
 }

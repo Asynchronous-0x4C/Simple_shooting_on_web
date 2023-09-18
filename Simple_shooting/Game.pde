@@ -192,7 +192,7 @@ class Bullet extends Entity{
     PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
     vel.mult(fpsMag);
     position.add(vel);
-    if(position.x-movement.velocity.x<0||width<position.x+movement.velocity.x||position.y-movement.velocity.y<0||width<position.y+movement.velocity.y)isDead=true;
+    if(position.x-movement.velocity.x<0||width<position.x+movement.velocity.x||position.y-movement.velocity.y<0||height<position.y+movement.velocity.y)isDead=true;
   }
   
   void display(){

@@ -21,13 +21,14 @@ function hideScrollBar()
   <link rel="stylesheet" href="css/app.css">
   <script>
     window.addEventListener("load",function(){
-      setSize();
 			document.getElementById('fullScreen').addEventListener('click', function(){
 				document.body.requestFullscreen();
         setTimeout(()=>{
           Processing.instances[0].setup();
         },20);
-        document.getElementById("fullScreen").remove();
+			});
+			document.getElementById('reload').addEventListener('click', function(){
+        location.reload();
 			});
     });
   </script>
@@ -43,6 +44,7 @@ function hideScrollBar()
     <canvas id="app" data-processing-sources="Simple__shooting_______.pde Shooting_NEXT.pde Shoting_MOUSE.pde Shooting_LEVEL.pde Shooting_DATA.pde"></canvas>
   </div>
   <button id="fullScreen">fullScreen</button>
+  <button id="reload">reload</button>
 
 </body>
 </html>

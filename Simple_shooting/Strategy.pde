@@ -25,11 +25,37 @@ abstract class Strategy{
 
 void initStrategy(){
   strategies.clear();
+  strategies.put("common",new CommonStrategy());
   strategies.put("start",new StartStrategy());
   strategies.put("menu",new MenuStrategy());
   strategies.put("config",new ConfigStrategy());
   strategies.put("stage",new StageStrategy());
   strategies.put("result",new ResultStrategy());
+}
+
+class CommonStrategy extends Strategy{
+  
+  CommonStrategy(){
+    super("","common");
+    UImanager.add(new DynamicFlowText(new Supplier<String>(){
+      String get(){
+        return show_fps?nf(fps,0,1)+" FPS":"";
+      }
+    },new PVector(35,20),15,3,new Color(0,0,100,200))
+    .setEmission(new Color(200,0,0)));
+  }
+  
+  void update(){
+    UImanager.handleUpdate();
+  }
+  
+  void display(){
+    UImanager.handleDisplay();
+  }
+  
+  void displayShadow(){
+    UImanager.handleDisplayShadow();
+  }
 }
 
 class StartStrategy extends Strategy{
@@ -178,6 +204,14 @@ class ConfigStrategy extends Strategy{
           setNextStrategy(strategies.get("menu"));
         }
       }).setLabel("Back")
+    );
+    UImanager.add(
+      new Button(width*0.5-125,75,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          show_fps=!show_fps;
+          b.setLabel("Show FPS : "+(show_fps?"ON":"OFF"));
+        }
+      }).setLabel("Show FPS : "+(show_fps?"ON":"OFF"))
     );
   }
   

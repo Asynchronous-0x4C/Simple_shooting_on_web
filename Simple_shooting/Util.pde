@@ -114,7 +114,7 @@ class Material{
   }
   
   void calcSurface(){
-    surface=lightColor.clone().mult_c(albedo);
+    surface=lightColor.clone().mult_c(albedo).add_c(emission.clone().mult_s(1/albedo.a));
   }
   
   void calcShadow(){
@@ -305,6 +305,10 @@ class Color implements Cloneable {
 
   Color clone(){
     return new Color(r*255,g*255,b*255,a*255);
+  }
+  
+  float blightness(){
+    return max(r,g,b);
   }
 
   int getInt(){

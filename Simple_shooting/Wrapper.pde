@@ -36,6 +36,10 @@ class InstanceFactory{
   }
 }
 
+boolean isWeb(){
+  return false;
+}
+
 void initAudio(){
   minim = new Minim(this);
 }

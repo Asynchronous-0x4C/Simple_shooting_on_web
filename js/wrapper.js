@@ -25,6 +25,10 @@ function saveJSONObject(obj,path){
   localStorage.setItem(path,obj);
 }
 
+function isWeb(){
+  return true;
+}
+
 class JSONObject{
 
   constructor(json){

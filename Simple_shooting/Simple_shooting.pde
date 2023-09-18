@@ -20,6 +20,7 @@ JSONObject saveData;
 long pTime;
 float fps=60;
 float fpsMag=1;
+boolean show_fps=false;
 
 int stageNumber=0;
 int chapter=1;
@@ -48,10 +49,13 @@ void setup(){
 }
 
 void draw(){
+  strategies.get("common").update();
   nowStrategy.update();
   bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
   nowStrategy.displayShadow();
+  strategies.get("common").displayShadow();
   nowStrategy.display();
+  strategies.get("common").display();
   updateEvent();
 }
 
