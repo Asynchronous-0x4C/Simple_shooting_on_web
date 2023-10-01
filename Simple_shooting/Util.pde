@@ -119,7 +119,7 @@ class Material{
   
   void calcShadow(){
     Color direct=lightColor.clone().mult_c(albedo).mult_s(1-albedo.a).add_c(emission.clone().mult_s(1f/sq(z_height))).mult_c(backgroundAlbedo);
-    Color indirect=lightColor.clone().mult_c(backgroundAlbedo).mult_c(backgroundAlbedo).lerp(new Color(255,255,255),z_height/(z_height+5));
+    Color indirect=lightColor.clone().mult_c(backgroundAlbedo).mult_s(albedo.a).mult_c(backgroundAlbedo);
     shadow=direct.add_c(indirect);
   }
   

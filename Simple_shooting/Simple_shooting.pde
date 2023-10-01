@@ -14,8 +14,10 @@ Strategy nowStrategy;
 GameSystem gameSystem;
 
 boolean mousePress=false;
+boolean mouseRelease=false;
 
 JSONObject saveData;
+int saveNumber;
 
 long pTime;
 float fps=60;
@@ -34,6 +36,8 @@ Color lightColor=new Color(255,255,255);
 Color backgroundAlbedo=new Color(190,190,185);
 
 int lightingUpdateCount=0;
+
+final int MAX_CHAPTER=3;
 
 void settings(){
   size(innerWidth-1,innerHeight-1,P2D);
@@ -86,6 +90,7 @@ void setNextStrategy(Strategy s){
 
 void updateEvent(){
   mousePress=false;
+  mouseRelease=false;
   fps=1000000000f/(getNanoSeconds()-pTime);
   fpsMag=60f/fps;
   pTime=getNanoSeconds();
@@ -93,6 +98,10 @@ void updateEvent(){
 
 void mousePressed(){
   mousePress=true;
+}
+
+void mouseReleased(){
+  mouseRelease=true;
 }
 
 class mutFloat{//mutable float

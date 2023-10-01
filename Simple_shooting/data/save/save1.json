@@ -1,17 +1,13 @@
 {
-  "date":{
-    "year":null,
-    "month":null,
-    "date":null,
-    "hour":null,
-    "minute":null
+  "date": {
+    "month": 9,
+    "hour": 20,
+    "year": 2023,
+    "day": 30,
+    "minute": 41
   },
-  "progress":1,
-  "level":5,
-  "exp":0,
-  "mission":[
-    {
-      "must":true
-    }
-  ]
+  "mission": [{"must": true}],
+  "level": 5,
+  "progress": 3,
+  "exp": 0
 }

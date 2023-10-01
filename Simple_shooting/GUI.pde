@@ -1,5 +1,5 @@
 abstract class GameComponent{
-  String font_name="font/OpenSans-Regular.ttf";
+  String font_name="data/font/OpenSans-Regular.ttf";
   PFont font;
   
   PVector position;
@@ -102,6 +102,8 @@ class Button extends GameComponent{
   float offsetDist=3;
   float hoverMaxTime=20;
   
+  boolean pressing=false;
+  
   Material hoverMaterial;
 
   Button(float x,float y,float w,float h){
@@ -130,7 +132,12 @@ class Button extends GameComponent{
       float hoverDist=offsetDist*ease(hoverTime/hoverMaxTime*5);
       offset.set(-hoverDist,-hoverDist);
       material.setZ_height(5.0+hoverDist);
-      if(mousePress)event.select(this);
+      if(mousePress&&!pressing){
+        event.select(this);
+        pressing=true;
+      }else if(mouseRelease||!mousePressed){
+        pressing=false;
+      }
     }else{
       hoverTime=0;
       offset.set(0,0);
@@ -420,7 +427,7 @@ class StageUI{
         UIscore+=round(max((system.score-UIscore)*0.1,(system.score-UIscore)>0?1:0));
         return "Score :"+UIscore;
       }
-    },new PVector(width-400,20),20,3,new Color(0,255,255,150)));
+    },new PVector(width-width*0.3,20),20,3,new Color(0,255,255,150)));
   }
   
   void update(){

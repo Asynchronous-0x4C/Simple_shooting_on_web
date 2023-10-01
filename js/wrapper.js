@@ -1,12 +1,14 @@
+let ref_applet;
+
 function loadJSONObject(path){
-  let path_arr=path.split("/");
+  const path_arr=path.split("/");
   if(localStorage[path_arr[path_arr.length-1]]){
     path=path_arr[path_arr.length-1];
-    let item=localStorage.getItem(path);
+    const item=localStorage.getItem(path);
     if(item==null)return null;
-    return new JSONObject(item);
+    return new JSONObject(JSON.parse(item));
   }else{
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("GET", path, false);
     if (xhr.overrideMimeType) {
       xhr.overrideMimeType("text/plain");
@@ -47,24 +49,48 @@ class JSONObject{
     return this.json[name]==null?init:this.json[name];
   }
 
+  setInt(name,val){
+    if(val!=null)this.json[name]=val;
+  }
+
   getFloat(name,init){
     return this.json[name]==null?init:this.json[name];
+  }
+
+  setFloat(name,val){
+    if(val!=null)this.json[name]=val;
   }
 
   getString(name,init){
     return this.json[name]==null?init:this.json[name];
   }
 
+  setString(name,val){
+    if(val!=null)this.json[name]=val;
+  }
+
   getBoolean(name,init){
     return this.json[name]==null?init:this.json[name];
+  }
+
+  setBoolean(name,val){
+    if(val!=null)this.json[name]=val;
   }
 
   getJSONObject(name){
     return new JSONObject(this.json[name]);
   }
 
+  setJSONObject(name,val){
+    if(val!=null)this.json[name]=val;
+  }
+
   getJSONArray(name){
     return new JSONArray(this.json[name]);
+  }
+
+  setJSONArray(name,val){
+    if(val!=null)this.json[name]=val;
   }
 }
 

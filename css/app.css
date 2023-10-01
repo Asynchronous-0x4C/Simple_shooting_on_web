@@ -31,7 +31,7 @@ span{
 
 #fullScreen{
   position: absolute;
-  top: 20px;
+  top: 50px;
   left: 20px;
   display: block;
   color: #0000ff;
@@ -44,7 +44,7 @@ span{
 
 #reload{
   position: absolute;
-  top: 50px;
+  top: 80px;
   left: 20px;
   display: block;
   color: #0000ff;
@@ -57,7 +57,7 @@ span{
 
 #re-fullScreen{
   position: absolute;
-  top: 30px;
+  top: 70px;
   left: 10px;
   width: 75px;
   height: 25px;
@@ -73,7 +73,7 @@ span{
 
 #re-reload{
   position: absolute;
-  top: 70px;
+  top: 110px;
   left: 10px;
   width: 75px;
   height: 25px;

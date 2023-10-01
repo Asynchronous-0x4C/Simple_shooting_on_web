@@ -278,7 +278,7 @@ class Player extends Agent{
     this.position=position;
     size=25;
     collider=new Circle(position,size,0);
-    status.put("HP",new mutFloat(1f));
+    status.put("HP",new mutFloat(3f));
     status.put("Attack",new mutFloat(1f));
     status.put("Defence",new mutFloat(0f));
     status.put("cooltime",new mutFloat(10f));
@@ -532,7 +532,19 @@ class GameSystem{
       endState=gameState;
       endScore=score;
       setNextStrategy(strategies.get("result"));
+      saveGame();
     }
+  }
+  
+  void saveGame(){
+    if(endState.equals("clear"))saveData.setInt("progress",max(saveData.getInt("progress"),min(stageNumber+1,MAX_CHAPTER)));
+    JSONObject save_date=saveData.getJSONObject("date");
+    save_date.setInt("year",year());
+    save_date.setInt("month",month());
+    save_date.setInt("day",day());
+    save_date.setInt("hour",hour());
+    save_date.setInt("minute",minute());
+    saveJSONObject(saveData,"./data/save/save"+saveNumber+".json");
   }
   
   void collision(){
@@ -558,9 +570,11 @@ class GameSystem{
       noStroke();
       fill(205,205,210);
       rectMode(CORNER);
-      for(int i=0;i<16;i++){
-        for(int j=0;j<9;j++){
-          if((resultTime-60f)>=i+j)rect(width/16f*i,height/9f*j,width/16f,height/9f);
+      float w=round(width/120f);
+      float h=round(height/120f);
+      for(int i=0;i<w;i++){
+        for(int j=0;j<h;j++){
+          if((resultTime-60f)>=i+j)rect(floor(width/w)*i,floor(height/h)*j,ceil(width/w),ceil(height/h));
         }
       }
     }

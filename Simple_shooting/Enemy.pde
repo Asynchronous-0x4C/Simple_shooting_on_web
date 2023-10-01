@@ -59,3 +59,18 @@ class SpecialAttackEnemy extends Enemy{
     setHP(3);
   }
 }
+
+class Large_R extends ShotEnemy{
+  
+  Large_R(ArrayList<Entity> entityList){
+    super(new Color(255,0,0,150),27,entityList);
+    setHP(4);
+    setShotRange(225);
+    setCooltime(45);
+    setLimitSpeed(2.7);
+  }
+  
+  void shot(){
+    entityList.add(new NormalBullet(new PVector(0,6),this));
+  }
+}

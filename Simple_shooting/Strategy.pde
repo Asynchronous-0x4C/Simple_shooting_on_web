@@ -79,8 +79,9 @@ class StartStrategy extends Strategy{
       UImanager.add(
         new Button(width*0.5-100,height*0.5-55+i*40,200,30).setEvent(new ButtonEvent(){
           void select(Button b){
-            String num=b.label.split(" ")[1];
-            saveData=loadJSONObject("./data/save/save"+num+".json");
+            saveNumber=int(b.label.split(" ")[1]);
+            saveData=loadJSONObject("./data/save/save"+saveNumber+".json");
+            chapter=saveData.getInt("progress");
             setNextStrategy(strategies.get("menu"));
           }
         }).setLabel("Save "+(i+1))
@@ -142,7 +143,7 @@ class MenuStrategy extends Strategy{
       }).setLabel("Config")
     );
     for(int i=0;i<10;i++){
-      if(i>chapter)break;
+      if(i>=chapter)break;
       UImanager.add(
         new Button(100,120+i*60,250,30).setEvent(new ButtonEvent(){
           void select(Button b){
