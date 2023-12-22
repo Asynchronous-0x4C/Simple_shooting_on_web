@@ -129,7 +129,7 @@ class InstanceFactory{
   }
   
   getInstance(name,entityList){
-    return eval("new this.applet."+name+"(entityList)");
+    return eval(`new this.applet.${name}(entityList)`);
   }
 }
 

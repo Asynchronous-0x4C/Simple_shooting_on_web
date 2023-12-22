@@ -1,0 +1,13 @@
+{
+  "date": {
+    "month": 12,
+    "hour": 9,
+    "year": 2023,
+    "day": 21,
+    "minute": 30
+  },
+  "mission": [{"must": true}],
+  "level": 5,
+  "progress": 1,
+  "exp": 0
+}

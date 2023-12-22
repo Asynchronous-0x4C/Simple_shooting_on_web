@@ -1,0 +1,137 @@
+import java.util.function.*;
+
+abstract class Particle extends Entity{
+  float maxLife;
+  float life;
+  float radius=0;
+  
+  void update(){
+    movement.update();
+    position.add(movement.velocity.x*fpsMag,movement.velocity.y*fpsMag);
+    angle+=radians(movement.velocity.magSq())*fpsMag;
+    life-=fpsMag;
+    material.setAlbedo(material.albedo.setAlpha(200*(life/maxLife)));
+  }
+  
+  void display(){
+    noStroke();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(position.x,position.y);
+    rotate(angle);
+    fill_by_color(material.getSurface());
+    rect(0,0,size,size,radius);
+    popMatrix();
+  }
+  
+  void displayShadow(){
+    noStroke();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(position.x+material.z_height,position.y+material.z_height);
+    rotate(angle);
+    fill_by_color(material.getShadow());
+    rect(0,0,size,size,radius);
+    popMatrix();
+  }
+}
+
+class MenuParticle extends Particle{
+  
+  MenuParticle(ParticleGenerator g){
+    position=g.range.getRandomPoint();
+    movement=new Movement(g.velocity.get(),new PVector(0,0),-1);
+    maxLife=g.life.get();
+    life=maxLife;
+    size=6;
+    angle=random(0,TWO_PI);
+    material=new Material(new Color(128,168,168),new Color(0));
+    radius=size*0.3;
+  }
+}
+
+class EntityParticle extends Particle{
+  
+  EntityParticle(EntityParticleGenerator g){
+    position=g.range.getRandomPoint();
+    movement=new Movement(g.velocity.get(),new PVector(0,0),-1);
+    maxLife=g.life.get();
+    life=maxLife;
+    size=6;
+    angle=random(0,TWO_PI);
+    material=g.parent.material;
+  }
+}
+
+abstract class ParticleGenerator extends Entity{
+  ArrayList<Particle> particle=new ArrayList<Particle>();
+  Collider range;
+  Supplier<PVector> velocity;
+  Supplier<Float> life;
+}
+
+class MenuParticleGenerator extends ParticleGenerator{
+  
+  MenuParticleGenerator(Rectangle range,Supplier<PVector> velocity,Supplier<Float> life){
+    this.range=range;
+    this.velocity=velocity;
+    this.life=life;
+  }
+  
+  void generate(float freq){
+    if(freq>=random(0,1)){
+      particle.add(new MenuParticle(this));
+    }
+  }
+  
+  void update(){
+    ArrayList<Particle> next=new ArrayList<Particle>();
+    for(Particle p:particle){
+      p.update();
+      if(p.life>0)next.add(p);
+    }
+    particle=next;
+  }
+  
+  void display(){
+    for(Particle p:particle)p.display();
+  }
+  
+  void displayShadow(){
+    for(Particle p:particle)p.displayShadow();
+  }
+}
+
+class EntityParticleGenerator extends ParticleGenerator{
+  Entity parent;
+  
+  EntityParticleGenerator(Entity e,Supplier<PVector> velocity,Supplier<Float> life){
+    parent=e;
+    this.range=e.collider;
+    this.velocity=velocity;
+    this.life=life;
+  }
+  
+  EntityParticleGenerator generate(int count){
+    for(int i=0;i<count;i++)particle.add(new EntityParticle(this));
+    return this;
+  }
+  
+  void update(){
+    ArrayList<Particle> next=new ArrayList<Particle>();
+    for(Particle p:particle){
+      p.update();
+      if(p.life>0)next.add(p);
+    }
+    particle=next;
+    if(particle.isEmpty())isDead=true;
+  }
+  
+  void display(){
+    for(Particle p:particle)p.display();
+  }
+  
+  void displayShadow(){
+    for(Particle p:particle)p.displayShadow();
+  }
+}

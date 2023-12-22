@@ -1,0 +1,11 @@
+{
+  "mission":"ミッション",
+  "boss":"ボス",
+  "must":"クリア条件",
+  "bonus":"ボーナス",
+  "challenge":"チャレンジ",
+  "hard_challenge":"高難易度チャレンジ",
+  "survive":"{}秒間生存する",
+  "score":"スコア{}を超える",
+  "defeat":"{}を倒す"
+}

@@ -1,0 +1,42 @@
+{
+  "1": {
+    "date": {
+      "month": 12,
+      "hour": 22,
+      "year": 2023,
+      "day": 22,
+      "minute": 32
+    },
+    "mission": [{"must": true}],
+    "level": 5,
+    "progress": 5,
+    "exp": 0
+  },
+  "2": {
+    "date": {
+      "month": null,
+      "hour": null,
+      "year": null,
+      "day": null,
+      "minute": null
+    },
+    "mission": [{"must": true}],
+    "level": 5,
+    "progress": 1,
+    "exp": 0
+  },
+  "3": {
+    "date": {
+      "month": null,
+      "hour": null,
+      "year": null,
+      "day": null,
+      "minute": null
+    },
+    "mission": [{"must": true}],
+    "level": 5,
+    "progress": 1,
+    "exp": 0
+  },
+  "lang": "ja_jp"
+}

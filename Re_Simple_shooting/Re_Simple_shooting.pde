@@ -1,0 +1,223 @@
+/*Debug
+ *1.Duplicate name function
+ *2.Space behind Generics
+ */
+
+import java.util.Comparator;
+
+import java.lang.reflect.*;
+
+Re_Simple_shooting ref_applet;
+
+HashMap<String,Sound> sounds=new HashMap<String,Sound>();
+
+HashMap<String,Strategy> strategies=new HashMap<String,Strategy>();
+Strategy nowStrategy;
+GameSystem gameSystem;
+
+boolean mousePress=false;
+
+JSONObject saveData;
+JSONObject currentData;
+int saveNumber;
+
+long pTime;
+float fps=60;
+float fpsMag=1;
+boolean show_fps=false;
+
+int stageNumber=0;
+
+JSONObject stageData;
+String loadedPath="";
+String endState="";
+int endScore=0;
+
+JSONObject langData;
+
+String font_name=isWeb()?"https://github.com/Koruri/Ohruri/blob/master/Ohruri-Light.ttf":"data/font/NotoSansJP-Light.ttf";
+
+Color lightColor=new Color(255,255,255);
+Color backgroundAlbedo=new Color(190,190,185);
+
+int lightingUpdateCount=0;
+
+final int MAX_CHAPTER=5;
+
+void settings(){
+  size(innerWidth-1,innerHeight-1,P2D);
+}
+
+void setup(){
+  settings();
+  setReference(this);
+  initData();
+  initStrategy();
+  initData();
+  setNextStrategy(strategies.get("start"));
+  pTime=getNanoSeconds();
+}
+
+void draw(){
+  strategies.get("common").update();
+  nowStrategy.update();
+  bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
+  nowStrategy.displayShadow();
+  strategies.get("common").displayShadow();
+  nowStrategy.display();
+  strategies.get("common").display();
+  updateEvent();
+}
+
+void resetBackground(){
+  backgroundAlbedo.set_f(190,190,185);
+  lightingUpdateCount++;
+}
+
+void setBackground(float r,float g,float b){
+  backgroundAlbedo.set_f(r,g,b);
+  lightingUpdateCount++;
+}
+
+void resetLight(){
+  lightColor.set_f(255,255,255);
+  lightingUpdateCount++;
+}
+
+void setLight(float r,float g,float b){
+  lightColor.set_f(r,g,b);
+  lightingUpdateCount++;
+}
+
+void setLight(String type){
+  float r=0,g=0,b=0;
+  switch(type){
+    case "sunrise":r=255;g=210;b=170;break;
+    case "day":r=240;g=250;b=255;break;
+    case "noon":r=250;g=255;b=255;break;
+    case "afternoon":r=220;g=240;b=255;break;
+    case "sunset":r=210;g=160;b=110;break;
+    case "night":r=40;g=40;b=45;break;
+    case "midnight":r=20;g=20;b=20;break;
+    case "dawn":r=120;g=80;b=45;break;
+  }
+  lightColor.set_f(r,g,b);
+  lightingUpdateCount++;
+}
+
+void setNextStrategy(Strategy s){
+  nowStrategy=s;
+  nowStrategy.init();
+}
+
+void updateEvent(){
+  mousePress=false;
+  fps=1000000000f/(getNanoSeconds()-pTime);
+  fpsMag=60f/fps;
+  pTime=getNanoSeconds();
+}
+
+void mousePressed(){
+  if(!isWeb())setMousePress(true);
+}
+
+void setMousePress(boolean b){
+  mousePress=b;
+}
+
+class mutFloat{//mutable float
+  private float default_float;
+  float mut_float;
+  
+  mutFloat(float value){
+    default_float=mut_float=value;
+  }
+  
+  float getDefault(){
+    return default_float;
+  }
+}
+
+PVector vectorRotate(PVector p,float angle){
+  return new PVector(p.x*cos(angle)-p.y*sin(angle),p.y*cos(angle)+p.x*sin(angle));
+}
+
+float length(float x,float y){
+  return sqrt(x*x+y*y);
+}
+
+float sqDist(PVector a,PVector b){
+  float x=b.x-a.x;
+  float y=b.y-a.y;
+  return x*x+y*y;
+}
+
+boolean ellipseDistFunc(PVector position,float x,float y,PVector point){
+  PVector relative=new PVector((point.x-position.x)/x,(point.y-position.y)/y);
+  return relative.mag()-1<=0;
+}
+
+boolean roundRectDistFunc(PVector p,float x,float y, float radius) {
+  PVector d = new PVector(abs(p.x)-x,abs(p.y)-y);
+  return min(max(d.x, d.y), 0.0) + length(max(d.x,0.0),max(d.y,0.0))- radius<=0;
+}
+
+GameSystem getGameSystem(){
+  if(!(nowStrategy instanceof StageStrategy))return null;
+  return ((StageStrategy)nowStrategy).system;
+}
+
+void bg_by_color(Color c){
+  background(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+void fill_by_color(Color c){
+  fill(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+void stroke_by_color(Color c){
+  stroke(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
+float ease(float x){
+  return 2.0/(1+pow(2.718281828,-x))-1.0;
+}
+
+void initData(){
+  saveData=loadJSONObject("./data/save/save.json");
+  loadLang(saveData.getString("lang"));
+  initAudio();
+  loadSound();
+}
+
+void loadLang(String code){
+  langData=loadJSONObject("./data/lang/"+code+".json");
+}
+
+void loadSound(){
+  readSound("exit","./data/sound/Exit.wav");
+  readSound("hit","./data/sound/Impact.wav");
+  readSound("defeat","./data/sound/Defeat.wav");
+  readSound("enter","./data/sound/Enter.wav");
+  readSound("shot","./data/sound/Shot.wav");
+  readSound("bullet_cancel","./data/sound/BulletCancel.wav");
+  readSound("damaged","./data/sound/Damaged.wav");
+}
+
+void readSound(String name,String path){
+  if(!sounds.containsKey(name))sounds.put(name,new Sound(path));
+}
+
+String translation(String s){
+  return langData.getString(s);
+}
+
+String syntax_translation(String s,String... token){
+  String res=translation(s);
+  int i=0;
+  while(res.indexOf("{}")!=-1){
+    res=res.replaceFirst("\\{\\}",token[i].startsWith("*")?translation(token[i].replace("*","")):token[i]);
+    ++i;
+  }
+  return res;
+}
