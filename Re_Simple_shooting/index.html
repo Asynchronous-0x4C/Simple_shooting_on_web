@@ -23,16 +23,16 @@ function hideScrollBar()
   <script src="./js/processing.min.js"></script>
   <script>
     window.addEventListener("load",function(){
-      let canvas=document.getElementById("app");
+      const canvas=document.getElementById("app");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       setTimeout(()=>{
-        Processing.instances[0].setup();
+        ref_applet.setup();
       },20);
 			document.getElementById('re-fullScreen').addEventListener('click', function(){
 				document.body.requestFullscreen();
         setTimeout(()=>{
-          Processing.instances[0].setup();
+          ref_applet.setup();
         },20);
 			});
 			document.getElementById('re-reload').addEventListener('click', function(){
