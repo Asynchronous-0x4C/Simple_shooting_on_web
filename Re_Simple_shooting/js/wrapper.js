@@ -1,7 +1,15 @@
 let ref_applet;
+let initialized=false;
+let safari=false;
 
 function setReference(s){
   ref_applet=s;
+  const agent=navigator.userAgent.toLowerCase();
+  if(agent.indexOf("chrome") != -1){}
+    else
+  if(agent.indexOf("safari") != -1){
+    safari=true;
+  }
 }
 
 function loadJSONObject(path){
@@ -43,6 +51,14 @@ class JSONObject{
 
   static parse(str){
     return new JSONObject(JSON.parse(str));
+  }
+
+  hasKey(str){
+    return this.json[str]!=null;
+  }
+
+  isNull(str){
+    return this.json[str]==null;
   }
 
   toString(){
@@ -161,8 +177,34 @@ function getNanoSeconds(){
   return performance.now()*1000000.0;
 }
 
+function damage_vibrate(){
+  if(!safari)navigator.vibrate([0,100,0]);
+}
+
+function boss_vibrate(){
+  if(!safari){
+    const id=setInterval(()=>{
+      navigator.vibrate(100);
+      clearInterval(id);
+    },180);
+  }
+}
+
+function boss_damage_vibrate(){
+  if(!safari){
+    const id=setInterval(()=>{
+      navigator.vibrate(100);
+      clearInterval(id);
+    },150);
+  }
+}
+
 window.addEventListener("load",()=>{
   document.getElementById("app").addEventListener("click",(el,ev)=>{
     ref_applet.setMousePress(true);
+    if(!initialized){
+      ref_applet.loadSound();
+      initialized=true;
+    }
   });
 });

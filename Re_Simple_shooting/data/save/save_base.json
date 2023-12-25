@@ -11,11 +11,7 @@
     "progress":1,
     "level":5,
     "exp":0,
-    "mission":[
-      {
-        "must":true
-      }
-    ]
+    "mission":{}
   },
   "2":{
     "date":{
@@ -28,11 +24,7 @@
     "progress":1,
     "level":5,
     "exp":0,
-    "mission":[
-      {
-        "must":true
-      }
-    ]
+    "mission":{}
   },
   "3":{
     "date":{
@@ -45,10 +37,6 @@
     "progress":1,
     "level":5,
     "exp":0,
-    "mission":[
-      {
-        "must":true
-      }
-    ]
+    "mission":{}
   }
 }

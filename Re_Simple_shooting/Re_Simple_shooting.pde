@@ -1,6 +1,7 @@
 /*Debug
  *1.Duplicate name function
  *2.Space behind Generics
+ *3.Foreach loop
  */
 
 import java.util.Comparator;
@@ -19,6 +20,7 @@ boolean mousePress=false;
 
 JSONObject saveData;
 JSONObject currentData;
+JSONObject defaultMissionData=JSONObject.parse("{}");
 int saveNumber;
 
 long pTime;
@@ -187,7 +189,7 @@ void initData(){
   saveData=loadJSONObject("./data/save/save.json");
   loadLang(saveData.getString("lang"));
   initAudio();
-  loadSound();
+  if(!isWeb())loadSound();
 }
 
 void loadLang(String code){
@@ -202,6 +204,7 @@ void loadSound(){
   readSound("shot","./data/sound/Shot.wav");
   readSound("bullet_cancel","./data/sound/BulletCancel.wav");
   readSound("damaged","./data/sound/Damaged.wav");
+  readSound("hit_damaged","./data/sound/HitDamaged.wav");
 }
 
 void readSound(String name,String path){

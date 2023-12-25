@@ -71,3 +71,9 @@ void stop(){
 long getNanoSeconds(){
   return System.nanoTime();
 }
+
+void damage_vibrate(){}
+
+void boss_damage_vibrate(){}
+
+void boss_vibrate(){}

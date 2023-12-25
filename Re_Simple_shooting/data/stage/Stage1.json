@@ -2,7 +2,7 @@
   "time":60,
   "background":"default",
   "stage_time":"day",
-  "type":"nomal",
+  "type":"normal",
   "mission":[
     {
       "name":"survive_60",

@@ -1,5 +1,4 @@
 {
-  "time":50,
   "light":"default",
   "background":"default",
   "stage_time":"afternoon",
@@ -24,24 +23,9 @@
   ],
   "main":[
     {
-      "time":50,
       "list":[
         {
-          "name":"SpecialAttackEnemy",
-          "freq":0.015
-        },
-        {
-          "name":"NormalEnemy",
-          "freq":0.025
-        }
-      ]
-    },
-    {
-      "time":30,
-      "list":[
-        {
-          "name":"Large_R",
-          "freq":0.03
+          "name":"Lost_Signal"
         }
       ]
     }

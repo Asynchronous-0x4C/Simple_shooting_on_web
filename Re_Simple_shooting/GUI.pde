@@ -53,6 +53,9 @@ abstract class GameComponent{
 
 class ComponentManager extends GameComponent{
   ArrayList<GameComponent> components=new ArrayList<GameComponent>();
+  ArrayList<GameComponent> next=new ArrayList<GameComponent>();
+  
+  boolean clearNext=false;
   
   int scrollDist=0;
   
@@ -67,6 +70,12 @@ class ComponentManager extends GameComponent{
   
   void update(){
     for(GameComponent c:components)c.handleUpdate();
+    if(clearNext){
+      components.clear();
+      clearNext=false;
+    }
+    components.addAll(next);
+    next.clear();
   }
   
   void display(){
@@ -78,12 +87,12 @@ class ComponentManager extends GameComponent{
   }
   
   ComponentManager add(GameComponent c){
-    components.add(c);
+    next.add(c);
     return this;
   }
   
   ComponentManager clear(){
-    components.clear();
+    clearNext=true;
     return this;
   }
 }

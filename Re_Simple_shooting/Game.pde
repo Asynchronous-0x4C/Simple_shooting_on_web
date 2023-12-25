@@ -330,11 +330,14 @@ class Player extends Agent{
         status.get("HP").mut_float-=calcDamage(b.Attack.mut_float,status.get("Defence").mut_float);
         status.get("HP").mut_float=max(0,status.get("HP").mut_float);
         sounds.get("damaged").play();
+        damage_vibrate();
       }
     }else if(e instanceof Enemy){
       Enemy _e=(Enemy)e;
       status.get("HP").mut_float-=calcDamage(_e.Attack.mut_float*2,status.get("Defence").mut_float);
       status.get("HP").mut_float=max(0,status.get("HP").mut_float);
+      sounds.get("hit_damaged").play();
+      damage_vibrate();
     }
   }
   
@@ -407,10 +410,23 @@ class Stage{
     if(!loadedPath.equals(path)){
       stageData=loadJSONObject(path);
     }
-    maxTime=stageData.getFloat("time");
     stage_time=stageData.getString("stage_time");
-    type=stageData.getString("type");
     JSONArray arr=stageData.getJSONArray("main");
+    type=stageData.getString("type");
+    switch(type){
+      case "normal":loadNormal(arr);break;
+      case "boss":loadBoss(arr);break;
+    }
+    JSONArray missions=stageData.getJSONArray("mission");
+    for(int i=0;i<missions.size();i++){
+      JSONObject obj=missions.getJSONObject(i);
+      this.missions.put(obj.getString("attribute"),new Mission(obj.getString("name")));
+    }
+    loadedPath=path;
+  }
+  
+  void loadNormal(JSONArray arr){
+    maxTime=stageData.getFloat("time");
     for(int i=0;i<arr.size();i++){
       JSONObject arr_obj=arr.getJSONObject(i);
       times.add(arr_obj.getFloat("time"));
@@ -424,9 +440,22 @@ class Stage{
         enemyMap.get(i).put(spownData.getString("name"),spownData.getFloat("freq"));
       }
     }
-    JSONArray missions=stageData.getJSONArray("mission");
-    
-    loadedPath=path;
+  }
+  
+  void loadBoss(JSONArray arr){
+    maxTime=1;
+    for(int i=0;i<arr.size();i++){
+      JSONObject arr_obj=arr.getJSONObject(i);
+      enemyMap.add(new HashMap<String,Float>());
+      JSONArray arr_obj_arr=arr_obj.getJSONArray("list");
+      for(int j=0;j<arr_obj_arr.size();j++){
+        JSONObject spownData=arr_obj_arr.getJSONObject(j);
+        factory.putConstructor(spownData.getString("name"));
+        Entity e=factory.getInstance(spownData.getString("name"),system.nextEntity);
+        system.entities.add(e.setPosition(new PVector(width*0.5,-e.size*2.0)));
+      }
+    }
+    system.ui.components.remove(0);
   }
   
   void init(){
@@ -462,14 +491,35 @@ class Stage{
     }
   }
   
+  boolean testMission(String name){
+    return missions.get(name).test();
+  }
+  
   class Mission{
+    HashMap<String,Predicate<Boolean>> predicators=new HashMap<String,Predicate<Boolean>>();
     
-    Mission(){
-      
+    Mission(String name){
+      putMission(name);
     }
     
-    void addMission(String name){
-      
+    void putMission(String name){
+      String[] str=name.split("_");
+      Predicate<Boolean> pred=null;
+      switch(str[0]){
+        case "survive":pred=new Predicate<Boolean>(){boolean test(Boolean b){return true;}};break;
+        case "score":pred=new Predicate<Boolean>(){boolean test(Boolean b){return system.score>=int(str[1]);}};break;
+        case "boss":pred=new Predicate<Boolean>(){boolean test(Boolean b){return system.boss_dead;}};break;
+      }
+      predicators.put(name,pred);
+    }
+    
+    boolean test(){
+      boolean res=true;
+      ArrayList<Predicate<Boolean>> pred=new ArrayList<Predicate<Boolean>>(predicators.values());
+      for(int i=0;i<pred.size();i++){
+        res=res&pred.get(i).test(true);
+      }
+      return res;
     }
   }
 }
@@ -505,6 +555,8 @@ class GameSystem{
   float gameMag=1;
   float resultTime=0;
   
+  boolean boss_dead=false;
+  
   GameSystem(){
     init();
     entities.add(player);
@@ -514,6 +566,7 @@ class GameSystem{
     gameState="shooting";
     score=0;
     gameMag=1;
+    boss_dead=false;
     resultTime=0;
     player=new Player(new PVector(width*0.5,height-40),nextEntity);
     entities=new ArrayList<Entity>();
@@ -550,6 +603,8 @@ class GameSystem{
     fpsMag=tempMag;
     if(player.isDead){
       gameState="fail";
+    }else if(stage.type.equals("boss")){
+      if(boss_dead)gameState="clear";
     }else if(stage.time<=0){
       gameState="clear";
     }
@@ -563,7 +618,15 @@ class GameSystem{
   
   void saveGame(){
     if(endState.equals("clear")){
-      currentData.setInt("progress",max(currentData.getInt("progress"),min(stageNumber+1,MAX_CHAPTER)));
+      if(!currentData.getJSONObject("mission").hasKey(str(stageNumber)))currentData.getJSONObject("mission").setJSONObject(str(stageNumber),defaultMissionData);
+      JSONObject save_mission=currentData.getJSONObject("mission").getJSONObject(str(stageNumber));
+      if(stage.testMission("must")){
+        currentData.setInt("progress",max(currentData.getInt("progress"),min(stageNumber+1,MAX_CHAPTER)));
+      }
+      if(!save_mission.getBoolean("must",false))save_mission.setBoolean("must",stage.testMission("must"));
+      if(!save_mission.getBoolean("bonus",false))save_mission.setBoolean("bonus",stage.testMission("bonus"));
+      if(!save_mission.getBoolean("challenge",false))save_mission.setBoolean("challenge",stage.testMission("challenge"));
+      if(!save_mission.getBoolean("hard_challenge",false))save_mission.setBoolean("hard_challenge",stage.testMission("hard_challenge"));
     }
     JSONObject save_date=currentData.getJSONObject("date");
     save_date.setInt("year",year());
@@ -610,5 +673,9 @@ class GameSystem{
   void displayShadow(){
     for(Entity e:entities)e.displayShadow();
     ui.displayShadow();
+  }
+  
+  void set_boss_dead(Boss b){
+    boss_dead=true;
   }
 }

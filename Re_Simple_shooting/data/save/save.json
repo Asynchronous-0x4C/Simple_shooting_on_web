@@ -2,14 +2,14 @@
   "1": {
     "date": {
       "month": 12,
-      "hour": 22,
+      "hour": 23,
       "year": 2023,
-      "day": 22,
-      "minute": 32
+      "day": 25,
+      "minute": 7
     },
-    "mission": [{"must": true}],
+    "mission": {},
     "level": 5,
-    "progress": 5,
+    "progress": 1,
     "exp": 0
   },
   "2": {
@@ -20,7 +20,7 @@
       "day": null,
       "minute": null
     },
-    "mission": [{"must": true}],
+    "mission": {},
     "level": 5,
     "progress": 1,
     "exp": 0
@@ -33,7 +33,7 @@
       "day": null,
       "minute": null
     },
-    "mission": [{"must": true}],
+    "mission": {},
     "level": 5,
     "progress": 1,
     "exp": 0

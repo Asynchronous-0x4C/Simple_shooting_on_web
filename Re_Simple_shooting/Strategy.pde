@@ -64,6 +64,10 @@ class StartStrategy extends Strategy{
   
   StartStrategy(){
     super("","start");
+  }
+  
+  void init(){
+    UImanager.clear();
     particleGen=new MenuParticleGenerator(new Rectangle(new PVector(width*0.5,height+10),new PVector(width,20),0),
       new Supplier<PVector>(){
         PVector get(){
@@ -86,9 +90,40 @@ class StartStrategy extends Strategy{
           }
         }).setLabel("Save "+(i+1))
       );
+      JSONObject o=saveData.getJSONObject(str(i+1)).getJSONObject("date");
+      String date=o.isNull("year")?"No Data":o.getInt("year")+"/"+o.getInt("month")+"/"+o.getInt("day")+" "+o.getInt("hour")+":"+o.getInt("minute");
+      UImanager.add(new FlowText(date,new PVector(width*0.5+130,height*0.5-25+i*40),30,2,new Color(100,100,200,200)).setStyle(LEFT));
     }
     UImanager.add(
       new Button(width*0.5-100,height*0.5+65,200,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          UImanager.add(
+            new Button(width*0.5+130,height*0.5+65,100,30).setEvent(new ButtonEvent(){
+              void select(Button b){
+                saveData=loadJSONObject("./data/save/save_base.json");
+                saveJSONObject(saveData,"./data/save/save.json");
+                init();
+              }
+            }).setLabel("OK")
+            .setHoverColor(new Color(120,40,40,180))
+            .setColor(new Color(180,100,100,200))
+          );
+          UImanager.add(
+            new Button(width*0.5+260,height*0.5+65,100,30).setEvent(new ButtonEvent(){
+              void select(Button b){
+                init();
+              }
+            }).setLabel("Cancel")
+            .setHoverColor(new Color(120,40,40,180))
+            .setColor(new Color(180,100,100,200))
+          );
+        }
+      }).setLabel("Clear data")
+      .setHoverColor(new Color(120,40,40,180))
+      .setColor(new Color(180,100,100,200))
+    );
+    UImanager.add(
+      new Button(width*0.5-100,height*0.5+145,200,30).setEvent(new ButtonEvent(){
         void select(Button b){
           sounds.get("exit").play();
           try{
@@ -99,6 +134,8 @@ class StartStrategy extends Strategy{
           exit();
         }
       }).setLabel("Exit")
+      .setHoverColor(new Color(80,40,40,180))
+      .setColor(new Color(140,100,100,200))
     );
     UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,new Color(100,100,100,200)));
     UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
@@ -152,6 +189,15 @@ class MenuStrategy extends Strategy{
       .setHoverColor(new Color(40,80,80,180))
       .setColor(new Color(100,140,140,200))
     );
+    UImanager.add(
+      new Button(40,20,30,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          setNextStrategy(strategies.get("start"));
+        }
+      }).setLabel("←")
+      .setHoverColor(new Color(80,40,40,180))
+      .setColor(new Color(140,100,100,200))
+    );
     for(int i=0;i<5;i++){
       if(i>=currentData.getInt("progress"))break;
       UImanager.add(
@@ -165,10 +211,7 @@ class MenuStrategy extends Strategy{
             JSONArray missions=stageData.getJSONArray("mission");
             for(int m_index=0;m_index<missions.size();m_index++){
               JSONObject o=missions.getJSONObject(m_index);
-              boolean clear=false;
-              if(currentData.getJSONArray("mission").size()>=stageNumber){
-                clear=currentData.getJSONArray("mission").getJSONObject(stageNumber-1).getBoolean(o.getString("attribute"),false);
-              }
+              boolean clear=currentData.getJSONObject("mission").hasKey(str(stageNumber))?currentData.getJSONObject("mission").getJSONObject(str(stageNumber)).getBoolean(o.getString("attribute"),false):false;
               missionText.setData(o.getString("name"),o.getString("attribute"),clear);
             }
           }
