@@ -23,9 +23,9 @@
   ],
   "main":[
     {
-      "list":[
+      "event":[
         {
-          "name":"Lost_Signal"
+          "name":"summon_Lost_Signal"
         }
       ]
     }

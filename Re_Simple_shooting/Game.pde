@@ -133,6 +133,10 @@ abstract class Enemy extends Agent{
         deadEvent();
         sounds.get("defeat").play();
       }else{
+        movement.velocity.add(PVector.lerp(new PVector(0,0),e.movement.velocity,min(1,e.movement.velocity.mag()/size*0.5)));
+        if((this instanceof ShotEnemy)&&!(this instanceof Boss)){
+          ((ShotEnemy)this).cooltime=60;
+        }
         sounds.get("hit").play();
       }
     }else if(e instanceof Player){
@@ -221,6 +225,7 @@ class Bullet extends Entity{
   }
   
   void Collision(Entity e){
+    if(isDead)return;
     if(e instanceof Player){
       Player p=(Player)e;
       if(!isMine){
@@ -230,6 +235,7 @@ class Bullet extends Entity{
     }else if(e instanceof Enemy){
       Enemy _e=(Enemy)e;
       if(isMine){
+        ++((Player)parent).streak;
         isDead=true;
         deadEvent();
       }
@@ -276,11 +282,16 @@ class Player extends Agent{
   PVector targetPoint;
   HashMap<String,mutFloat> status=new HashMap<String,mutFloat>();
   
+  int streak=0;
+  
+  boolean player_input=true;
+  
   Player(PVector position,ArrayList<Entity> entityList){
     this.entityList=entityList;
     targetPoint=new PVector(position.x,position.y);
     this.position=position;
     size=25;
+    streak=0;
     collider=new Circle(position,size,0);
     status.put("HP",new mutFloat(5f));
     status.put("Attack",new mutFloat(1f));
@@ -294,9 +305,11 @@ class Player extends Agent{
   }
   
   void update(){
-    position.x+=(targetPoint.x-position.x)*min(1f,0.3*fpsMag);
+    if(player_input){
+      if(mousePressed)shot();
+      position.x+=(targetPoint.x-position.x)*min(1f,0.3*fpsMag);
+    }
     status.get("cooltime").mut_float-=fpsMag;
-    if(mousePressed)shot();
     if(status.get("HP").mut_float<=0){
       isDead=true;
       deadEvent();
@@ -323,12 +336,17 @@ class Player extends Agent{
     ellipse(position.x+3,position.y+3,size,size);
   }
   
+  void setPlayerInput(boolean b){
+    player_input=b;
+  }
+  
   void Collision(Entity e){
     if(e instanceof Bullet){
       Bullet b=(Bullet)e;
       if(!b.isMine){
         status.get("HP").mut_float-=calcDamage(b.Attack.mut_float,status.get("Defence").mut_float);
         status.get("HP").mut_float=max(0,status.get("HP").mut_float);
+        streak=0;
         sounds.get("damaged").play();
         damage_vibrate();
       }
@@ -336,6 +354,7 @@ class Player extends Agent{
       Enemy _e=(Enemy)e;
       status.get("HP").mut_float-=calcDamage(_e.Attack.mut_float*2,status.get("Defence").mut_float);
       status.get("HP").mut_float=max(0,status.get("HP").mut_float);
+      streak=0;
       sounds.get("hit_damaged").play();
       damage_vibrate();
     }
@@ -390,6 +409,8 @@ class Stage{
   InstanceFactory factory;
   ArrayList<Float> times=new ArrayList<Float>();
   ArrayList<HashMap<String,Float>> enemyMap=new ArrayList<HashMap<String,Float>>();
+  ArrayList<RelativeSchedule> schedules=new ArrayList<RelativeSchedule>();
+  ArrayList<RelativeSchedule> next_schedules=new ArrayList<RelativeSchedule>();
   boolean end=false;
   float maxTime;
   float time;
@@ -448,11 +469,20 @@ class Stage{
       JSONObject arr_obj=arr.getJSONObject(i);
       enemyMap.add(new HashMap<String,Float>());
       JSONArray arr_obj_arr=arr_obj.getJSONArray("list");
-      for(int j=0;j<arr_obj_arr.size();j++){
-        JSONObject spownData=arr_obj_arr.getJSONObject(j);
-        factory.putConstructor(spownData.getString("name"));
-        Entity e=factory.getInstance(spownData.getString("name"),system.nextEntity);
-        system.entities.add(e.setPosition(new PVector(width*0.5,-e.size*2.0)));
+      if(arr_obj_arr!=null){
+        for(int j=0;j<arr_obj_arr.size();j++){
+          JSONObject spownData=arr_obj_arr.getJSONObject(j);
+          factory.putConstructor(spownData.getString("name"));
+          Entity e=factory.getInstance(spownData.getString("name"),system.nextEntity);
+          system.entities.add(e.setPosition(new PVector(width*0.5,-e.size*2.0)));
+        }
+      }
+      arr_obj_arr=arr_obj.getJSONArray("event");
+      if(arr_obj_arr!=null){
+        for(int j=0;j<arr_obj_arr.size();j++){
+          String name=arr_obj_arr.getJSONObject(j).getString("name");
+          schedules.add(new RelativeSchedule(0,boss_events.get(name)));
+        }
       }
     }
     system.ui.components.remove(0);
@@ -466,7 +496,12 @@ class Stage{
   
   void update(){
     if(!system.gameState.equals("shooting"))return;
-    time-=1.0/fps;
+    if(!type.equals("boss"))time-=1.0/fps;
+    for(RelativeSchedule s:schedules){
+      s.update(1.0/fps);
+    }
+    schedules.addAll(next_schedules);
+    next_schedules.clear();
     if(time<=0){
       end=true;
       return;
@@ -508,7 +543,7 @@ class Stage{
       switch(str[0]){
         case "survive":pred=new Predicate<Boolean>(){boolean test(Boolean b){return true;}};break;
         case "score":pred=new Predicate<Boolean>(){boolean test(Boolean b){return system.score>=int(str[1]);}};break;
-        case "boss":pred=new Predicate<Boolean>(){boolean test(Boolean b){return system.boss_dead;}};break;
+        case "defeat":pred=new Predicate<Boolean>(){boolean test(Boolean b){return system.boss_dead;}};break;
       }
       predicators.put(name,pred);
     }
@@ -539,6 +574,29 @@ class TimeSchedule{
   
   Consumer<Stage> getProcess(){
     return process;
+  }
+}
+
+class RelativeSchedule{
+  float time;
+  float duration;
+  boolean isEnd=false;
+  
+  Consumer<Float> process;
+  
+  RelativeSchedule(float duration,Consumer<Float> process){
+    this.duration=duration;
+    this.process=process;
+  }
+  
+  void update(float second){
+    if(isEnd)return;
+    if(time>=duration){
+      time=duration;
+      isEnd=true;
+    }
+    process.accept(time);
+    time+=second;
   }
 }
 
@@ -668,6 +726,10 @@ class GameSystem{
         }
       }
     }
+  }
+  
+  Player getPlayer(){
+    return player;
   }
   
   void displayShadow(){

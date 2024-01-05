@@ -269,6 +269,14 @@ class ConfigStrategy extends Strategy{
         }
       }).setLabel("Show FPS : "+(show_fps?"ON":"OFF"))
     );
+    UImanager.add(
+      new Button(width*0.5-125,135,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          setVibration(!getVibration());
+          b.setLabel("Vibration : "+(getVibration()?"ON":"OFF"));
+        }
+      }).setLabel("Vibration : "+(getVibration()?"ON":"OFF"))
+    );
   }
   
   void update(){

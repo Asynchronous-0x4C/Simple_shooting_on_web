@@ -59,7 +59,20 @@ class EntityParticle extends Particle{
     life=maxLife;
     size=6;
     angle=random(0,TWO_PI);
-    material=g.parent.material;
+    material=g.parent.material.copy();
+  }
+}
+
+class BossParticle extends Particle{
+  
+  BossParticle(BossParticleGenerator g){
+    position=g.range.getRandomPoint();
+    movement=new Movement(g.velocity.get(),new PVector(0,0),-1);
+    maxLife=g.life.get();
+    life=maxLife;
+    size=6;
+    angle=random(0,TWO_PI);
+    material=new Material(g.albedo,new Color(0,0,0));
   }
 }
 
@@ -115,6 +128,41 @@ class EntityParticleGenerator extends ParticleGenerator{
   EntityParticleGenerator generate(int count){
     for(int i=0;i<count;i++)particle.add(new EntityParticle(this));
     return this;
+  }
+  
+  void update(){
+    ArrayList<Particle> next=new ArrayList<Particle>();
+    for(Particle p:particle){
+      p.update();
+      if(p.life>0)next.add(p);
+    }
+    particle=next;
+    if(particle.isEmpty())isDead=true;
+  }
+  
+  void display(){
+    for(Particle p:particle)p.display();
+  }
+  
+  void displayShadow(){
+    for(Particle p:particle)p.displayShadow();
+  }
+}
+
+class BossParticleGenerator extends ParticleGenerator{
+  Color albedo;
+  
+  BossParticleGenerator(Color c,Rectangle range,Supplier<PVector> velocity,Supplier<Float> life){
+    albedo=c;
+    this.range=range;
+    this.velocity=velocity;
+    this.life=life;
+  }
+  
+  void generate(float freq){
+    if(freq>=random(0,1)){
+      particle.add(new BossParticle(this));
+    }
   }
   
   void update(){

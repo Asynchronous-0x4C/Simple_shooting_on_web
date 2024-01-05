@@ -1,15 +1,17 @@
 let ref_applet;
 let initialized=false;
-let safari=false;
+let apple=false;
+let vibrate=true;let a;
 
 function setReference(s){
   ref_applet=s;
   const agent=navigator.userAgent.toLowerCase();
-  if(agent.indexOf("chrome") != -1){}
-    else
-  if(agent.indexOf("safari") != -1){
-    safari=true;
-  }
+  if(agent.indexOf("macintosh") != -1 ||
+     agent.indexOf("ipad") != -1 ||
+     agent.indexOf("iphone") != -1 ||
+     agent.indexOf("ipod") != -1){
+    apple=true;
+  }a=agent;
 }
 
 function loadJSONObject(path){
@@ -128,6 +130,10 @@ class JSONArray{
     return new JSONObject(this.json[index]);
   }
 
+  getString(index){
+    return this.json[index];
+  }
+
   size(){
     return this.json==undefined?0:Object.keys(this.json).length;
   }
@@ -167,6 +173,7 @@ class Sound{
   }
 
   play(){
+    if(apple)return;
     this.audio.currentTime = 0;
     this.audio.loop = false;
     this.audio.play();
@@ -178,11 +185,16 @@ function getNanoSeconds(){
 }
 
 function damage_vibrate(){
-  if(!safari)navigator.vibrate([0,100,0]);
+  if(!apple&&vibrate){
+    const id=setInterval(()=>{
+      navigator.vibrate([0,1,0]);
+      clearInterval(id);
+    },100);
+  }
 }
 
 function boss_vibrate(){
-  if(!safari){
+  if(!apple&&vibrate){
     const id=setInterval(()=>{
       navigator.vibrate(100);
       clearInterval(id);
@@ -191,12 +203,20 @@ function boss_vibrate(){
 }
 
 function boss_damage_vibrate(){
-  if(!safari){
+  if(!apple&&vibrate){
     const id=setInterval(()=>{
       navigator.vibrate(100);
       clearInterval(id);
     },150);
   }
+}
+
+function setVibration(b){
+  vibrate=b;
+}
+
+function getVibration(){
+  return vibrate;
 }
 
 window.addEventListener("load",()=>{

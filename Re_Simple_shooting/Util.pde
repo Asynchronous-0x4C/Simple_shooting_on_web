@@ -15,7 +15,7 @@ class Movement{
   void update(){
     velocity.mult(smooth);
     velocity.add(accel);
-    if(limit>0)velocity.limit(limit);
+    if(limit>=0)velocity.limit(limit);
   }
   
   void setVelocity(PVector v){
@@ -137,6 +137,10 @@ class Material{
       updateCount=lightingUpdateCount;
     }
     return surface;
+  }
+  
+  Material copy(){
+    return new Material(albedo,emission);
   }
 }
 

@@ -8,12 +8,12 @@ import java.util.Comparator;
 
 import java.lang.reflect.*;
 
-Re_Simple_shooting ref_applet;
+Re_Simple_shooting ref_applet=null;
 
 HashMap<String,Sound> sounds=new HashMap<String,Sound>();
 
 HashMap<String,Strategy> strategies=new HashMap<String,Strategy>();
-Strategy nowStrategy;
+Strategy currentStrategy;
 GameSystem gameSystem;
 
 boolean mousePress=false;
@@ -46,27 +46,34 @@ int lightingUpdateCount=0;
 
 final int MAX_CHAPTER=5;
 
+float scaling=1;
+
 void settings(){
   size(innerWidth-1,innerHeight-1,P2D);
 }
 
 void setup(){
   settings();
+  if(isWeb()){
+    scaling=min(1,(innerHeight-1)/720.0);
+    width*=1f/scaling;
+    height*=1f/scaling;
+  }
   setReference(this);
   initData();
   initStrategy();
-  initData();
   setNextStrategy(strategies.get("start"));
   pTime=getNanoSeconds();
 }
 
 void draw(){
   strategies.get("common").update();
-  nowStrategy.update();
+  currentStrategy.update();
   bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
-  nowStrategy.displayShadow();
+  if(isWeb())scale(scaling);
+  currentStrategy.displayShadow();
   strategies.get("common").displayShadow();
-  nowStrategy.display();
+  currentStrategy.display();
   strategies.get("common").display();
   updateEvent();
 }
@@ -108,8 +115,8 @@ void setLight(String type){
 }
 
 void setNextStrategy(Strategy s){
-  nowStrategy=s;
-  nowStrategy.init();
+  currentStrategy=s;
+  currentStrategy.init();
 }
 
 void updateEvent(){
@@ -120,11 +127,33 @@ void updateEvent(){
 }
 
 void mousePressed(){
-  if(!isWeb())setMousePress(true);
+  if(!isWeb()){
+    setMousePress(true);
+  }
+}
+
+void mouseMoved(){
+  setMousePosition();
+}
+
+void mouseDragged(){
+  setMousePosition();
+}
+
+void windowResized(){
+  if(frameCount>1){
+    currentStrategy.init();
+  }
 }
 
 void setMousePress(boolean b){
   mousePress=b;
+}
+
+void setMousePosition(){
+  if(!isWeb())return;
+  mouseX/=scaling;
+  mouseY/=scaling;
 }
 
 class mutFloat{//mutable float
@@ -148,6 +177,10 @@ float length(float x,float y){
   return sqrt(x*x+y*y);
 }
 
+PVector vector_rotate(float l,float angle){
+  return new PVector(l*cos(angle),l*sin(angle));
+}
+
 float sqDist(PVector a,PVector b){
   float x=b.x-a.x;
   float y=b.y-a.y;
@@ -165,12 +198,19 @@ boolean roundRectDistFunc(PVector p,float x,float y, float radius) {
 }
 
 GameSystem getGameSystem(){
-  if(!(nowStrategy instanceof StageStrategy))return null;
-  return ((StageStrategy)nowStrategy).system;
+  if(!(currentStrategy instanceof StageStrategy))return null;
+  return ((StageStrategy)currentStrategy).system;
+}
+
+Player getPlayer(){
+  if(!(currentStrategy instanceof StageStrategy))return null;
+  return ((StageStrategy)currentStrategy).system.player;
 }
 
 void bg_by_color(Color c){
-  background(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+  fill(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+  rectMode(CORNER);
+  rect(0,0,width*scaling,height*scaling);
 }
 
 void fill_by_color(Color c){
@@ -185,10 +225,19 @@ float ease(float x){
   return 2.0/(1+pow(2.718281828,-x))-1.0;
 }
 
+float easeOutExpo(float x){
+  return x==1?1:1-pow(2,-10*x);
+}
+
+float ease25(float x){
+  return 1.0/(1+pow(2.718281828,-25*(x-0.25)));
+}
+
 void initData(){
   saveData=loadJSONObject("./data/save/save.json");
   loadLang(saveData.getString("lang"));
   initAudio();
+  initEvent();
   if(!isWeb())loadSound();
 }
 

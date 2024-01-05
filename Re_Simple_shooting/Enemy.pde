@@ -30,7 +30,7 @@ abstract class ShotEnemy extends Enemy{
   void update(){
     super.update();
     cooltime-=fpsMag;
-    if(cooltime<=0&&ellipseDistFunc(position,shotRange,shotRange*3,gameSystem.player.position)&&predicate.test(this)){
+    if(cooltime<=0&&ellipseDistFunc(position,shotRange,shotRange*3,gameSystem.getPlayer().position)&&predicate.test(this)){
       shot();
       cooltime=maxCooltime;
     }
@@ -47,8 +47,11 @@ abstract class Boss extends ShotEnemy{
   
   void deadEvent(){
     super.deadEvent();
+    bossDead();
     boss_vibrate();
   }
+  
+  abstract void bossDead();
   
   void setClear(){
     getGameSystem().set_boss_dead(this);
@@ -105,14 +108,101 @@ class Large_C extends Enemy{
 }
 
 class Lost_Signal extends Boss{
+  int shot_count=0;
+  int form=0;
+  int sub_form=0;
+  
+  float offset=0;
   
   Lost_Signal(ArrayList<Entity> entityList){
-    super(new Color(0,255,255,150),27,entityList);
-    setHP(30);
-    setLimitSpeed(0.1);
+    super(new Color(0,0,0,150),75,entityList);
+    setHP(300);
+    setLimitSpeed(0);
+    setShotRange(3000);
+    setCooltime(5);
   }
   
   void shot(){
-    entityList.add(new NormalBullet(new PVector(0,6),this));
+    switch(form){
+      case 0:
+        switch(sub_form){
+          case 0:shot_0_0();break;
+          case 1:shot_0_1();break;
+        }
+        if(HP.mut_float<180)form=1;break;
+      case 1:
+        HP.mut_float-=120;
+        setCooltime(5);
+        form=2;
+        addParticle();
+        sounds.get("defeat").play();
+        return;
+      case 2:shot_2();break;
+    }
+  }
+  
+  void shot_0_0(){
+    float angle=radians(60+12*abs(6-shot_count)+random(-2,2)+offset);
+    shot_count=(shot_count+1)%12;
+    entityList.add(new BossBullet(vector_rotate(6,angle),this,angle));
+    if(shot_count==0){
+      offset=random(-6,6);
+      if(random(0,1)<0.2){
+        sub_form=1;
+        setCooltime(13);
+      }
+    }
+  }
+  
+  void shot_0_1(){
+    float angle=atan2(getPlayer().position.y-position.y,getPlayer().position.x-position.x);
+    shot_count=(shot_count+1)%12;
+    float offset=random(-3,3);
+    entityList.add(new BossBullet(vector_rotate(6,angle+radians(offset-20)),this,angle));
+    entityList.add(new BossBullet(vector_rotate(6,angle+radians(offset)),this,angle));
+    entityList.add(new BossBullet(vector_rotate(6,angle+radians(offset+20)),this,angle));
+    if(shot_count==0){
+      if(random(0,1)<0.7){
+        sub_form=0;
+        setCooltime(5);
+      }
+    }
+  }
+  
+  void shot_2(){
+    float angle=radians(54+12*abs(6-shot_count)+random(-2,2)+offset);
+    shot_count=(shot_count+1)%12;
+    entityList.add(new BossBullet(vector_rotate(6,angle),this,angle));
+    angle=radians(126-12*abs(6-shot_count)+random(-2,2)+offset);
+    entityList.add(new BossBullet(vector_rotate(6,angle),this,angle));
+    if(shot_count==0)offset=random(-6,6);
+  }
+  
+  void addParticle(){
+    getGameSystem().nextEntity.add(new EntityParticleGenerator(this,
+      new Supplier<PVector>(){
+        PVector get(){
+          PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
+          vel.mult(fpsMag);
+          float speed=random(-1.5,1.5);
+          float angle=random(0,TWO_PI);
+          return new PVector(cos(angle)*speed+vel.x,sin(angle)*speed+vel.y);
+        }
+      },
+      new Supplier<Float>(){
+        Float get(){
+          return random(30,60);
+        }
+      }
+      ).generate(floor(size*0.25))
+    );
+  }
+  
+  void bossDead(){
+    getGameSystem().stage.schedules.add(new RelativeSchedule(1.0,new Consumer<Float>(){
+      void accept(Float f){
+        if(f>=1){setClear();}
+      }
+    }));
   }
 }

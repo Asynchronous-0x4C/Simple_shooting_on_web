@@ -51,6 +51,33 @@ abstract class GameComponent{
   }
 }
 
+class E2GAdapter extends GameComponent{
+  Entity adaptee;
+  Consumer<Entity> updator=null;
+  
+  E2GAdapter(Entity adaptee){
+    this.adaptee=adaptee;
+  }
+  
+  E2GAdapter setConsumer(Consumer<Entity> e){
+    updator=e;
+    return this;
+  }
+  
+  void update(){
+    if(updator!=null)updator.accept(adaptee);
+    adaptee.update();
+  }
+  
+  void display(){
+    adaptee.display();
+  }
+  
+  void displayShadow(){
+    adaptee.displayShadow();
+  }
+}
+
 class ComponentManager extends GameComponent{
   ArrayList<GameComponent> components=new ArrayList<GameComponent>();
   ArrayList<GameComponent> next=new ArrayList<GameComponent>();
@@ -402,15 +429,15 @@ class FlowRect extends GameComponent{
 }
 
 class DynamicFlowRect extends FlowRect{
-  Supplier<Rectangle> supplier;
+  Function<DynamicFlowRect,Rectangle> supplier;
   
-  DynamicFlowRect(Supplier<Rectangle> supplier,float z,Color body_c){
-    super(supplier.get(),z,body_c);
+  DynamicFlowRect(Function<DynamicFlowRect,Rectangle> supplier,float z,Color body_c){
+    super(supplier.apply(null),z,body_c);
     this.supplier=supplier;
   }
   
   void update(){
-    body=supplier.get();
+    body=supplier.apply(this);
   }
 }
 
@@ -429,13 +456,13 @@ class StageUI{
     },new PVector(width*0.5,20),20,3,new Color(50,50,50,200)).setEmission(new Color(50,50,50)));
     components.add(new DynamicFlowText(new Supplier<String>(){
       String get(){
-        return "HP: "+ceil(max(0.0,s.player.status.get("HP").mut_float));
+        return "HP: "+ceil(max(0.0,s.getPlayer().status.get("HP").mut_float));
       }
     },new PVector(width-270,37.5),20,3,new Color(0,255,0,150)).setEmission(new Color(0,255,0)));
-    components.add(new DynamicFlowRect(new Supplier<Rectangle>(){
-      Rectangle get(){
-        float hp=s.player.status.get("HP").mut_float/s.player.status.get("HP").default_float;
-        return new Rectangle(new PVector(width-230+100*hp,30),new PVector(200*hp,15),1);
+    components.add(new DynamicFlowRect(new Function<DynamicFlowRect,Rectangle>(){
+      Rectangle apply(DynamicFlowRect r){
+        float hp=s.getPlayer().status.get("HP").mut_float/s.getPlayer().status.get("HP").default_float;
+        return new Rectangle(new PVector(width-230+100*hp,30),new PVector(200*hp,15),0);
       }
     },3,new Color(0,255,0,150)).setEmission(new Color(0,255,0)));
     components.add(new DynamicFlowText(new Supplier<String>(){

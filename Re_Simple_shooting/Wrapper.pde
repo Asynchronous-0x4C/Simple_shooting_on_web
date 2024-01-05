@@ -4,8 +4,8 @@ import javax.sound.sampled.*;
 
 Minim minim;
 
-final int innerWidth=1280;
-final int innerHeight=720;
+final int innerWidth=1281;
+final int innerHeight=721;
 
 void setReference(Re_Simple_shooting s){
   ref_applet=s;
@@ -77,3 +77,7 @@ void damage_vibrate(){}
 void boss_damage_vibrate(){}
 
 void boss_vibrate(){}
+
+void setVibration(boolean b){}
+
+boolean getVibration(){return false;}
