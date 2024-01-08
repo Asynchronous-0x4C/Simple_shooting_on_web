@@ -133,7 +133,10 @@ abstract class Enemy extends Agent{
         deadEvent();
         sounds.get("defeat").play();
       }else{
-        movement.velocity.add(PVector.lerp(new PVector(0,0),e.movement.velocity,min(1,e.movement.velocity.mag()/size*0.5)));
+        PVector d=PVector.sub(e.position,position);
+        float a=PVector.angleBetween(movement.velocity,d)*sign(cross(movement.velocity,d))*0.1;
+        float v=e.movement.velocity.mag()*cos(a);
+        movement.velocity.add(new PVector(v*sin(a),-v*cos(a)/sqrt(size)));
         if((this instanceof ShotEnemy)&&!(this instanceof Boss)){
           ((ShotEnemy)this).cooltime=60;
         }

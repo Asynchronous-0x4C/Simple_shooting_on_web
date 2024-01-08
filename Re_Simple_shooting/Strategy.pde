@@ -160,16 +160,17 @@ class StartStrategy extends Strategy{
 }
 
 class MenuStrategy extends Strategy{
-  ComponentManager startManager;
+  ComponentManager startManager=new ComponentManager();
   MissionTextBox missionText;
+  int stage_stride=0;
   
   MenuStrategy(){
     super("start","menu");
   }
   
   void init(){
-    startManager=(ComponentManager)new ComponentManager().setActive(false);
     missionText=new MissionTextBox(new PVector(width*0.75-200,100),new PVector(400,height-220),25,new Color(150,150,150,150),new Color(20,20,20,150));
+    startManager.clear();
     UImanager.clear();
     UImanager.add(
       new Button(100,20,250,30).setEvent(new ButtonEvent(){
@@ -199,7 +200,7 @@ class MenuStrategy extends Strategy{
       .setColor(new Color(140,100,100,200))
     );
     for(int i=0;i<5;i++){
-      if(i>=currentData.getInt("progress"))break;
+      if(i+(stage_stride*5)>=currentData.getInt("progress"))break;
       UImanager.add(
         new Button(100,120+i*60,250,30).setEvent(new ButtonEvent(){
           void select(Button b){
@@ -215,7 +216,27 @@ class MenuStrategy extends Strategy{
               missionText.setData(o.getString("name"),o.getString("attribute"),clear);
             }
           }
-        }).setLabel("stage "+(i+1))
+        }).setLabel("stage "+(i+1+(stage_stride*5)))
+      );
+    }
+    if(stage_stride>0){
+      UImanager.add(
+        new Button(100,500,120,30).setEvent(new ButtonEvent(){
+          void select(Button b){
+            --stage_stride;
+            init();
+          }
+        }).setLabel("Prev")
+      );
+    }
+    if((stage_stride+1)*5<currentData.getInt("progress")){
+      UImanager.add(
+        new Button(230,500,120,30).setEvent(new ButtonEvent(){
+          void select(Button b){
+            ++stage_stride;
+            init();
+          }
+        }).setLabel("Next")
       );
     }
     UImanager.add(startManager);

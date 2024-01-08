@@ -485,3 +485,18 @@ class StageUI{
     for(GameComponent c:components)c.handleDisplayShadow();
   }
 }
+
+class InputHandler{
+  ArrayList<Integer> binds;
+  Runnable complete;
+  int count=0;
+  
+  InputHandler(Runnable complete,Integer... binds){
+    this.binds=new ArrayList<Integer>();
+    for(Integer b:binds){
+      this.binds.add(b);
+    }
+    this.complete=complete;
+    //TODO:add listener
+  }
+}

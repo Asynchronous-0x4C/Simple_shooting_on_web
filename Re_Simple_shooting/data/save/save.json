@@ -1,46 +1,15 @@
 {
   "1": {
     "date": {
-      "month": 1,
-      "hour": 19,
-      "year": 2024,
-      "day": 3,
-      "minute": 6
+      "month": null,
+      "hour": null,
+      "year": null,
+      "day": null,
+      "minute": null
     },
-    "mission": {
-      "1": {
-        "hard_challenge": false,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "2": {
-        "hard_challenge": false,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "3": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "4": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "5": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      }
-    },
+    "mission": {},
     "level": 5,
-    "progress": 5,
+    "progress": 1,
     "exp": 0
   },
   "2": {

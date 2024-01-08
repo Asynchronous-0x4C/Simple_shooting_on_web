@@ -15,6 +15,7 @@ HashMap<String,Sound> sounds=new HashMap<String,Sound>();
 HashMap<String,Strategy> strategies=new HashMap<String,Strategy>();
 Strategy currentStrategy;
 GameSystem gameSystem;
+boolean strategy_changed=false;
 
 boolean mousePress=false;
 
@@ -44,7 +45,7 @@ Color backgroundAlbedo=new Color(190,190,185);
 
 int lightingUpdateCount=0;
 
-final int MAX_CHAPTER=5;
+final int MAX_CHAPTER=6;
 
 float scaling=1;
 
@@ -69,12 +70,16 @@ void setup(){
 void draw(){
   strategies.get("common").update();
   currentStrategy.update();
-  bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
-  if(isWeb())scale(scaling);
-  currentStrategy.displayShadow();
-  strategies.get("common").displayShadow();
-  currentStrategy.display();
-  strategies.get("common").display();
+  if(!strategy_changed){
+    bg_by_color(lightColor.clone().mult_c(backgroundAlbedo));
+    if(isWeb())scale(scaling);
+    currentStrategy.displayShadow();
+    strategies.get("common").displayShadow();
+    currentStrategy.display();
+    strategies.get("common").display();
+  }else{
+    strategy_changed=false;
+  }
   updateEvent();
 }
 
@@ -117,6 +122,7 @@ void setLight(String type){
 void setNextStrategy(Strategy s){
   currentStrategy=s;
   currentStrategy.init();
+  strategy_changed=true;
 }
 
 void updateEvent(){
@@ -231,6 +237,14 @@ float easeOutExpo(float x){
 
 float ease25(float x){
   return 1.0/(1+pow(2.718281828,-25*(x-0.25)));
+}
+
+float cross(PVector x,PVector y){
+  return x.x*y.y-x.y*y.x;
+}
+
+float sign(float x){
+  return x>0?1:x<0?-1:0;
 }
 
 void initData(){
