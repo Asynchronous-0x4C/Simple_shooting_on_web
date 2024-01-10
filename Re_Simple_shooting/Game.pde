@@ -84,6 +84,7 @@ abstract class Agent extends Entity{
 }
 
 abstract class Enemy extends Agent{
+  float mass=20;
   
   Enemy(Color bodyColor,float size,ArrayList<Entity> entityList){
     this.entityList=entityList;
@@ -91,6 +92,10 @@ abstract class Enemy extends Agent{
     this.size=size;
     collider=new Rectangle(position,new PVector(size,size),0);
     movement=new Movement(new PVector(0,0),new PVector(0,0.1),3);
+  }
+  
+  void setMass(float m){
+    mass=m;
   }
   
   void update(){
@@ -134,9 +139,9 @@ abstract class Enemy extends Agent{
         sounds.get("defeat").play();
       }else{
         PVector d=PVector.sub(e.position,position);
-        float a=PVector.angleBetween(movement.velocity,d)*sign(cross(movement.velocity,d))*0.1;
+        float a=PVector.angleBetween(movement.velocity,d)*sign(cross(movement.velocity,d))*0.03;
         float v=e.movement.velocity.mag()*cos(a);
-        movement.velocity.add(new PVector(v*sin(a),-v*cos(a)/sqrt(size)));
+        movement.velocity.add(new PVector(v*sin(a),-v*cos(a)/sqrt(mass)));
         if((this instanceof ShotEnemy)&&!(this instanceof Boss)){
           ((ShotEnemy)this).cooltime=60;
         }
@@ -309,7 +314,7 @@ class Player extends Agent{
   
   void update(){
     if(player_input){
-      if(mousePressed)shot();
+      if(mousePressed&&!mouseHover)shot();
       position.x+=(targetPoint.x-position.x)*min(1f,0.3*fpsMag);
     }
     status.get("cooltime").mut_float-=fpsMag;
@@ -350,6 +355,7 @@ class Player extends Agent{
         status.get("HP").mut_float-=calcDamage(b.Attack.mut_float,status.get("Defence").mut_float);
         status.get("HP").mut_float=max(0,status.get("HP").mut_float);
         streak=0;
+        entityList.add(new ExplosionBullet(new PVector(20,0),this));
         sounds.get("damaged").play();
         damage_vibrate();
       }
@@ -358,6 +364,7 @@ class Player extends Agent{
       status.get("HP").mut_float-=calcDamage(_e.Attack.mut_float*2,status.get("Defence").mut_float);
       status.get("HP").mut_float=max(0,status.get("HP").mut_float);
       streak=0;
+        entityList.add(new ExplosionBullet(new PVector(30,0),this));
       sounds.get("hit_damaged").play();
       damage_vibrate();
     }
@@ -657,7 +664,7 @@ class GameSystem{
     entities.clear();
     entities.addAll(nextEntity);
     nextEntity.clear();
-    player.setTarget(new PVector(mouseX,mouseY));
+    if(!mouseHover)player.setTarget(new PVector(mouseX,mouseY));
     if(gameState.equals("shooting")){
       collision();
     }
@@ -675,6 +682,10 @@ class GameSystem{
       setNextStrategy(strategies.get("result"));
       saveGame();
     }
+  }
+  
+  void exit(){
+    gameState="fail";
   }
   
   void saveGame(){

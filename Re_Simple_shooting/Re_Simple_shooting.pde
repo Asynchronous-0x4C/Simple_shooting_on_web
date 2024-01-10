@@ -18,6 +18,7 @@ GameSystem gameSystem;
 boolean strategy_changed=false;
 
 boolean mousePress=false;
+boolean mouseHover=false;
 
 JSONObject saveData;
 JSONObject currentData;
@@ -68,6 +69,7 @@ void setup(){
 }
 
 void draw(){
+  mouseHover=false;
   strategies.get("common").update();
   currentStrategy.update();
   if(!strategy_changed){

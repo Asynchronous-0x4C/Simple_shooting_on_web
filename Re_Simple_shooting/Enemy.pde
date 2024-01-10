@@ -66,7 +66,8 @@ class NormalEnemy extends ShotEnemy{
   }
   
   void shot(){
-    entityList.add(new NormalBullet(new PVector(0,6),this));
+    float a=radians(random(-5,5))+PI*0.5;
+    entityList.add(new NormalBullet(new PVector(cos(a)*6,sin(a)*6),this));
   }
 }
 
@@ -76,6 +77,7 @@ class SpecialAttackEnemy extends Enemy{
     super(new Color(255,255,0,200),20,entityList);
     setLimitSpeed(6);
     setHP(3);
+    setMass(15);
   }
 }
 
@@ -87,6 +89,7 @@ class Large_R extends ShotEnemy{
     setShotRange(225);
     setCooltime(45);
     setLimitSpeed(2.7);
+    setMass(50);
   }
   
   void shot(){
@@ -100,6 +103,7 @@ class Large_C extends Enemy{
     super(new Color(0,255,255,150),27,entityList);
     setHP(5);
     setLimitSpeed(2.6);
+    setMass(40);
   }
   
   void shot(){

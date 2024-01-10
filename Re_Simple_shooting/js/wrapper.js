@@ -41,6 +41,10 @@ function saveJSONObject(obj,path){
   localStorage.setItem(path,obj);
 }
 
+function circle(x,y,l){
+  ref_applet.ellipse(x,y,l,l);
+}
+
 function isWeb(){
   return true;
 }

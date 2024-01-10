@@ -122,6 +122,12 @@ class ComponentManager extends GameComponent{
     clearNext=true;
     return this;
   }
+  
+  ComponentManager clearAll(){
+    next.clear();
+    clearNext=true;
+    return this;
+  }
 }
 
 interface ButtonEvent{
@@ -137,7 +143,10 @@ class Button extends GameComponent{
   float offsetDist=3;
   float hoverMaxTime=20;
   
+  boolean enable=true;
+  
   Material hoverMaterial;
+  Material disableMaterial;
 
   Button(float x,float y,float w,float h){
     position=new PVector(x,y);
@@ -145,6 +154,7 @@ class Button extends GameComponent{
     this.font=createFont(font_name,h*0.75,true);
     material=new Material(new Color(120,120,120,180),new Color(0)).setZ_height(5);
     hoverMaterial=new Material(new Color(60,60,60,200),new Color(0));
+    disableMaterial=new Material(new Color(60,60,60,50),new Color(0));
   }
   
   Button setEvent(ButtonEvent e){
@@ -157,7 +167,13 @@ class Button extends GameComponent{
     return this;
   }
   
+  Button setEnable(boolean b){
+    enable=b;
+    return this;
+  }
+  
   void update(){
+    if(!enable)return;
     hover=isHover();
     if(hover){
       hoverTime+=fpsMag;
@@ -165,6 +181,7 @@ class Button extends GameComponent{
       float hoverDist=offsetDist*ease(hoverTime/hoverMaxTime*5);
       offset.set(-hoverDist,-hoverDist);
       material.setZ_height(5.0+hoverDist);
+      mouseHover=true;
       if(mousePress){
         event.select(this);
         sounds.get("enter").play();
@@ -179,13 +196,17 @@ class Button extends GameComponent{
   void display(){
     rectMode(CORNER);
     noStroke();
-    fill_by_color(hover?hoverMaterial.getSurface():material.getSurface());
+    fill_by_color(enable?hover?hoverMaterial.getSurface():material.getSurface():disableMaterial.getSurface());
     rect(position.x+offset.x,position.y+offset.y,size.x,size.y);
-    if(hover){
-      rect(position.x-7+offset.x,position.y+offset.y,3.5,size.y);
-      fill(200,200,200);
+    if(enable){
+      if(hover){
+        rect(position.x-7+offset.x,position.y+offset.y,3.5,size.y);
+        fill(200,200,200);
+      }else{
+        fill(220,220,220);
+      }
     }else{
-      fill(220,220,220);
+      fill(100,100,100,200);
     }
     textFont(font);
     textSize(size.y*0.75);
@@ -196,13 +217,18 @@ class Button extends GameComponent{
   void displayShadow(){
     rectMode(CORNER);
     noStroke();
-    fill_by_color(hover?hoverMaterial.getShadow():material.getShadow());
+    fill_by_color(enable?hover?hoverMaterial.getShadow():material.getShadow():disableMaterial.getShadow());
     rect(position.x+material.z_height+offset.x,position.y+material.z_height+offset.y,size.x,size.y);
     if(hover)rect(position.x-7+material.z_height+offset.x,position.y+material.z_height+offset.y,3.5,size.y);
   }
   
   Button setHoverColor(Color c){
     hoverMaterial.setAlbedo(c);
+    return this;
+  }
+  
+  Button setDisableColor(Color c){
+    disableMaterial.setAlbedo(c);
     return this;
   }
 }
@@ -486,7 +512,26 @@ class StageUI{
   }
 }
 
-class InputHandler{
+class Filter extends GameComponent{
+  Color c;
+  
+  Filter(Color c){
+    this.c=c;
+  }
+  
+  void update(){}
+  
+  void display(){
+    noStroke();
+    fill_by_color(c);
+    rectMode(CORNER);
+    rect(0,0,width,height);
+  }
+  
+  void displayShadow(){}
+}
+
+class InputHandler extends GameComponent{
   ArrayList<Integer> binds;
   Runnable complete;
   int count=0;
@@ -499,4 +544,10 @@ class InputHandler{
     this.complete=complete;
     //TODO:add listener
   }
+  
+  void update(){}
+  
+  void display(){}
+  
+  void displayShadow(){}
 }

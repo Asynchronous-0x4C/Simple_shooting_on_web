@@ -67,7 +67,7 @@ class StartStrategy extends Strategy{
   }
   
   void init(){
-    UImanager.clear();
+    UImanager.clearAll();
     particleGen=new MenuParticleGenerator(new Rectangle(new PVector(width*0.5,height+10),new PVector(width,20),0),
       new Supplier<PVector>(){
         PVector get(){
@@ -139,7 +139,7 @@ class StartStrategy extends Strategy{
     );
     UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,new Color(100,100,100,200)));
     UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
-    UImanager.add(new FlowText("! This is test !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
+    UImanager.add(new FlowText("! This is beta !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
   }
   
   void update(){
@@ -170,8 +170,8 @@ class MenuStrategy extends Strategy{
   
   void init(){
     missionText=new MissionTextBox(new PVector(width*0.75-200,100),new PVector(400,height-220),25,new Color(150,150,150,150),new Color(20,20,20,150));
-    startManager.clear();
-    UImanager.clear();
+    startManager.clearAll();
+    UImanager.clearAll();
     UImanager.add(
       new Button(100,20,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
@@ -207,7 +207,7 @@ class MenuStrategy extends Strategy{
             stageNumber=int(b.label.split(" ")[1]);
             strategies.get("stage").init();
             resetLight();
-            startManager.setActive(true);
+            ((Button)startManager.components.get(0)).setEnable(true);
             missionText.setText("  "+translation("mission")+"(Stage"+stageNumber+")");
             JSONArray missions=stageData.getJSONArray("mission");
             for(int m_index=0;m_index<missions.size();m_index++){
@@ -246,6 +246,7 @@ class MenuStrategy extends Strategy{
           setNextStrategy(strategies.get("stage"));
         }
       }).setLabel("Start")
+      .setEnable(false)
       .setHoverColor(new Color(40,80,40,180))
       .setColor(new Color(100,140,100,200))
     );
@@ -272,7 +273,7 @@ class ConfigStrategy extends Strategy{
   }
   
   void init(){
-    UImanager.clear();
+    UImanager.clearAll();
     UImanager.add(
       new Button(width*0.5-125,height-50,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
@@ -320,7 +321,7 @@ class ShopStrategy extends Strategy{
   }
   
   void init(){
-    UImanager.clear();
+    UImanager.clearAll();
     UImanager.add(
       new Button(width*0.5-125,height-50,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
@@ -347,28 +348,76 @@ class ShopStrategy extends Strategy{
 
 class StageStrategy extends Strategy{
   GameSystem system;
+  ComponentManager pauseManager=new ComponentManager();
+  
+  boolean pause=false;
   
   StageStrategy(){
     super("menu","stage");
   }
   
   void init(){
+    pause=false;
     system=new GameSystem();
+    UImanager.clearAll();
+    pauseManager.clearAll();
+    pauseManager.add(new Filter(new Color(0,0,0,150)));
+    pauseManager.add(new FlowText("| Pause |",new PVector(width*0.5,100),100,3,new Color(200,200,200,200)));
+    pauseManager.add(new Button(width*0.5-125,height*0.5-50,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          pause=false;
+          pauseManager.setActive(false);
+        }
+      }).setLabel("Continue")
+      .setHoverColor(new Color(40,80,40,180))
+      .setColor(new Color(100,140,100,200))
+    );
+    pauseManager.add(new Button(width*0.5-125,height*0.5,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          init();
+        }
+      }).setLabel("Retry")
+      .setHoverColor(new Color(40,80,40,180))
+      .setColor(new Color(100,140,100,200))
+    );
+    pauseManager.add(new Button(width*0.5-125,height*0.5+50,250,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          pause=false;
+          pauseManager.setActive(false);
+          system.exit();
+        }
+      }).setLabel("Exit")
+      .setHoverColor(new Color(80,40,40,180))
+      .setColor(new Color(140,100,100,200))
+    );
+    UImanager.add(pauseManager.setActive(false));
+    UImanager.add(new Button(width-50,50,30,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          pause=!pause;
+          pauseManager.setActive(pause);
+        }
+      }).setLabel("×")
+      .setHoverColor(new Color(20,20,80,120))
+      .setColor(new Color(75,75,140,150))
+    );
     gameSystem=system;
     system.loadStage("./data/stage/Stage"+stageNumber+".json");
     setLight(system.stage.stage_time);
   }
   
   void update(){
-    system.update();
+    UImanager.update();
+    if(!pause)system.update();
   }
   
   void display(){
     system.display();
+    UImanager.display();
   }
   
   void displayShadow(){
     system.displayShadow();
+    UImanager.displayShadow();
   }
 }
 
