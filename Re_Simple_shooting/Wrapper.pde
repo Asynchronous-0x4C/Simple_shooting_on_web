@@ -2,6 +2,16 @@ import ddf.minim.*;
 import ddf.minim.effects.*;
 import javax.sound.sampled.*;
 
+import processing.sound.*;
+
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.*;
+
+ExecutorService exec;
+ArrayList<EntityProcess>processes=new ArrayList<>();
+ArrayList<Future<?>>futures=new ArrayList<>();
+
 Minim minim;
 
 final int innerWidth=1281;
@@ -9,6 +19,11 @@ final int innerHeight=721;
 
 void setReference(Re_Simple_shooting s){
   ref_applet=s;
+  cores=Runtime.getRuntime().availableProcessors();
+  exec=Executors.newFixedThreadPool(cores);
+  for(int i=0;i<cores;i++){
+    processes.add(new EntityProcess());
+  }
 }
 
 class InstanceFactory{
@@ -81,3 +96,67 @@ void boss_vibrate(){}
 void setVibration(boolean b){}
 
 boolean getVibration(){return false;}
+
+void startEntityProcess(GameSystem s){
+  boolean collision=s.gameState.equals("shooting");
+  float size=s.entities.size()/(float)cores;
+  for(int i=0;i<cores;i++){
+    futures.add(exec.submit(processes.get(i).setData(round(size*i),round(size*(i+1)),collision,s.entities)));
+  }
+}
+
+void waitEntityProcess(GameSystem s){
+  if(s.pause)return;
+  try{
+    for(Future<?>f:futures){
+      f.get();
+    }
+  }catch(Exception e){
+    e.printStackTrace();
+  }
+  futures.clear();
+  for(Entity e:s.entities){
+    if(!e.isDead)s.nextEntity.add(e);
+  }
+  s.entities.clear();
+  s.entities.addAll(s.nextEntity);
+  s.nextEntity.clear();
+}
+
+class EntityProcess implements Runnable{
+  int start;
+  int end;
+  
+  boolean collision;
+  ArrayList<Entity> entities=new ArrayList<>();
+  
+  EntityProcess(){}
+  
+  void run(){
+    for(int n=start;n<end;n++){
+      Entity e=entities.get(n);
+      e.update();
+      if(!e.isDead){
+        if(collision){
+          for(int i=0;i<entities.size();i++){
+            Entity _e=entities.get(i);
+            if(e==_e||_e.currentFrame!=frameCount||_e.isDead||((_e instanceof Enemy)&&(e instanceof Enemy))){
+              continue;
+            }else if(colliderCollision(e.collider,_e.collider)){
+              e.Collision(_e);
+              _e.Collision(e);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  Runnable setData(int s,int e,boolean c,ArrayList<Entity> src){
+    start=s;
+    end=e;
+    collision=c;
+    entities=src;
+    return this;
+  }
+}

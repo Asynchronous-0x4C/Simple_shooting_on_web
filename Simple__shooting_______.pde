@@ -5,6 +5,7 @@
  * @date 2020/09/30(α1.00)2020/11/23(β1.00)\(^o^)/
  */
 
+boolean onButton=false;
 float vertualMouseX=0;
 PImage Mouse;
 PImage Mouse2;
@@ -20,105 +21,73 @@ ArrayList<Enemy2> enemies2;
 ArrayList<Bullet> eneBullets2;
 ArrayList<Enemy3> enemies3;
 ArrayList<Bullet3> eneBullets3;
-ArrayList<Bullet3> myBullets3;
 ArrayList<Enemy4> enemies4;
 ArrayList<Bullet4> eneBullets4;
-ArrayList<Bullet4> myBullets4;
 ArrayList<Enemy5> enemies5;
 ArrayList<Bullet5> eneBullets5;
-ArrayList<Bullet5> myBullets5;
 ArrayList<Enemy6> enemies6;
 ArrayList<Bullet6> eneBullets6;
-ArrayList<Bullet6> myBullets6;
 ArrayList<Enemy7> enemies7;
 ArrayList<Bullet7> eneBullets7;
-ArrayList<Bullet7> myBullets7;
 ArrayList<Enemy00> enemies00;
 ArrayList<Enemy8> enemies8;
 ArrayList<Bullet8> eneBullets8;
-ArrayList<Bullet8> myBullets8;
 ArrayList<Enemy9> enemies9;
 ArrayList<Bullet9> eneBullets9;
-ArrayList<Bullet9> myBullets9;
 ArrayList<Enemy10> enemies10;
 ArrayList<Bullet10> eneBullets10;
-ArrayList<Bullet10> myBullets10;
 ArrayList<Enemy01> enemies01;
 ArrayList<Enemy11> enemies11;
 ArrayList<Bullet11> eneBullets11;
-ArrayList<Bullet11> myBullets11;
 ArrayList<Bullet12> eneBullets12;
-ArrayList<Bullet12> myBullets12;
 ArrayList<Enemy12> enemies12;
 ArrayList<Bullet13> eneBullets13;
-ArrayList<Bullet13> myBullets13;
 ArrayList<Enemy13> enemies13;
 ArrayList<Bullet14> eneBullets14;
-ArrayList<Bullet14> myBullets14;
 ArrayList<Enemy14> enemies14;
 ArrayList<Enemy15> enemies15;
-ArrayList<Bullet15> myBullets15;
 ArrayList<Bullet15> eneBullets15;
 ArrayList<Enemy16> enemies16;
-ArrayList<Bullet16> myBullets16;
 ArrayList<Bullet16> eneBullets16;
 ArrayList<Enemy17> enemies17;
-ArrayList<Bullet17> myBullets17;
 ArrayList<Bullet17> eneBullets17;
 ArrayList<Enemy18> enemies18;
-ArrayList<Bullet18> myBullets18;
 ArrayList<Bullet18> eneBullets18;
 ArrayList<Enemy19> enemies19;
-ArrayList<Bullet19> myBullets19;
 ArrayList<Bullet19> eneBullets19;
 ArrayList<Enemy20> enemies20;
-ArrayList<Bullet20> myBullets20;
 ArrayList<Bullet20> eneBullets20;
 ArrayList<Enemy21> enemies21;
-ArrayList<Bullet21> myBullets21;
 ArrayList<Bullet21> eneBullets21;
 ArrayList<Enemy22> enemies22;
-ArrayList<Bullet22> myBullets22;
 ArrayList<Bullet22> eneBullets22;
 ArrayList<Enemy23> enemies23;
-ArrayList<Bullet23> myBullets23;
 ArrayList<Bullet23> eneBullets23;
 ArrayList<Enemy24> enemies24;
-ArrayList<Bullet24> myBullets24;
 ArrayList<Bullet24> eneBullets24;
 ArrayList<Enemy25> enemies25;
-ArrayList<Bullet25> myBullets25;
 ArrayList<Bullet25> eneBullets25;
 ArrayList<Enemy26> enemies26;
-ArrayList<Bullet26> myBullets26;
 ArrayList<Bullet26> eneBullets26;
 ArrayList<Enemy27> enemies27;
-ArrayList<Bullet27> myBullets27;
 ArrayList<Bullet27> eneBullets27;
 ArrayList<Enemy28> enemies28;
-ArrayList<Bullet28> myBullets28;
 ArrayList<Bullet28> eneBullets28;
 ArrayList<Enemy29> enemies29;
-ArrayList<Bullet29> myBullets29;
 ArrayList<Bullet29> eneBullets29;
 ArrayList<Enemy30> enemies30;
-ArrayList<Bullet30> myBullets30;
 ArrayList<Bullet30> eneBullets30;
 ArrayList<Enemy31> enemies31;
-ArrayList<Bullet31> myBullets31;
 ArrayList<Bullet31> eneBullets31;
 ArrayList<Enemy32> enemies32;
-ArrayList<Bullet32> myBullets32;
 ArrayList<Bullet32> eneBullets32;
 ArrayList<Enemy33> enemies33;
-ArrayList<Bullet33> myBullets33;
 ArrayList<Bullet33> eneBullets33;
 ArrayList<Enemy34> enemies34;
-ArrayList<Bullet34> myBullets34;
 ArrayList<Bullet34> eneBullets34;
 ArrayList<Enemy35> enemies35;
-ArrayList<Bullet35> myBullets35;
 ArrayList<Bullet35> eneBullets35;
+boolean keyPress=false;
 boolean mousePress=false;
 boolean pPress=false;
 boolean skillButton=false;
@@ -250,8 +219,12 @@ int f=0;
 int q=0;
 boolean fullsc;
 
-void setup() {
+void settings(){
   size(innerWidth-1,innerHeight-1);
+}
+
+void setup() {
+  settings();
   frameRate(60);
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
@@ -683,7 +656,7 @@ void draw() {
         }
         break;
       case 5:
-        if (Charpter>1) {
+        if (Charpter>10) {
           ms="key "+skill[5]+":Control";
         } else {
           ms="key ?/???";
@@ -3241,7 +3214,7 @@ void draw() {
       AA=0;
       CC=0;
       BG2=0;
-    };
+    }
     fill(cR[2], cG[2], cB[2]);
     stroke(0, 245, 100);
     rect(320, 280, 240, 35);
@@ -3260,7 +3233,7 @@ void draw() {
     if (mouseX>=200+width/2-320&&440+width/2-320>=mouseX&&mouseY>=263+height/2-320&&297+height/2-320>=mouseY&&mousePressed) {
       menu=0;
       timelock=0;
-    };
+    }
   }
 
 
@@ -3382,38 +3355,45 @@ void draw() {
           ENEMY(0.07, 0.001, 0, 0.002, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.001, 0.004, 0.004, 0.004, 0.004, 0.007, 0.001, 0.002, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0.003, 0.0009, 0.001);
         }
       }
-      boolean onButton=false;
       if(skillButton){
         keyPressed=false;
-        key=(char)-1;
+        skillButton=false;
+        key=0;
       }
+      onButton=false;
       textAlign(CENTER);
       textSize(20);
-      fill(100,100);
       stroke(0,255,0);
-      rect(20,height-220,40,40);
-      fill(200);
-      text("A",20,height-210);
-      if(0<mouseX&&mouseX<40&&height-240<mouseY&&mouseY<height-200){
-        onButton=true;
-        if(!pPress&&mousePress){
-          keyPressed=true;
-          skillButton=true;
-          key='a';
+      for(int i=0;i<7;i++){
+        String t="";
+        switch(i){
+          case 0:t="A";break;
+          case 1:t="S";break;
+          case 2:t="C";break;
+          case 3:t="G";break;
+          case 4:t="N";if(Charpter<15)continue;break;
+          case 5:t="H";if(Charpter<11)continue;break;
+          case 6:t="J";if(Charpter<2)continue;break;
         }
-      }
-      if(Charpter>=15){
         fill(100,100);
-        stroke(0,255,0);
-        rect(20,height-280,40,40);
+        rect(20,height-220-60*i,40,40);
         fill(200);
-        text("N",20,height-270);
-        if(0<mouseX&&mouseX<40&&height-300<mouseY&&mouseY<height-260){
+        text(t,20,height-210-60*i);
+        if(0<mouseX&&mouseX<40&&height-240-i*60<mouseY&&mouseY<height-200-i*60){
           onButton=true;
-          if(!pPress&&mousePress){
-            keyPressed=true;
-            skillButton=true;
-            key='n';
+          if(i==2||i==3){
+            if(mousePressed){
+              keyPressed=true;
+              skillButton=true;
+              key=skill[i];
+            }
+          }else{
+            if(!pPress&&mousePress){
+              keyPress=true;
+              keyPressed=true;
+              skillButton=true;
+              key=skill[i];
+            }
           }
         }
       }
@@ -3543,7 +3523,7 @@ void draw() {
           Charpter=Charpter+1;
           a[0]=a[0]+1;
           a[1]=0;
-        };
+        }
       }
       if (Time>=Gt+7) {
         data_save(0);
@@ -3888,6 +3868,10 @@ void draw() {
           cheetAA=10;
           Enerugy=100;
         }
+        if (keyPress&&scene>=3&&menu==0&&key==skill[6]&&JT<=30&&JCT>=600) {
+          JUST=true;
+          JCT=0;
+        }
         if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=400&&LEVEL<30&&!VSCR||CC<=600&&CC>0&&LEVEL<30&&!VSCR) {
           Pup=true;
           AA=3;
@@ -3895,24 +3879,31 @@ void draw() {
           if (CC==1)SP=SP-400;
           Ene=2;
           PUP();
-        };
+        }
         if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=800&&LEVEL>=30&&!VSCR||CC<=600&&CC>0&&LEVEL>=30&&!VSCR) {
           Pup2=true;
           AA=6;
           BB=1;
           PUP();
-        };
+        }
         if (CC>600&&CC<=1200) {
           PUP();
         }
-        if (keyPressed&&(key==skill[1])&&SP>=640&&Balia2==false&&!VSCR) {
-          Balia2=true;
-          AA=1;
-          Ene=2;
-        }
-        if (keyPressed&&(key==skill[1])&&Balia&&!VSCR) {
-          Balia2=false;
-          Ene=1;
+        if (keyPress&&(key==skill[1])&&!VSCR) {
+          Balia=!Balia;
+          if(Balia&&SP>=300){
+            AA=1;
+            BB=2;
+            CC=0;
+            SP=SP-300;
+            Ene=2;
+          }else if(Balia){
+            Balia=false;
+          }else{
+            AA=0;
+            BB=0;
+            Ene=1;
+          }
         }
         if (Balia) {
           stroke(0, 240, 255, Vol2);
@@ -3923,10 +3914,9 @@ void draw() {
           SP=SP-1;
           Cc=Cc+1;
           Ene=2;
-        };
+        }
         if (DD>=G)DD=int(G);
         if (DD<=0||SP<=1) {
-          Balia2=false;
           Balia=false;
           Ene=1;
           AA=0;
@@ -5076,6 +5066,7 @@ void draw() {
     }
   pPress=mousePress;
   mousePress=false;
+  keyPress=false;
   }
 
   class Myself {
@@ -5206,18 +5197,7 @@ void draw() {
         if (!CP&&charge>=360&&timeC+2<=Time&&Enerugy>=1) {
           charge=0;
         }
-        if (mousePressed && coolingTime >= 10&&Enerugy>=1&&mouseButton==LEFT) {
-          Enerugy=Enerugy-Ene;
-          Bullet_type=0;
-          myBullets.add(new Bullet());
-          if (Cre) {
-            coolingTime=-60;
-            Cre=false;
-          } else {
-            coolingTime = 3+AA+cheetAA+AA2;
-          }
-        }
-        if (keyCode==ALT&&coolingTime >= 10&&Enerugy>=1) {
+        if (mousePressed&&mouseButton==LEFT&&keyPressed&&keyCode==SHIFT&&coolingTime >= 10&&Enerugy>=1) {
           Enerugy=Enerugy-Ene*3;
           Bullet_type=1;
           myBullets.add(new Bullet());
@@ -5230,6 +5210,17 @@ void draw() {
             Cre=false;
           } else {
             coolingTime = (3+AA+cheetAA+AA2)-10;
+          }
+        }
+        if (mousePressed && coolingTime >= 10&&Enerugy>=1&&mouseButton==LEFT&&!onButton) {
+          Enerugy=Enerugy-Ene;
+          Bullet_type=0;
+          myBullets.add(new Bullet());
+          if (Cre) {
+            coolingTime=-60;
+            Cre=false;
+          } else {
+            coolingTime = 3+AA+cheetAA+AA2;
           }
         }
         if(keyPressed&&key==skill[3]){

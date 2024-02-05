@@ -47,7 +47,7 @@ Consumer<Float> summon_Lost_Signal=new Consumer<Float>(){
           },3,new Color(255,128,0,150)));
         }else if(f>=7){
           getGameSystem().ui.components.remove(getGameSystem().ui.components.size()-1);
-          getGameSystem().entities.add(new Lost_Signal(getGameSystem().nextEntity).setPosition(new PVector(width*0.5,100)));
+          getGameSystem().nextEntity.add(new Lost_Signal(getGameSystem().nextEntity).setPosition(new PVector(width*0.5,100)));
           getGameSystem().getPlayer().setPlayerInput(true);
         }
       }

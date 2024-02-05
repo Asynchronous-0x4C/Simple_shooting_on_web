@@ -1,7 +1,10 @@
 let ref_applet;
 let initialized=false;
 let apple=false;
-let vibrate=true;let a;
+let vibrate=true;
+
+const workers=[];
+let results=0;
 
 function setReference(s){
   ref_applet=s;
@@ -11,7 +14,14 @@ function setReference(s){
      agent.indexOf("iphone") != -1 ||
      agent.indexOf("ipod") != -1){
     apple=true;
-  }a=agent;
+  }
+  for(let i=0;i<4;i++){
+    const w=new Worker("js/worker.js");
+    w.addEventListener('message', (e)=>{
+      results++;console.log("end");
+    });
+    workers.push(w);
+  }
 }
 
 function loadJSONObject(path){
@@ -231,4 +241,45 @@ window.addEventListener("load",()=>{
       initialized=true;
     }
   });
+  document.getElementById("app").addEventListener("mousedown",(el,ev)=>{
+    ref_applet.JSMousePressed();
+  });
 });
+
+function startEntityProcess(s){
+  const collision=s.gameState=="shooting";
+  // const size=s.entities.size()/4.0;
+  // for(let i=0;i<workers.length;i++){console.log(s.entities);
+  //   workers[i].postMessage(JSON.parse(JSON.stringify({"s":Math.round(size*i),"e":Math.round(size*(i+1)),"c":collision,"src":s.entities})));
+  // }
+  for(let n=0;n<s.entities.size();n++){
+    const e=s.entities.get(n);
+    e.update();
+    if(!e.isDead){
+      if(collision){
+        for(let i=0;i<s.nextEntity.size();i++){
+          const _e=s.nextEntity.get(i);
+          if(e===_e||((_e instanceof ref_applet.Enemy)&&(e instanceof ref_applet.Enemy))){
+            continue;
+          }else if(ref_applet.colliderCollision(e.collider,_e.collider)){
+            e.Collision(_e);
+            _e.Collision(e);
+          }
+        }
+      }
+      s.nextEntity.add(e);
+    }
+  }
+}
+
+function waitEntityProcess(s){
+  if(s.pause)return;
+  // while(results<4){console.log("wait",results);
+  // }
+  // for(let e of s.entities){
+  //   if(!e.isDead)s.nextEntity.add(e);
+  // }
+  s.entities.clear();
+  s.entities.addAll(s.nextEntity);
+  s.nextEntity.clear();
+}

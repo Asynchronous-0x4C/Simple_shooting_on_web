@@ -17,6 +17,7 @@ Strategy currentStrategy;
 GameSystem gameSystem;
 boolean strategy_changed=false;
 
+PVector mouse=new PVector(0,0);
 boolean mousePress=false;
 boolean mouseHover=false;
 
@@ -27,12 +28,16 @@ int saveNumber;
 
 long pTime;
 float fps=60;
+float gameMag=1;
 float fpsMag=1;
+
+float fgMag=1;
 boolean show_fps=false;
 
 int stageNumber=0;
 
 JSONObject stageData;
+JSONObject[] stageList=new JSONObject[5];
 String loadedPath="";
 String endState="";
 int endScore=0;
@@ -48,6 +53,7 @@ int lightingUpdateCount=0;
 
 final int MAX_CHAPTER=6;
 
+int cores=4;
 float scaling=1;
 
 void settings(){
@@ -69,6 +75,8 @@ void setup(){
 }
 
 void draw(){
+  mouse.set(mouseX,mouseY);
+  mouse.div(scaling);
   mouseHover=false;
   strategies.get("common").update();
   currentStrategy.update();
@@ -141,11 +149,13 @@ void mousePressed(){
 }
 
 void mouseMoved(){
-  setMousePosition();
+  //setMousePosition();
 }
 
 void mouseDragged(){
-  setMousePosition();
+}
+
+void JSMousePressed(){
 }
 
 void windowResized(){
@@ -265,7 +275,7 @@ void loadSound(){
   readSound("exit","./data/sound/Exit.wav");
   readSound("hit","./data/sound/Impact.wav");
   readSound("defeat","./data/sound/Defeat.wav");
-  readSound("enter","./data/sound/Enter.wav");
+  readSound("enter","./data/sound/Enter.mp3");
   readSound("shot","./data/sound/Shot.wav");
   readSound("bullet_cancel","./data/sound/BulletCancel.wav");
   readSound("damaged","./data/sound/Damaged.wav");

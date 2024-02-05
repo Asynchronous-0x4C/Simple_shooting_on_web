@@ -7,10 +7,11 @@ abstract class Particle extends Entity{
   
   void update(){
     movement.update();
-    position.add(movement.velocity.x*fpsMag,movement.velocity.y*fpsMag);
-    angle+=radians(movement.velocity.magSq())*fpsMag;
-    life-=fpsMag;
+    position.add(movement.velocity.x*fgMag,movement.velocity.y*fgMag);
+    angle+=radians(movement.velocity.magSq())*fgMag;
+    life-=fgMag;
     material.setAlbedo(material.albedo.setAlpha(200*(life/maxLife)));
+    currentFrame=frameCount;
   }
   
   void display(){
@@ -104,6 +105,7 @@ class MenuParticleGenerator extends ParticleGenerator{
       if(p.life>0)next.add(p);
     }
     particle=next;
+    currentFrame=frameCount;
   }
   
   void display(){
@@ -138,6 +140,7 @@ class EntityParticleGenerator extends ParticleGenerator{
     }
     particle=next;
     if(particle.isEmpty())isDead=true;
+    currentFrame=frameCount;
   }
   
   void display(){
@@ -173,6 +176,7 @@ class BossParticleGenerator extends ParticleGenerator{
     }
     particle=next;
     if(particle.isEmpty())isDead=true;
+    currentFrame=frameCount;
   }
   
   void display(){

@@ -1,5 +1,6 @@
 abstract class Strategy{
   ComponentManager UImanager=new ComponentManager();
+  DialogManager dialogManager=new DialogManager();
   String child;
   String parent;
   String name;
@@ -145,7 +146,11 @@ class StartStrategy extends Strategy{
   void update(){
     particleGen.generate(0.5);
     particleGen.update();
-    UImanager.handleUpdate();
+    if(dialogManager.isEmpty()){
+      UImanager.handleUpdate();
+    }else{
+      dialogManager.update();
+    }
   }
   
   void display(){
@@ -200,7 +205,8 @@ class MenuStrategy extends Strategy{
       .setColor(new Color(140,100,100,200))
     );
     for(int i=0;i<5;i++){
-      if(i+(stage_stride*5)>=currentData.getInt("progress"))break;
+      int index=i+(stage_stride*5);
+      if(index>=currentData.getInt("progress"))break;
       UImanager.add(
         new Button(100,120+i*60,250,30).setEvent(new ButtonEvent(){
           void select(Button b){
@@ -208,7 +214,7 @@ class MenuStrategy extends Strategy{
             strategies.get("stage").init();
             resetLight();
             ((Button)startManager.components.get(0)).setEnable(true);
-            missionText.setText("  "+translation("mission")+"(Stage"+stageNumber+")");
+            missionText.setStaticText("  "+translation("mission")+"(Stage"+stageNumber+")");
             JSONArray missions=stageData.getJSONArray("mission");
             for(int m_index=0;m_index<missions.size();m_index++){
               JSONObject o=missions.getJSONObject(m_index);
@@ -218,6 +224,7 @@ class MenuStrategy extends Strategy{
           }
         }).setLabel("stage "+(i+1+(stage_stride*5)))
       );
+      stageList[i]=loadJSONObject("./data/stage/Stage"+(index+1)+".json");
     }
     if(stage_stride>0){
       UImanager.add(
@@ -323,6 +330,24 @@ class ShopStrategy extends Strategy{
   void init(){
     UImanager.clearAll();
     UImanager.add(
+      new FlowTextBox(new PVector(25,10),new PVector(250,30),20,new Color(0,0,0,100),new Color(230,230,230,200))
+      .setText(new Supplier<String>(){
+        String get(){
+          return "Fusion Core: "+currentData.getInt("Fusion Core");
+        }
+      })
+      .setAlign(CENTER)
+    );
+    UImanager.add(
+      new FlowTextBox(new PVector(300,10),new PVector(250,30),20,new Color(0,0,0,100),new Color(230,230,230,200))
+      .setText(new Supplier<String>(){
+        String get(){
+          return "Meta Material: "+currentData.getInt("Meta Material");
+        }
+      })
+      .setAlign(CENTER)
+    );
+    UImanager.add(
       new Button(width*0.5-125,height-50,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
           setNextStrategy(strategies.get("menu"));
@@ -350,22 +375,19 @@ class StageStrategy extends Strategy{
   GameSystem system;
   ComponentManager pauseManager=new ComponentManager();
   
-  boolean pause=false;
-  
   StageStrategy(){
     super("menu","stage");
   }
   
   void init(){
-    pause=false;
     system=new GameSystem();
     UImanager.clearAll();
     pauseManager.clearAll();
     pauseManager.add(new Filter(new Color(0,0,0,150)));
-    pauseManager.add(new FlowText("| Pause |",new PVector(width*0.5,100),100,3,new Color(200,200,200,200)));
+    pauseManager.add(new FlowText("Pause",new PVector(width*0.5,100),100,3,new Color(200,200,200,200)));
     pauseManager.add(new Button(width*0.5-125,height*0.5-50,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
-          pause=false;
+          system.pause=false;
           pauseManager.setActive(false);
         }
       }).setLabel("Continue")
@@ -382,7 +404,7 @@ class StageStrategy extends Strategy{
     );
     pauseManager.add(new Button(width*0.5-125,height*0.5+50,250,30).setEvent(new ButtonEvent(){
         void select(Button b){
-          pause=false;
+          system.pause=false;
           pauseManager.setActive(false);
           system.exit();
         }
@@ -393,21 +415,25 @@ class StageStrategy extends Strategy{
     UImanager.add(pauseManager.setActive(false));
     UImanager.add(new Button(width-50,50,30,30).setEvent(new ButtonEvent(){
         void select(Button b){
-          pause=!pause;
-          pauseManager.setActive(pause);
+          system.pause=!system.pause;
+          pauseManager.setActive(system.pause);
         }
       }).setLabel("×")
       .setHoverColor(new Color(20,20,80,120))
       .setColor(new Color(75,75,140,150))
     );
     gameSystem=system;
-    system.loadStage("./data/stage/Stage"+stageNumber+".json");
+    if(stageList[(stageNumber-1)%5].getInt("index")!=stageNumber){
+      system.loadStage("./data/stage/Stage"+stageNumber+".json");
+    }else{
+      system.loadStage((stageNumber-1)%5);
+    }
     setLight(system.stage.stage_time);
   }
   
   void update(){
     UImanager.update();
-    if(!pause)system.update();
+    system.update();
   }
   
   void display(){

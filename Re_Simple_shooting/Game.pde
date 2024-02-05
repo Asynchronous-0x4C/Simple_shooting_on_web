@@ -29,6 +29,9 @@ abstract class Entity{
   mutFloat Attack=new mutFloat(1);
   mutFloat Defence=new mutFloat(0);
   
+  float moveRange=0.3;
+  
+  int currentFrame=0;
   boolean isDead=false;
   
   Entity setPosition(PVector position){
@@ -47,7 +50,7 @@ abstract class Entity{
   }
   
   Entity setLimitSpeed(float s){
-    movement.setLimitSpeed(s);
+    movement.setLimitSpeed(s+random(-moveRange,moveRange)*0.5);
     return this;
   }
   
@@ -91,7 +94,7 @@ abstract class Enemy extends Agent{
     material=new Material(bodyColor,new Color(0));
     this.size=size;
     collider=new Rectangle(position,new PVector(size,size),0);
-    movement=new Movement(new PVector(0,0),new PVector(0,0.1),3);
+    movement=new Movement(new PVector(0,0),new PVector(0,0.1),3+random(-moveRange,moveRange)*0.5);
   }
   
   void setMass(float m){
@@ -101,9 +104,10 @@ abstract class Enemy extends Agent{
   void update(){
     movement.update();
     PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
-    vel.mult(fpsMag);
+    vel.mult(fgMag);
     position.add(vel);
     if(height<position.y-size*0.5)isDead=true;
+    currentFrame=frameCount;
   }
   
   void display(){
@@ -161,7 +165,7 @@ abstract class Enemy extends Agent{
       new Supplier<PVector>(){
         PVector get(){
           PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
-          vel.mult(fpsMag);
+          vel.mult(fgMag);
           float speed=random(-1.5,1.5);
           float angle=random(0,TWO_PI);
           return new PVector(cos(angle)*speed+vel.x,sin(angle)*speed+vel.y);
@@ -205,9 +209,10 @@ class Bullet extends Entity{
   void update(){
     movement.update();
     PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
-    vel.mult(fpsMag);
+    vel.mult(fgMag);
     position.add(vel);
     if(position.x-movement.velocity.x<0||width<position.x+movement.velocity.x||position.y-movement.velocity.y<0||height<position.y+movement.velocity.y)isDead=true;
+    currentFrame=frameCount;
   }
   
   void display(){
@@ -270,7 +275,7 @@ class Bullet extends Entity{
       new Supplier<PVector>(){
         PVector get(){
           PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
-          vel.mult(fpsMag);
+          vel.mult(fgMag);
           float speed=random(-1.5,1.5);
           float angle=random(0,TWO_PI);
           return new PVector(cos(angle)*speed+vel.x*0.25,sin(angle)*speed+vel.y*0.25);
@@ -315,19 +320,21 @@ class Player extends Agent{
   void update(){
     if(player_input){
       if(mousePressed&&!mouseHover)shot();
-      position.x+=(targetPoint.x-position.x)*min(1f,0.3*fpsMag);
+      position.x+=(targetPoint.x-position.x)*min(1f,0.3*fgMag);
     }
-    status.get("cooltime").mut_float-=fpsMag;
+    status.get("cooltime").mut_float-=fgMag;
     if(status.get("HP").mut_float<=0){
       isDead=true;
       deadEvent();
     }
+    currentFrame=frameCount;
   }
   
   void shot(){
     if(status.get("cooltime").mut_float<=0){
       status.get("cooltime").mut_float=status.get("cooltime").getDefault();
-      entityList.add(new Bullet(new Color(0,0,255,150),new PVector(0,-15),this));
+      float r=HALF_PI+random(-HALF_PI*0.05,HALF_PI*0.05);
+      entityList.add(new Bullet(new Color(0,0,255,150),new PVector(-15*cos(r),-15*sin(r)),this));
       sounds.get("shot").play();
     }
   }
@@ -441,6 +448,17 @@ class Stage{
     if(!loadedPath.equals(path)){
       stageData=loadJSONObject(path);
     }
+    loadStageData();
+    loadedPath=path;
+  }
+  
+  void loadStage(int index){
+    factory=new InstanceFactory(ref_applet);
+    stageData=stageList[index];
+    loadStageData();
+  }
+  
+  void loadStageData(){
     stage_time=stageData.getString("stage_time");
     JSONArray arr=stageData.getJSONArray("main");
     type=stageData.getString("type");
@@ -453,7 +471,6 @@ class Stage{
       JSONObject obj=missions.getJSONObject(i);
       this.missions.put(obj.getString("attribute"),new Mission(obj.getString("name")));
     }
-    loadedPath=path;
   }
   
   void loadNormal(JSONArray arr){
@@ -526,7 +543,7 @@ class Stage{
         float freq=enemyMap.get(enemyIndex).get(s);
         if(sum<rand&&rand<=sum+freq){
           Entity e=factory.getInstance(s,system.nextEntity);
-          system.entities.add(e.setPosition(new PVector(random(e.size*0.5,width-e.size*0.5),-e.size*2.0)));
+          system.nextEntity.add(e.setPosition(new PVector(random(e.size*0.5,width-e.size*0.5),-e.size*2.0)));
           break;
         }
         sum+=freq;
@@ -620,10 +637,10 @@ class GameSystem{
   int score=0;
   
   String gameState="";
-  float gameMag=1;
   float resultTime=0;
   
   boolean boss_dead=false;
+  boolean pause=false;
   
   GameSystem(){
     init();
@@ -646,29 +663,26 @@ class GameSystem{
   void loadStage(String path){
     stage.loadStage(path);
     stage.init();
+    gameMag=1;
+  }
+  
+  void loadStage(int index){
+    stage.loadStage(index);
+    stage.init();
+    gameMag=1;
   }
   
   void update(){
-    float tempMag=fpsMag;
+    if(pause)return;
     if(gameState.equals("clear")||gameState.equals("fail")){
       resultTime+=fpsMag;
       gameMag*=0.9;
-      fpsMag*=gameMag;
     }
+    fgMag=gameMag*fpsMag;
+    startEntityProcess(this);
     stage.update();
     ui.update();
-    for(Entity e:entities){
-      e.update();
-      if(!e.isDead)nextEntity.add(e);
-    }
-    entities.clear();
-    entities.addAll(nextEntity);
-    nextEntity.clear();
-    if(!mouseHover)player.setTarget(new PVector(mouseX,mouseY));
-    if(gameState.equals("shooting")){
-      collision();
-    }
-    fpsMag=tempMag;
+    if(!mouseHover)player.setTarget(new PVector(mouse.x,mouse.y));
     if(player.isDead){
       gameState="fail";
     }else if(stage.type.equals("boss")){
@@ -695,10 +709,29 @@ class GameSystem{
       if(stage.testMission("must")){
         currentData.setInt("progress",max(currentData.getInt("progress"),min(stageNumber+1,MAX_CHAPTER)));
       }
-      if(!save_mission.getBoolean("must",false))save_mission.setBoolean("must",stage.testMission("must"));
-      if(!save_mission.getBoolean("bonus",false))save_mission.setBoolean("bonus",stage.testMission("bonus"));
-      if(!save_mission.getBoolean("challenge",false))save_mission.setBoolean("challenge",stage.testMission("challenge"));
-      if(!save_mission.getBoolean("hard_challenge",false))save_mission.setBoolean("hard_challenge",stage.testMission("hard_challenge"));
+      boolean clear=stage.testMission("must");
+      if(clear&&!save_mission.getBoolean("must",false)){
+        save_mission.setBoolean("must",true);
+        if(stage.type.equals("boss")){
+          currentData.setInt("Meta Material",currentData.getInt("Meta Material")+1);
+        }
+        currentData.setInt("Fusion Core",currentData.getInt("Fusion Core")+1);
+      }
+      clear=stage.testMission("bonus");
+      if(clear&&!save_mission.getBoolean("bonus",false)){
+        save_mission.setBoolean("bonus",true);
+        currentData.setInt("Fusion Core",currentData.getInt("Fusion Core")+1);
+      }
+      clear=stage.testMission("challenge");
+      if(clear&&!save_mission.getBoolean("challenge",false)){
+        save_mission.setBoolean("challenge",true);
+        currentData.setInt("Fusion Core",currentData.getInt("Fusion Core")+1);
+      }
+      clear=stage.testMission("hard_challenge");
+      if(clear&&!save_mission.getBoolean("hard_challenge",false)){
+        save_mission.setBoolean("hard_challenge",true);
+        currentData.setInt("Fusion Core",currentData.getInt("Fusion Core")+1);
+      }
     }
     JSONObject save_date=currentData.getJSONObject("date");
     save_date.setInt("year",year());
@@ -707,22 +740,6 @@ class GameSystem{
     save_date.setInt("hour",hour());
     save_date.setInt("minute",minute());
     saveJSONObject(saveData,"./data/save/save.json");
-  }
-  
-  void collision(){
-    for(int i=0;i<entities.size();i++){
-      Entity e=entities.get(i);
-      for(int j=i;j<entities.size();j++){
-        Entity _e=entities.get(j);
-        if(e==_e||(e instanceof Enemy)){
-          continue;
-        }
-        if(colliderCollision(e.collider,_e.collider)){
-          e.Collision(_e);
-          _e.Collision(e);
-        }
-      }
-    }
   }
   
   void display(){
@@ -747,6 +764,7 @@ class GameSystem{
   }
   
   void displayShadow(){
+    waitEntityProcess(this);
     for(Entity e:entities)e.displayShadow();
     ui.displayShadow();
   }

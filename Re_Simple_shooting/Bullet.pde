@@ -8,11 +8,12 @@ class ExplosionBullet extends Bullet{
   }
   
   void update(){
-    size+=movement.velocity.x*fpsMag;
+    size+=movement.velocity.x*fgMag;
     collider.size.set(size,size);
-    duration-=fpsMag;
-    material.setAlbedo(new Color(255,64,0,150*easeOutExpo(duration/30)));
+    duration-=fgMag;
+    material.setAlbedo(new Color(255,64,0,150*sin(duration/30)));
     if(duration<=0)isDead=true;
+    currentFrame=frameCount;
   }
   
   void display(){

@@ -92,10 +92,7 @@ boolean CP=false;
 boolean Kill=false;
 int CI[];
 void keyPressed() {
-  if (scene>=3&&menu==0&&key==skill[6]&&JT<=30&&JCT>=600) {
-    JUST=true;
-    JCT=0;
-  }
+  keyPress=true;
   if (keyCode==ENTER&&screenshot) {
     shot=shot+1;
     Savescreen="Shooting_screen"+year()+month()+day()+hour()+minute()+second()+millis();
@@ -106,7 +103,7 @@ void keyPressed() {
     screen=true;
   }
   if (scene>=3&&menu==0||scene>=3&&menu==10||scene>=3&&menu==-10||scene>=3&&menu==-100) {
-    if (key==skill[5])LOCK=!LOCK;
+    if (key==skill[5]&&Charpter>10)LOCK=!LOCK;
   }
   if (menu==-7) {
     CHEET_W();
@@ -163,18 +160,6 @@ void mouseDragged() {
   }
 }
 void keyReleased() {
-  if (Balia2) {
-    AA=1;
-    BB=2;
-    CC=0;
-    SP=SP-640;
-    Balia=true;
-  }
-  if (Balia2==false) {
-    AA=0;
-    BB=0;
-    Balia=false;
-  }
   if (AA==6) {
     SP=SP-800;
     Ene=6;
@@ -351,7 +336,7 @@ void PUP() {
   if (CC>=600) {
     AA=-4;
     Ene=1;
-  };
+  }
   if (CC>=600) {
     Enerugy=Enerugy+0.15;
     stroke(240, 0, 10, Vol2);
@@ -359,14 +344,14 @@ void PUP() {
     rect(width/2+50, height-10, CC/6-100, 10);
     textSize(17);
     text("cooldown", width/2-80, height-5);
-  };
+  }
   if (CC>=1200||Time>=Gt) {
     BB=0;
     CC=0;
     AA=0;
     Pup=false;
     Pup2=false;
-  };
+  }
   if (CC>=1200&&a[2]==1) {
     a[2]=0;
     DD=-1;
@@ -423,7 +408,7 @@ void mousePressed() {
 class GravityBall {
   PVector pos;
   int age=0;
-  int stopage=300;
+  int stopage=floor(random(150,300));
   int maxage=1200;
   float r=300;
 
@@ -431,7 +416,7 @@ class GravityBall {
   }
   
   GravityBall(Myself Me) {
-    pos=Me.loc.copy();
+    pos=new PVector(Me.loc.x,Me.loc.y);
   }
   
   void setpos(PVector p){

@@ -4,7 +4,8 @@ abstract class ShotEnemy extends Enemy{
       return true;
     }
   };
-  float maxCooltime=30f;
+  float cooltimeRange=3.0;
+  float maxCooltime=30f+random(-cooltimeRange,cooltimeRange)*0.5;
   float cooltime=0f;
   float shotRange=200;
   
@@ -13,7 +14,7 @@ abstract class ShotEnemy extends Enemy{
   }
   
   ShotEnemy setCooltime(float f){
-    this.maxCooltime=f;
+    this.maxCooltime=f+random(-cooltimeRange,cooltimeRange)*0.5;
     return this;
   }
   

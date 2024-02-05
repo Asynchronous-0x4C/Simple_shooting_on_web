@@ -157,3 +157,7 @@ class Sound{
 function getNanoSeconds(){
   return performance.now()*1000000.0;
 }
+
+function getChar(s){
+  return s.charCodeAt(0);
+}

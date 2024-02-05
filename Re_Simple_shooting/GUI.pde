@@ -42,7 +42,7 @@ abstract class GameComponent{
   }
   
   boolean isHover(){
-    return (position.x<mouseX&&mouseX<position.x+size.x&&position.y<mouseY&&mouseY<position.y+size.y);
+    return (position.x<mouse.x&&mouse.x<position.x+size.x&&position.y<mouse.y&&mouse.y<position.y+size.y);
   }
   
   GameComponent setEmission(Color c){
@@ -255,8 +255,9 @@ class ScrollBar extends GameComponent{
 }
 
 class FlowTextBox extends GameComponent{
-  String text_content="";
+  Supplier<String> text_content=new Supplier<String>(){String get(){return "";}};
   int text_size=15;
+  int align=LEFT;
   
   Material textMaterial;
   
@@ -269,8 +270,18 @@ class FlowTextBox extends GameComponent{
     this.font=createFont(font_name,text_size);
   }
   
-  FlowTextBox setText(String t){
+  FlowTextBox setText(Supplier<String> t){
     text_content=t;
+    return this;
+  }
+  
+  FlowTextBox setStaticText(String t){
+    text_content=new Supplier<String>(){String get(){return t;}};
+    return this;
+  }
+  
+  FlowTextBox setAlign(int a){
+    align=a;
     return this;
   }
   
@@ -282,10 +293,10 @@ class FlowTextBox extends GameComponent{
     rectMode(CORNER);
     rect(position.x,position.y,size.x,size.y);
     fill_by_color(textMaterial.getSurface());
-    textAlign(LEFT);
+    textAlign(align);
     textSize(text_size);
     textFont(font);
-    text(text_content,position.x,position.y,size.x,size.y);
+    text(text_content.get(),position.x,position.y,size.x,size.y);
   }
   
   void displayShadow(){
@@ -293,10 +304,10 @@ class FlowTextBox extends GameComponent{
     rectMode(CORNER);
     rect(position.x+material.z_height,position.y+material.z_height,size.x,size.y);
     fill_by_color(textMaterial.getShadow());
-    textAlign(LEFT);
+    textAlign(align);
     textSize(text_size);
     textFont(font);
-    text(text_content,position.x+material.z_height,position.y+material.z_height,size.x,size.y);
+    text(text_content.get(),position.x+material.z_height,position.y+material.z_height,size.x,size.y);
   }
 }
 
@@ -550,4 +561,54 @@ class InputHandler extends GameComponent{
   void display(){}
   
   void displayShadow(){}
+}
+
+class DialogManager extends GameComponent{
+  ArrayList<Dialog> dialogs=new ArrayList<Dialog>();
+  
+  void addDialog(Dialog d){
+    dialogs.add(d);
+  }
+  
+  boolean isEmpty(){
+    return dialogs.isEmpty();
+  }
+  
+  void update(){
+    ArrayList<Dialog> next=new ArrayList<Dialog>();//TODO:add index data for each dialog
+    for(Dialog d:dialogs){
+      d.update();
+      if(d.duration>0){
+        next.add(d);
+      }
+    }
+    dialogs=next;
+  }
+  
+  void display(){
+    for(Dialog d:dialogs){
+      d.display();
+    }
+  }
+  
+  void displayShadow(){}
+}
+
+abstract class Dialog extends GameComponent{
+  float duration=60;
+  String title;
+  
+  int index=0;
+  
+  void setTitle(String title){
+    this.title=title;
+  }
+  
+  void setDuration(float duration){
+    this.duration=duration;
+  }
+  
+  void update(){
+    duration-=fpsMag;
+  }
 }
