@@ -125,6 +125,7 @@ class Lost_Signal extends Boss{
     setLimitSpeed(0);
     setShotRange(3000);
     setCooltime(5);
+    setMass(10e10);
   }
   
   void shot(){

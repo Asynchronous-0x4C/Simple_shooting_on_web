@@ -160,3 +160,7 @@ class EntityProcess implements Runnable{
     return this;
   }
 }
+
+boolean isApple(){
+  return false;
+}

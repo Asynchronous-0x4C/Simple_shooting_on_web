@@ -50,7 +50,14 @@ abstract class Entity{
   }
   
   Entity setLimitSpeed(float s){
-    movement.setLimitSpeed(s+random(-moveRange,moveRange)*0.5);
+    movement.setLimitSpeed(s+random(-moveRange,moveRange)*0.5*min(1,s));
+    return this;
+  }
+  
+  Entity setAccel(PVector a){
+    float r=random(-moveRange,moveRange)*0.5*min(1,a.mag());
+    a.add(r,r);
+    movement.setAccel(a);
     return this;
   }
   

@@ -196,7 +196,7 @@ class MenuStrategy extends Strategy{
       .setColor(new Color(100,140,140,200))
     );
     UImanager.add(
-      new Button(40,20,30,30).setEvent(new ButtonEvent(){
+      new Button(40,isApple()?70:20,30,30).setEvent(new ButtonEvent(){
         void select(Button b){
           setNextStrategy(strategies.get("start"));
         }

@@ -59,6 +59,10 @@ function isWeb(){
   return true;
 }
 
+function isApple(){
+  return apple;
+}
+
 class JSONObject{
 
   constructor(json){

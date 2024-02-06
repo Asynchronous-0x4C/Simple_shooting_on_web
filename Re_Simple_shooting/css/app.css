@@ -57,7 +57,7 @@ span{
 
 #re-fullScreen{
   position: absolute;
-  top: 70px;
+  top: 120px;
   left: 10px;
   width: 75px;
   height: 25px;
@@ -73,7 +73,7 @@ span{
 
 #re-reload{
   position: absolute;
-  top: 110px;
+  top: 160px;
   left: 10px;
   width: 75px;
   height: 25px;

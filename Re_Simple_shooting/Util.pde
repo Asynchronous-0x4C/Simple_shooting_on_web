@@ -18,6 +18,10 @@ class Movement{
     if(limit>=0)velocity.limit(limit);
   }
   
+  void setAccel(PVector a){
+    accel=a;
+  }
+  
   void setVelocity(PVector v){
     velocity=v;
   }
