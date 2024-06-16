@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
-<script Language="JavaScript">
-function hideScrollBar()
-{
-  document.body.style.overflow = "hidden";
-}
-</script>
 <head>
   <link rel="icon" sizes="16x16" href="favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="manifest" href="./manifest.json">
-  <script>
+  <script type="text/javascript">
     if(navigator.serviceWorker){
       navigator.serviceWorker.register('./js/sw.js');
+    }
+    function hideScrollBar(){
+      document.body.style.overflow = "hidden";
     }
   </script>
   <meta name="google-site-verification" content="wYEzmGGDFQV2liMM59lABdtS5muiqGE_r2Hs-MA-n5Y" />
@@ -26,7 +23,7 @@ function hideScrollBar()
   <link rel="stylesheet" href="css/app.css">
   <title>Simple_shooting</title>
   <script src="./js/wrapper.js"></script>
-  <script>
+  <script type="text/javascript">
     window.addEventListener("load",function(){
 			document.getElementById('fullScreen').addEventListener('click', function(){
 				document.body.requestFullscreen();
