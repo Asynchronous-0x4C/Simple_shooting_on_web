@@ -2,17 +2,17 @@ const CACHE_VERSION='ssc-v1';
 const DISP_VERSION='ssc-d-v1';
 
 const resources=[
-  '/index.html',
-  '/css/app.css',
-  '/js/processing.min.js',
-  '/js/wrapper.js',
-  '/data/Mouse2.0gen2.png',
-  '/data/Mouse2.0gen2x2.png',
-  '/data/NODATA.png'
+  './index.html',
+  './css/app.css',
+  './js/processing.min.js',
+  './js/wrapper.js',
+  './data/Mouse2.0gen2.png',
+  './data/Mouse2.0gen2x2.png',
+  './data/NODATA.png'
 ]
 
 for(let i=0;i<35;i++){
-  resources.push(`/data/ITEM${i}.png`);
+  resources.push(`./data/ITEM${i}.png`);
 }
 
 self.addEventListener('install',(e)=>{
