@@ -12,7 +12,7 @@ const resources=[
 ]
 
 for(let i=0;i<35;i++){
-  if(!(i==11||i==12||i==19||i==21||i==22))resources.push(`/data/ITEM${i}.png`);
+  resources.push(`/data/ITEM${i}.png`);
 }
 
 self.addEventListener('install',(e)=>{
