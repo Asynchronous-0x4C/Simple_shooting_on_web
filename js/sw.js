@@ -2,6 +2,7 @@ const CACHE_VERSION='ssc-v1';
 const DISP_VERSION='ssc-d-v1';
 
 const resources=[
+  '../',
   '../index.html',
   '../css/app.css',
   './processing.min.js',
