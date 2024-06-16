@@ -3,6 +3,7 @@ let initialized=false;
 let apple=false;
 let vibrate=true;
 
+const pointers=[...Array(10)];
 const workers=[];
 let results=0;
 
@@ -15,13 +16,13 @@ function setReference(s){
      agent.indexOf("ipod") != -1){
     apple=true;
   }
-  for(let i=0;i<4;i++){
-    const w=new Worker("js/worker.js");
-    w.addEventListener('message', (e)=>{
-      results++;console.log("end");
-    });
-    workers.push(w);
-  }
+  // for(let i=0;i<4;i++){
+  //   const w=new Worker("js/worker.js");
+  //   w.addEventListener('message', (e)=>{
+  //     results++;console.log("end");
+  //   });
+  //   workers.push(w);
+  // }
 }
 
 function loadJSONObject(path){
@@ -181,6 +182,10 @@ function initAudio(){
   
 }
 
+function getClassName(o){
+  return o.constructor.name;
+}
+
 class Sound{
 
   constructor(path){
@@ -195,6 +200,14 @@ class Sound{
     this.audio.currentTime = 0;
     this.audio.loop = false;
     this.audio.play();
+  }
+
+  setVolume(v){
+    this.audio.volume=v;
+  }
+
+  setMute(m){
+    this.audio.muted=m;
   }
 }
 
@@ -287,3 +300,18 @@ function waitEntityProcess(s){
   s.entities.addAll(s.nextEntity);
   s.nextEntity.clear();
 }
+
+addEventListener("pointerdown",e=>{
+  pointers[e.pointerId]={press:true,pressed:true,x:e.clientX,y:e.clientY};
+  console.log(e.pointerId);
+});
+
+addEventListener("pointermove",e=>{
+  pointers[e.pointerId]={press:false,pressed:true,x:e.clientX,y:e.clientY};
+  console.log(e.pointerId);
+});
+
+addEventListener("pointerup",e=>{
+  pointers[e.pointerId]={press:false,pressed:false,x:e.clientX,y:e.clientY};
+  console.log(e.pointerId);
+})

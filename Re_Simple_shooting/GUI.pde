@@ -233,6 +233,60 @@ class Button extends GameComponent{
   }
 }
 
+class DialogButton extends Button{
+  Color c;
+  Color foreground_c;
+  
+  Color text_c;
+  
+  DialogButton(float x,float y,float w,float h){
+    super(x,y,w,h);
+  }
+  
+  void update(){
+    if(!enable)return;
+    hover=isHover();
+    if(hover){
+      hoverTime+=fpsMag;
+      hoverTime=min(hoverTime,hoverMaxTime);
+      mouseHover=true;
+      if(mousePress){
+        event.select(this);
+        sounds.get("enter").play();
+      }
+    }else{
+      hoverTime=max(0,hoverTime-fpsMag*2);
+    }
+    float hover_alpha=ease(hoverTime/hoverMaxTime*5);
+    c.setAlpha(hover_alpha*255);
+    foreground_c=text_c.lerp(new Color(220),1-hover_alpha);
+  }
+  
+  void display(){
+    fill_by_color(c);
+    stroke(230);
+    rectMode(CORNER);
+    rect(position.x,position.y,size.x,size.y);
+    fill_by_color(foreground_c);
+    textFont(font);
+    textSize(size.y*0.75);
+    textAlign(CENTER);
+    text(label,position.x+size.x*0.5,position.y+size.y*0.77);
+  }
+  
+  void displayShadow(){}
+  
+  DialogButton setColor(Color c){
+    this.c=c;
+    return this;
+  }
+  
+  DialogButton setTextColor(Color c){
+    this.text_c=c;
+    return this;
+  }
+}
+
 class ScrollBar extends GameComponent{
   float maxLength;
   float displayLength;
@@ -296,7 +350,7 @@ class FlowTextBox extends GameComponent{
     textAlign(align);
     textSize(text_size);
     textFont(font);
-    text(text_content.get(),position.x,position.y,size.x,size.y);
+    text(text_content.get(),position.x,position.y+(isWeb()?text_size*0.27:0),size.x,size.y);
   }
   
   void displayShadow(){
@@ -307,7 +361,7 @@ class FlowTextBox extends GameComponent{
     textAlign(align);
     textSize(text_size);
     textFont(font);
-    text(text_content.get(),position.x+material.z_height,position.y+material.z_height,size.x,size.y);
+    text(text_content.get(),position.x+material.z_height,position.y+(isWeb()?text_size*0.27:0)+material.z_height,size.x,size.y);
   }
 }
 
@@ -321,7 +375,7 @@ class MissionTextBox extends FlowTextBox{
   MissionTextBox(PVector position,PVector size,int text_size,Color body,Color text){
     super(position,size,text_size,body,text);
     unachieved=new Material(new Color(255,0,0,150),new Color(0));
-    achieved=new Material(new Color(0,240,50,150),new Color(0));
+    achieved=new Material(new Color(0,255,128,150),new Color(0));
   }
   
   MissionTextBox setData(String name,String attr,boolean clear){
@@ -344,7 +398,7 @@ class MissionTextBox extends FlowTextBox{
       if(!missions.containsKey(s))continue;
       Mission m=missions.get(s);
       fill_by_color((m.clear?achieved:unachieved).getSurface());
-      text("  "+m.t_attribute+"\n  "+m.t_name,position.x,position.y+offset,size.x,size.y);
+      text("  "+m.t_attribute+"\n  "+m.t_name,position.x,position.y+text_size*0.27+offset,size.x,size.y);
       offset+=text_size*3;
     }
   }
@@ -359,7 +413,7 @@ class MissionTextBox extends FlowTextBox{
       if(!missions.containsKey(s))continue;
       Mission m=missions.get(s);
       fill_by_color((m.clear?achieved:unachieved).getShadow());
-      text("  "+m.t_attribute+"\n  "+m.t_name,position.x+material.z_height,position.y+offset+material.z_height,size.x,size.y);
+      text("  "+m.t_attribute+"\n  "+m.t_name,position.x+material.z_height,position.y+text_size*0.27+offset+material.z_height,size.x,size.y);
       offset+=text_size*3;
     }
   }
@@ -542,6 +596,46 @@ class Filter extends GameComponent{
   void displayShadow(){}
 }
 
+class GroupBorder extends GameComponent{
+  ArrayList<GameComponent> components=new ArrayList<GameComponent>();
+  
+  PVector mergin;
+  float border_width;
+  
+  GroupBorder(float mergin_x,float mergin_y,float border_width){
+    mergin=new PVector(mergin_x,mergin_y);
+    this.border_width=border_width;
+    position=new PVector();
+    size=new PVector();
+  }
+  
+  GroupBorder add(GameComponent c){
+    components.add(c);
+    position.set(min(position.x,c.position.x-mergin.x),min(position.y,c.position.x-mergin.y));
+    size.set(max(position.x+size.x,c.position.x+c.size.x+mergin.x),max(position.y+size.y,c.position.y+c.size.y+mergin.y));
+    size.sub(position);
+    return this;
+  }
+  
+  void update(){
+    
+  }
+  
+  void display(){
+    rectMode(CORNER);
+    noFill();
+    stroke_by_color(material.getSurface());
+    rect(position.x,position.y,size.x,size.y);
+  }
+  
+  void displayShadow(){
+    rectMode(CORNER);
+    noFill();
+    stroke_by_color(material.getShadow());
+    rect(position.x+3,position.y+3,size.x,size.y);
+  }
+}
+
 class InputHandler extends GameComponent{
   ArrayList<Integer> binds;
   Runnable complete;
@@ -566,8 +660,12 @@ class InputHandler extends GameComponent{
 class DialogManager extends GameComponent{
   ArrayList<Dialog> dialogs=new ArrayList<Dialog>();
   
-  void addDialog(Dialog d){
+  void add(Dialog d){
     dialogs.add(d);
+  }
+  
+  void clear(){
+    dialogs.clear();
   }
   
   boolean isEmpty(){
@@ -575,10 +673,18 @@ class DialogManager extends GameComponent{
   }
   
   void update(){
-    ArrayList<Dialog> next=new ArrayList<Dialog>();//TODO:add index data for each dialog
+    HashMap<String,Integer> indexes=new HashMap<String,Integer>();
+    ArrayList<Dialog> next=new ArrayList<Dialog>();//TODO:set index data for each dialog
     for(Dialog d:dialogs){
       d.update();
       if(d.duration>0){
+        if(indexes.containsKey(getClassName(d))){
+          indexes.replace(getClassName(d),indexes.get(getClassName(d))+1);
+          d.index=indexes.get(getClassName(d));
+        }else{
+          d.index=0;
+          indexes.put(getClassName(d),0);
+        }
         next.add(d);
       }
     }
@@ -610,5 +716,73 @@ abstract class Dialog extends GameComponent{
   
   void update(){
     duration-=fpsMag;
+  }
+  
+  void displayShadow(){}
+}
+
+class SelectDialog extends Dialog{
+  Button accept;
+  Button reject;
+  
+  int text_size=30;
+  
+  String content="";
+  
+  boolean closeable=true;
+  
+  SelectDialog(float x,float y,String a,String r){
+    position=new PVector(width*0.5,height*0.5);
+    size=new PVector(x,y);
+    this.font=createFont(font_name,text_size,true);
+    float min_mergin=10;
+    float min_height=35;
+    float min_width=300;
+    accept=new DialogButton(position.x-min_width-min_mergin*2,position.y+size.y*0.5-min_height-min_mergin,min_width,min_height)
+           .setColor(new Color(200)).setTextColor(new Color(20)).setLabel(a);
+    reject=new DialogButton(position.x+min_mergin*2,position.y+size.y*0.5-min_height-min_mergin,min_width,min_height)
+           .setColor(new Color(200)).setTextColor(new Color(20)).setLabel(r);
+  }
+  
+  SelectDialog setEvent(ButtonEvent a,ButtonEvent r){
+    accept.setEvent(a);
+    reject.setEvent(r);
+    return this;
+  }
+  
+  SelectDialog setText(String s){
+    content=s;
+    return this;
+  }
+  
+  SelectDialog setCloseable(boolean b){
+    closeable=b;
+    return this;
+  }
+  
+  void display(){
+    noStroke();
+    fill(0,200);
+    rectMode(CENTER);
+    rect(position.x,position.y,size.x,size.y);
+    fill(255);
+    textAlign(CENTER,CENTER);
+    rectMode(CORNER);
+    textSize(text_size);
+    textFont(this.font);
+    textLeading(text_size*1.14);
+    text(content,position.x-size.x*0.5,position.y-size.y*0.5,size.x,size.y);
+    accept.display();
+    reject.display();
+  }
+  
+  void update(){
+    if(closeable&&!isHover()&&mousePress)duration=0;
+    accept.update();
+    reject.update();
+  }
+  
+  boolean isHover(){
+    return (position.x-size.x*0.5<mouse.x&&mouse.x<position.x+size.x*0.5&&position.y-size.y*0.5<mouse.y&&mouse.y<position.y+size.y*0.5);
   }
 }

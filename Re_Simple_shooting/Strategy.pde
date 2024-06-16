@@ -69,6 +69,7 @@ class StartStrategy extends Strategy{
   
   void init(){
     UImanager.clearAll();
+    dialogManager.clear();
     particleGen=new MenuParticleGenerator(new Rectangle(new PVector(width*0.5,height+10),new PVector(width,20),0),
       new Supplier<PVector>(){
         PVector get(){
@@ -141,6 +142,12 @@ class StartStrategy extends Strategy{
     UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,new Color(100,100,100,200)));
     UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
     UImanager.add(new FlowText("! This is beta !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
+    if(true){
+      UImanager.handleUpdate();
+      SelectDialog d=new SelectDialog(800,500,translation("enable"),translation("disable")).setText(translation("start_information"));
+      d.setEvent(new ButtonEvent(){void select(Button b){d.duration=0;}},new ButtonEvent(){void select(Button b){setVibration(false);setMute(true);d.duration=0;}});
+      dialogManager.add(d);
+    }
   }
   
   void update(){
@@ -156,6 +163,7 @@ class StartStrategy extends Strategy{
   void display(){
     UImanager.handleDisplay();
     particleGen.display();
+    dialogManager.handleDisplay();
   }
   
   void displayShadow(){

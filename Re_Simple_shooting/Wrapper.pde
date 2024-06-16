@@ -76,6 +76,14 @@ class Sound{
     player.rewind();
     player.play();
   }
+  
+  void setVolume(float v){
+    player.setGain(v);
+  }
+  
+  void setMute(boolean m){
+    if(m)player.mute();else player.unmute();
+  }
 }
 
 void stop(){
@@ -85,6 +93,10 @@ void stop(){
 
 long getNanoSeconds(){
   return System.nanoTime();
+}
+
+String getClassName(Object o){
+  return o.getClass().toString();
 }
 
 void damage_vibrate(){}

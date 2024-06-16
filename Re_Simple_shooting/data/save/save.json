@@ -2,10 +2,10 @@
   "1": {
     "date": {
       "month": 2,
-      "hour": 20,
+      "hour": 17,
       "year": 2024,
-      "day": 1,
-      "minute": 31
+      "day": 15,
+      "minute": 7
     },
     "mission": {
       "1": {
@@ -27,9 +27,7 @@
         "must": true
       }
     },
-    "shop":{
-
-    },
+    "shop": {},
     "level": 5,
     "Fusion Core": 0,
     "progress": 6,
@@ -38,16 +36,22 @@
   },
   "2": {
     "date": {
-      "month": null,
-      "hour": null,
-      "year": null,
-      "day": null,
-      "minute": null
+      "month": 2,
+      "hour": 21,
+      "year": 2024,
+      "day": 7,
+      "minute": 39
     },
-    "mission": {},
+    "mission": {
+      "1": {"must": true},
+      "2": {
+        "bonus": true,
+        "must": true
+      }
+    },
     "level": 5,
-    "Fusion Core": 0,
-    "progress": 1,
+    "Fusion Core": 3,
+    "progress": 3,
     "exp": 0
   },
   "3": {

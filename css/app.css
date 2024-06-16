@@ -29,6 +29,11 @@ span{
   font-family: "OpenSans-Regular";
 }
 
+button{
+  z-index: 9999;
+  position: absolute;
+}
+
 #fullScreen{
   position: absolute;
   top: 50px;

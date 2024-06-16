@@ -1,3 +1,15 @@
+void setVolume(float vol){
+  for(Sound s:sounds.values()){
+    s.setVolume(vol);
+  }
+}
+
+void setMute(boolean m){
+  for(Sound s:sounds.values()){
+    s.setMute(m);
+  }
+}
+
 class Movement{
   PVector velocity;
   PVector accel;
@@ -308,7 +320,7 @@ class Color implements Cloneable {
   }
 
   Color lerp(Color c1,float a){
-    return clone().add_c(clone().sub_c(c1).mult_s(a));
+    return clone().add_c(c1.clone().sub_c(this).mult_s(a));
   }
 
   Color clone(){
@@ -322,4 +334,12 @@ class Color implements Cloneable {
   int getInt(){
     return intValue;
   }
+}
+
+//TODO:Add Pointer class
+class Pointer{
+  boolean press=false;
+  boolean pressed=false;
+  int x=0;
+  int y=0;
 }

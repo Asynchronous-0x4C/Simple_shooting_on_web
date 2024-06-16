@@ -7,12 +7,12 @@
 }
 
 .container {
-  scrollbar-width: none; /*Firefox対応のスクロールバー非表示コード*/  
-  -ms-overflow-style: none;/*Internet Explore対応のスクロールバー非表示コード*/   
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .container::-webkit-scrollbar {  
-display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロールバー非表示コード*/
+  display: none;
 }
 
 body{
@@ -20,39 +20,13 @@ body{
 }
 
 @font-face { 
-  font-family: "OpenSans-Regular"; 
+  font-family: "NotoSansJP-Light.ttf"; 
 
-  src: url("../Simple_shooting/data/font/OpenSans-Regular.ttf") format("truetype") 
+  src: url("../data/font/NotoSansJP-Light.ttf") format("truetype") 
 }
 
 span{
   font-family: "OpenSans-Regular";
-}
-
-#fullScreen{
-  position: absolute;
-  top: 50px;
-  left: 20px;
-  display: block;
-  color: #0000ff;
-  background-color: #000000;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 0px;
-  border-color: #00ff00;
-}
-
-#reload{
-  position: absolute;
-  top: 80px;
-  left: 20px;
-  display: block;
-  color: #0000ff;
-  background-color: #000000;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 0px;
-  border-color: #00ff00;
 }
 
 #re-fullScreen{
@@ -64,6 +38,7 @@ span{
   display: block;
   color: #ffffff;
   background-color: rgba(120, 120, 120, 0.7);
+  backdrop-filter: blur(2px);
   border-style: none;
 }
 
@@ -80,6 +55,7 @@ span{
   display: block;
   color: #ffffff;
   background-color: rgba(120, 120, 120, 0.7);
+  backdrop-filter: blur(2px);
   border-style: none;
   box-shadow: #000000;
 }
