@@ -4,10 +4,10 @@
   "background_color":"#000000",
   "icons":[{
     "src": "./favicon.png",
-    "sizes": "256x256",
+    "sizes": "512x512",
     "type": "image/png"
   }],
-  "start_url": "/Simple_Shooting_on_web/",
-  "scope": "/Simple_Shooting_on_web/",
+  "start_url": "../index.html",
+  "scope": "../",
   "display": "standalone"
 }
