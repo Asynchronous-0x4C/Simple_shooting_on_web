@@ -4,12 +4,9 @@ const DISP_VERSION='ssc-d-v1';
 const resources=[
   '../',
   '../index.html',
-  '../css/',
   '../css/app.css',
-  './',
   './processing.min.js',
   './wrapper.js',
-  '../data/',
   '../data/Mouse2.0gen2.png',
   '../data/Mouse2.0gen2x2.png',
   '../data/NODATA.png',
