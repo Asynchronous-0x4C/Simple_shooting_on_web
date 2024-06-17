@@ -4,12 +4,21 @@ const DISP_VERSION='ssc-d-v1';
 const resources=[
   '../',
   '../index.html',
+  '../css/',
   '../css/app.css',
+  './',
   './processing.min.js',
   './wrapper.js',
+  '../data/',
   '../data/Mouse2.0gen2.png',
   '../data/Mouse2.0gen2x2.png',
-  '../data/NODATA.png'
+  '../data/NODATA.png',
+  '../Simple__shooting_______.pde',
+  '../Shooting_DATA.pde',
+  '../Shooting_LEVEL.pde',
+  '../Shooting_NEXT.pde',
+  '../Shoting_MOUSE.pde',
+  '../static.pde'
 ]
 
 for(let i=0;i<35;i++){

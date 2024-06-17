@@ -7,22 +7,7 @@
   <script type="text/javascript">
     window.addEventListener('load',()=>{
       if('serviceWorker' in navigator){
-        navigator.serviceWorker.register('./js/sw.js').then((registration)=>{
-            return registration.pushManager.getSubscription().then((subscription)=>{
-              console.log("subscription", subscription)
-              if (subscription) {
-                return subscription
-              }
-              return registration.pushManager.subscribe({
-                userVisibleOnly: true
-              })
-            })
-          }).then((subscription)=>{
-            const endpoint = subscription.endpoint
-            console.log("pushManager endpoint:", endpoint)
-          }).catch((error)=>{
-            console.log("serviceWorker error:", error)
-          })
+        navigator.serviceWorker.register('./js/sw.js');
       }
     });
     function hideScrollBar(){
