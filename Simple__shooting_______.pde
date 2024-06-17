@@ -231,34 +231,34 @@ void setup() {
   // Mouse2=loadImage("Mouse2.0gen2x2.png");
   String Key1[]=loadStrings("AP1");
   if (Key1==null) {
-  } else {
-    String KEy1[]=split(Key1[0], ',');
-    year1=int(KEy1[12]);
-    month1=int(KEy1[13]);
-    day1=int(KEy1[14]);
-    hour1=int(KEy1[15]);
-    minute1=int(KEy1[16]);
+    Key1=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
   }
+  String KEy1[]=split(Key1[0], ',');
+  year1=int(KEy1[12]);
+  month1=int(KEy1[13]);
+  day1=int(KEy1[14]);
+  hour1=int(KEy1[15]);
+  minute1=int(KEy1[16]);
   String Key2[]=loadStrings("AP2");
   if (Key2==null) {
-  } else {
-    String KEy2[]=split(Key2[0], ',');
-    year2=int(KEy2[12]);
-    month2=int(KEy2[13]);
-    day2=int(KEy2[14]);
-    hour2=int(KEy2[15]);
-    minute2=int(KEy2[16]);
+    Key2=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
   }
+  String KEy2[]=split(Key2[0], ',');
+  year2=int(KEy2[12]);
+  month2=int(KEy2[13]);
+  day2=int(KEy2[14]);
+  hour2=int(KEy2[15]);
+  minute2=int(KEy2[16]);
   String Key3[]=loadStrings("AP3");
   if (Key3==null) {
-  } else {
-    String KEy3[]=split(Key3[0], ',');
-    year3=int(KEy3[12]);
-    month3=int(KEy3[13]);
-    day3=int(KEy3[14]);
-    hour3=int(KEy3[15]);
-    minute3=int(KEy3[16]);
+    Key3=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
   }
+  String KEy3[]=split(Key3[0], ',');
+  year3=int(KEy3[12]);
+  month3=int(KEy3[13]);
+  day3=int(KEy3[14]);
+  hour3=int(KEy3[15]);
+  minute3=int(KEy3[16]);
 
 
   a=new int[101];
