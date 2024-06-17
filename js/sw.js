@@ -27,7 +27,7 @@ for(let i=0;i<35;i++){
 
 self.addEventListener('install',(e)=>{
   console.log('service worker install')
-  e.waitUntil(caches.open(DISP_VERSION).then((cache)=>cache.addAll(resources)));
+  e.waitUntil(caches.open(DISP_VERSION).then((cache)=>resources.forEach(r=>{cache.add(r);console.log(`${r} is succeed.`);})));
 })
 
 self.addEventListener('fetch',(e)=>{
