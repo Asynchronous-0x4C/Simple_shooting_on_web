@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name":"Simple_shooting_on_web",
-  "short_name":"Simple_shooting",
-  "background_color":"#000000",
-  "theme_color": "#000000",
+  "name":"Re:Simple_shooting",
+  "short_name":"Re:Simple_shooting",
+  "background_color":"#E6E6E6",
+  "theme_color": "#E6E6E6",
   "icons":[
     {
       "src": "./favicon.png",
@@ -19,6 +19,6 @@
     }
   ],
   "start_url": "./index.html",
-  "scope": "/Simple_shooting_on_web/",
+  "scope": "/Simple_shooting_on_web/Re_Simple_shooting/",
   "display": "standalone"
 }

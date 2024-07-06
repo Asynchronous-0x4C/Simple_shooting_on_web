@@ -45,6 +45,14 @@ class JSONObject{
     return JSON.stringify(this.json);
   }
 
+  keys(){
+    return Object.keys(this.json);
+  }
+
+  hasKey(name){
+    return this.json.hasOwnProperty(name);
+  }
+
   getInt(name,init){
     return this.json[name]==null?init:this.json[name];
   }
@@ -82,7 +90,7 @@ class JSONObject{
   }
 
   setJSONObject(name,val){
-    if(val!=null)this.json[name]=val;
+    if(val!=null)this.json[name]=val["json"];
   }
 
   getJSONArray(name){
@@ -90,7 +98,11 @@ class JSONObject{
   }
 
   setJSONArray(name,val){
-    if(val!=null)this.json[name]=val;
+    if(val!=null)this.json[name]=val["json"];
+  }
+
+  size(){
+    return this.json==undefined?0:Object.keys(this.json).length;
   }
 }
 
@@ -100,12 +112,20 @@ class JSONArray{
     this.json=json;
   }
 
+  static parse(str){
+    return new JSONArray(JSON.parse(str));
+  }
+
   getJSONArray(index){
     return new JSONArray(this.json[index]);
   }
 
   getJSONObject(index){
     return new JSONObject(this.json[index]);
+  }
+
+  getString(index,init){
+    return this.json[index]==null?init:this.json[index];
   }
 
   size(){

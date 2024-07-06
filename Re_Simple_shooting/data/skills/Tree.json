@@ -1,0 +1,9 @@
+{
+  "HP":{
+    "description":"desc_HP",
+    "materials":{
+      "fusion_core":1,
+      "meta_material":0
+    }
+  }
+}

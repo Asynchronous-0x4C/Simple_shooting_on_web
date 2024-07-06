@@ -17,6 +17,7 @@ display: none; /*Google Chrome、Safari、Microsoft Edge対応のスクロール
 
 body{
   margin: 0px;
+  background-color: #000000;
 }
 
 @font-face { 

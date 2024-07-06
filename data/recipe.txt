@@ -1,0 +1,9 @@
+Iron scrap,2:Steel ingot,1
+Titanium scrap,2:Titanium ingot,1
+Battery,1+Iridium debri,1:Ion battery,1
+Computer,6+Cooling pipe,5+Copper,3:Super computer,1
+Super computer,3+Cooling pipe,4+High power magnetron,4:Quantum computer,1
+Computer,6:Semiconductor,3+Gold debri,1
+Lens,1+Computer,3:High precision lens,1
+Silver scrap,3:Silver ingot,1
+Gold debri,3:Gold ingot,1

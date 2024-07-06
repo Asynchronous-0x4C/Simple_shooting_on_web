@@ -1,10 +1,15 @@
-/**  O.M&A.T //<>//
+/**  O.M&A.T //<>// //<>// //<>//
  * kitiku seizeigambare(^^)www
  * "The shooting game"
  * @author (^^)wwwzzzzzxzxxzxzxzxzxzxxzxzxxxx
  * @date 2020/09/30(α1.00)2020/11/23(β1.00)\(^o^)/
  */
 
+Save save;
+Recipes recipes;
+SDate[] dates;
+Save[] saves;
+int[] items=new int[35];
 boolean onButton=false;
 float vertualMouseX=0;
 PImage Mouse;
@@ -103,7 +108,7 @@ boolean A7;
 boolean itget[];
 String stage;
 String ice;
-String[] ITEMS={"Iron scrap", "Titanium scrap", "Battery", "Ion battery", "Computer", 
+String[] item_names={"Iron scrap", "Titanium scrap", "Battery", "Ion battery", "Computer", 
   "Super computer", "Quantum computer", "Engin", "ion engin", "Right speed engin", 
   "Solar panel", "Reactor", "Fusion reactor", "Lens", "High precision lens", 
   "Autonomous optimized lens", "Enhanced laser", "Ultra high power laser", "Iridium debri", "Semiconductor", 
@@ -147,7 +152,6 @@ float[] b;
 char skill[];
 int colorNumber=0;
 int screenst=0;
-int Charpter=0;
 int cheetAA=0;
 int poisen=0;
 int freeze=0;
@@ -156,13 +160,7 @@ int stone=0;
 int scene=-2;
 int scene2=0;
 int shot=0;
-int minute1;
-int minute2;
-int minute3;
 int cheet=0;
-int month1;
-int month2;
-int month3;
 int menu=0;
 int DET1=0;
 int DET2=0;
@@ -175,12 +173,6 @@ int SCENE;
 int RT2=0;
 int RTT=0;
 int XXA=0;
-int year1;
-int hour1;
-int year2;
-int hour2;
-int year3;
-int hour3;
 int DD=15;
 int C1=1;
 int PS=0;
@@ -193,9 +185,6 @@ int RB=0;
 int NN=0;
 int zr=0;
 int BA=0;
-int day1;
-int day2;
-int day3;
 int Ene;
 int C=1;
 int Con;
@@ -204,14 +193,12 @@ int ITC;
 int BS;
 int CT;
 int P;
-int items[];
 int igt[];
 int hps[];
 int cR[];
 int cG[];
 int cB[];
 int Ar[];
-int EC[];
 int[] a;
 int x=0;
 int y=0;
@@ -229,49 +216,25 @@ void setup() {
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
   // Mouse2=loadImage("Mouse2.0gen2x2.png");
-  String Key1[]=loadStrings("AP1");
-  if (Key1==null) {
-    Key1=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
+  save=new Save();
+  dates=new SDate[3];
+  saves=new Save[3];
+  for(int i=0;i<3;i++){
+    saves[i]=new Save("Save"+(i+1)+".json");
+    dates[i]=new SDate(saves[i],i);
   }
-  String KEy1[]=split(Key1[0], ',');
-  year1=int(KEy1[12]);
-  month1=int(KEy1[13]);
-  day1=int(KEy1[14]);
-  hour1=int(KEy1[15]);
-  minute1=int(KEy1[16]);
-  String Key2[]=loadStrings("AP2");
-  if (Key2==null) {
-    Key2=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
-  }
-  String KEy2[]=split(Key2[0], ',');
-  year2=int(KEy2[12]);
-  month2=int(KEy2[13]);
-  day2=int(KEy2[14]);
-  hour2=int(KEy2[15]);
-  minute2=int(KEy2[16]);
-  String Key3[]=loadStrings("AP3");
-  if (Key3==null) {
-    Key3=new String[]{"0,5,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0"};
-  }
-  String KEy3[]=split(Key3[0], ',');
-  year3=int(KEy3[12]);
-  month3=int(KEy3[13]);
-  day3=int(KEy3[14]);
-  hour3=int(KEy3[15]);
-  minute3=int(KEy3[16]);
-
-
+  
+  recipes=new Recipes("./data/Recipes.json");
+  
   a=new int[101];
   b=new float[100];
   cR=new int[100];
   cG=new int[100];
   cB=new int[100];
   Ar=new int[100];
-  EC=new int[100];
   N=new float[26];
   z=new float[66];
   RGBA=new int[100];
-  items=new int[50];
   itget=new boolean[50];
   igt=new int[50];
   CI=new int[50];
@@ -409,12 +372,12 @@ void draw() {
   for(int r = 0; r < 3; r++){
   ellipse(100 + 100 * r, 100, 60, 60);
 }
-  Rexp=LEVEL*100;
+  Rexp=save.level*100;
   Ene=1;
   if (scene==0||scene>=3&&menu==1||scene==-3||scene==-2||scene==0&&menu==-7)translate(width/2-320, height/2-320);
   Con2=15;
   SC2=SC*-1;
-  a[0]=Charpter;
+  a[0]=save.chapter;
   if (scene==-2) {
     background(0);
     fill(0, 255, 206);
@@ -426,9 +389,9 @@ void draw() {
     //getSurface().setCursor(Mouse, 1, 1);
     textAlign(LEFT);
     fill(0, 255, 206);
-    text(year1+"/"+month1+"/"+day1+" "+hour1+":"+minute1, 260, 240);
-    text(year2+"/"+month2+"/"+day2+" "+hour2+":"+minute2, 260, 280);
-    text(year3+"/"+month3+"/"+day3+" "+hour3+":"+minute3, 260, 320);
+    for(int i=0;i<3;i++){
+      dates[i].display(260,240+40*i);
+    }
     fill(0, 255, 255);
      textSize(100);
       pushStyle();
@@ -558,7 +521,7 @@ void draw() {
   if (scene==-3) {
     background(50);
     Vol2=496-Vol;
-    if (Charpter==0)Ar[i]=0;
+    if (save.chapter==0)Ar[i]=0;
     SC=constrain(SC, 0, 4000);
     if (keyPressed&&keyCode==UP) {
       SC=SC-3;
@@ -567,7 +530,7 @@ void draw() {
       SC=SC+3;
     }
     i++;
-    if (Charpter==0) {
+    if (save.chapter==0) {
       if (i>=99) {
         i=0;
       }
@@ -633,7 +596,7 @@ void draw() {
       fill(0, 255, 210);
       switch(SK) {
       case 0:
-        if (LEVEL>=30) {
+        if (save.level>=30) {
           ms="key "+skill[0]+":Power up+";
         } else {
           ms="key "+skill[0]+":Power up";
@@ -649,21 +612,21 @@ void draw() {
         ms="key "+skill[3]+":G-shot";
         break;
       case 4:
-        if (Charpter>=15) {
+        if (save.chapter>=15) {
           ms="key "+skill[4]+":Night vision";
         } else {
           ms="key ?:???";
         }
         break;
       case 5:
-        if (Charpter>10) {
+        if (save.chapter>10) {
           ms="key "+skill[5]+":Control";
         } else {
           ms="key ?/???";
         }
         break;
       case 6:
-        if (Charpter>1) {
+        if (save.chapter>1) {
           ms="key "+skill[6]+":Counter";
         } else {
           ms="key ?/???";
@@ -695,7 +658,7 @@ void draw() {
     textSize(20);
     text("Enemy Archive", 60, 660);
 
-    if (EC[0]>=0) {
+    if (save.getDefeat("Normal")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("1. Nomal", 55, 700);
@@ -704,9 +667,9 @@ void draw() {
       rect(70, 725, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 1  score 200   Number of defeats "+EC[0], 90, 727);
+      text("Size 20   ATK 1  score 200   Number of defeats "+save.getDefeat("Normal"), 90, 727);
     }
-    if (EC[1]>=0) {
+    if (save.getDefeat("Special attack")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("2. Special attack", 55, 800);
@@ -715,9 +678,9 @@ void draw() {
       rect(70, 825, 23, 23);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 23   ATK 7  score 400   Number of defeats "+EC[1], 90, 827);
+      text("Size 23   ATK 7  score 400   Number of defeats "+save.getDefeat("Special attack"), 90, 827);
     }
-    if (EC[2]>=0) {
+    if (save.getDefeat("Rare")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("3. Rare", 55, 900);
@@ -726,9 +689,9 @@ void draw() {
       rect(70, 925, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 3  score 800   Number of defeats "+EC[2], 90, 927);
+      text("Size 20   ATK 3  score 800   Number of defeats "+save.getDefeat("Rare"), 90, 927);
     }
-    if (EC[3]>=0) {
+    if (save.getDefeat("Poisen")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("4. Poisen", 55, 1000);
@@ -737,9 +700,9 @@ void draw() {
       rect(70, 1025, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 2/s×5  score 500   Number of defeats "+EC[3], 90, 1027);
+      text("Size 20   ATK 2/s×5  score 500   Number of defeats "+save.getDefeat("Poisen"), 90, 1027);
     }
-    if (EC[4]>=0) {
+    if (save.getDefeat("Normal Boss")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("5. Nomal Boss", 55, 1100);
@@ -748,9 +711,9 @@ void draw() {
       rect(70, 1125, 30, 30);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 30   ATK 4  score 10000   Number of defeats "+EC[4], 90, 1127);
+      text("Size 30   ATK 4  score 10000   Number of defeats "+save.getDefeat("Normal_Boss"), 90, 1127);
     }
-    if (EC[5]>=0) {
+    if (save.getDefeat("Normal Boss++")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("6. Nomal Boss++", 55, 1200);
@@ -759,9 +722,9 @@ void draw() {
       rect(70, 1225, 30, 30);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 30   ATK 5  score20000   Number of defeats "+EC[5], 90, 1227);
+      text("Size 30   ATK 5  score20000   Number of defeats "+save.getDefeat("Normal Boss++"), 90, 1227);
     }
-    if (EC[6]>=0) {
+    if (save.getDefeat("Cluster")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("7. Cluster", 55, 1300);
@@ -770,9 +733,9 @@ void draw() {
       rect(70, 1325, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 2  score 500   Number of defeats "+EC[6], 90, 1327);
+      text("Size 20   ATK 2  score 500   Number of defeats "+save.getDefeat("Cluster"), 90, 1327);
     }
-    if (EC[8]>=0) {
+    if (save.getDefeat("Nomal Boss α")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("8. Nomal Boss α", 55, 1400);
@@ -781,9 +744,9 @@ void draw() {
       rect(70, 1425, 30, 30);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 30   ATK 6  score 14000   Number of defeats "+EC[8], 90, 1427);
+      text("Size 30   ATK 6  score 14000   Number of defeats "+save.getDefeat("Nomal Boss α"), 90, 1427);
     }
-    if (EC[9]>=0) {
+    if (save.getDefeat("Nomal Boss β")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("9. Nomal Boss β", 55, 1500);
@@ -792,9 +755,9 @@ void draw() {
       rect(70, 1525, 30, 30);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 30   ATK 3  score 7000   Number of defeats "+EC[9], 90, 1527);
+      text("Size 30   ATK 3  score 7000   Number of defeats "+save.getDefeat("Nomal Boss β"), 90, 1527);
     }
-    if (EC[10]>=0) {
+    if (save.getDefeat("Transparent")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("10. Transparent", 55, 1600);
@@ -803,9 +766,9 @@ void draw() {
       rect(70, 1625, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 1+2/s×5  score 1000   Number of defeats "+EC[10], 90, 1627);
+      text("Size 20   ATK 1+2/s×5  score 1000   Number of defeats "+save.getDefeat("Transparent"), 90, 1627);
     }
-    if (EC[11]>=0) {
+    if (save.getDefeat("Charge")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("11. Charge", 55, 1700);
@@ -814,9 +777,9 @@ void draw() {
       rect(70, 1725, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 1/s+2×5  score 500   Number of defeats "+EC[11], 90, 1727);
+      text("Size 20   ATK 1/s+2×5  score 500   Number of defeats "+save.getDefeat("Charge"), 90, 1727);
     }
-    if (EC[12]>=0) {
+    if (save.getDefeat("Fire")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("12. Fire", 55, 1800);
@@ -825,9 +788,9 @@ void draw() {
       rect(70, 1825, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 1+2×5  score 750   Number of defeats "+EC[12], 90, 1827);
+      text("Size 20   ATK 1+2×5  score 750   Number of defeats "+save.getDefeat("Fire"), 90, 1827);
     }
-    if (EC[13]>=0) {
+    if (save.getDefeat("Transparent Boss")>=0) {
       fill(105, 82, 255);
       textSize(17);
       text("13. Transparent Boss", 55, 1900);
@@ -836,9 +799,9 @@ void draw() {
       rect(70, 1925, 30, 30);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 30   ATK 7   score 500000   Number of defeats "+EC[13], 90, 1927);
+      text("Size 30   ATK 7   score 500000   Number of defeats "+save.getDefeat("Transparent Boss"), 90, 1927);
     }
-    if (EC[14]>=0) {
+    if (save.getDefeat("Thunder")>=0) {
       fill(105, 82, 255);
       textSize(17);
       text("14. Thunder", 55, 2000);
@@ -847,9 +810,9 @@ void draw() {
       rect(70, 2025, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 2×10  score 750   Number of defeats "+EC[14], 90, 2027);
+      text("Size 20   ATK 2×10  score 750   Number of defeats "+save.getDefeat("Thunder"), 90, 2027);
     }
-    if (EC[15]>=0) {
+    if (save.getDefeat("Upward Compatible")>=0) {
       fill(105, 82, 255);
       textSize(17);
       text("15. Upward Compatible", 55, 2100);
@@ -858,9 +821,9 @@ void draw() {
       rect(70, 2125, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 9  score 750   Number of defeats "+EC[15], 90, 2127);
+      text("Size 20   ATK 9  score 750   Number of defeats "+save.getDefeat("Upward Compatible"), 90, 2127);
     }
-    if (EC[16]>=0) {
+    if (save.getDefeat("Upward Compatible+++")>=0) {
       fill(105, 82, 255);
       textSize(17);
       text("16. Upward Compatible+++", 55, 2200);
@@ -869,9 +832,9 @@ void draw() {
       rect(70, 2225, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 9+poisen+fire+freese+prasma  score 750   Number of defeats "+EC[16], 90, 2227);
+      text("Size 20   ATK 9+poisen+fire+freese+prasma  score 750   Number of defeats "+save.getDefeat("Upward Compatible+++"), 90, 2227);
     }
-    if (EC[17]==0) {
+    if (save.getDefeat("Recovery")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("17. Recovery", 55, 2300);
@@ -880,9 +843,9 @@ void draw() {
       rect(70, 2325, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK HP+2   (If you kill this)=YOU DEAD  score NO   Number of defeats "+EC[17], 90, 2327);
+      text("Size 20   ATK HP+2   (If you kill this)=YOU DEAD  score NO   Number of defeats "+save.getDefeat("Recovery"), 90, 2327);
     }
-    if (EC[18]==0) {
+    if (save.getDefeat("Flash")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("18. Flash", 55, 2400);
@@ -891,9 +854,9 @@ void draw() {
       rect(70, 2425, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 70     score 750   Number of defeats "+EC[18], 90, 2427);
+      text("Size 20   ATK 70     score 750   Number of defeats "+save.getDefeat("Flash"), 90, 2427);
     }
-    if (EC[19]==0) {
+    if (save.getDefeat("Plasma")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("19. Plasma", 55, 2500);
@@ -902,9 +865,9 @@ void draw() {
       rect(70, 2525, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 1     score 750   Number of defeats "+EC[19], 90, 2527);
+      text("Size 20   ATK 1     score 750   Number of defeats "+save.getDefeat("Plasma"), 90, 2527);
     }
-    if (EC[20]==0) {
+    if (save.getDefeat("Freeze")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("20. Freeze", 55, 2600);
@@ -913,9 +876,9 @@ void draw() {
       rect(70, 2625, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 2×5     score NO   Number of defeats "+EC[20], 90, 2627);
+      text("Size 20   ATK 2×5     score NO   Number of defeats "+save.getDefeat("Freeze"), 90, 2627);
     }
-    if (EC[21]==0) {
+    if (save.getDefeat("Completely Transparent")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("21. Completely Transparent", 55, 2700);
@@ -924,9 +887,9 @@ void draw() {
       rect(70, 2725, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 7   score 750   Number of defeats "+EC[21], 90, 2727);
+      text("Size 20   ATK 7   score 750   Number of defeats "+save.getDefeat("Completely Transparent"), 90, 2727);
     }
-    if (EC[22]==0) {
+    if (save.getDefeat("Fire Boss")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("22. Fire Boss", 55, 2800);
@@ -935,9 +898,9 @@ void draw() {
       rect(70, 2825, 21, 21);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 21   ATK 4+2×5   score 10000   Number of defeats "+EC[22], 90, 2827);
+      text("Size 21   ATK 4+2×5   score 10000   Number of defeats "+save.getDefeat("Fire Boss"), 90, 2827);
     }
-    if (EC[23]==0) {
+    if (save.getDefeat("Freeze Boss")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("23. Freeze Boss", 55, 2900);
@@ -946,9 +909,9 @@ void draw() {
       rect(70, 2925, 21, 21);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 21   ATK 2+2×5 score 10000   Number of defeats "+EC[23], 90, 2927);
+      text("Size 21   ATK 2+2×5 score 10000   Number of defeats "+save.getDefeat("Freeze Boss"), 90, 2927);
     }
-    if (EC[24]==0) {
+    if (save.getDefeat("Multi-Attribute")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("24. Multi-Attribute", 55, 3000);
@@ -958,9 +921,9 @@ void draw() {
       ellipse(70, 3025, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 9+poisen+fire+freese+prasma    score 750   Number of defeats "+EC[24], 90, 3027);
+      text("Size 20   ATK 9+poisen+fire+freese+prasma    score 750   Number of defeats "+save.getDefeat("Multi-Attribute"), 90, 3027);
     } 
-    if (EC[25]==0) {
+    if (save.getDefeat("Thunder Boss")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("25. Thunder Boss", 55, 3100);
@@ -969,9 +932,9 @@ void draw() {
       rect(70, 3125, 21, 21);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 21   ATK 2+2×10   score 10000   Number of defeats "+EC[25], 90, 3127);
+      text("Size 21   ATK 2+2×10   score 10000   Number of defeats "+save.getDefeat("Thunder Boss"), 90, 3127);
     }
-    if (EC[26]==0) {
+    if (save.getDefeat("Tornado")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("26. Tornado", 55, 3200);
@@ -980,9 +943,9 @@ void draw() {
       rect(70, 3225, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 9+3×12   score 750   Number of defeats "+EC[26], 90, 3227);
+      text("Size 20   ATK 9+3×12   score 750   Number of defeats "+save.getDefeat("Tornado"), 90, 3227);
     }
-    if (EC[27]==0) {
+    if (save.getDefeat("Tarbo")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("27. Tarbo", 55, 3300);
@@ -991,9 +954,9 @@ void draw() {
       rect(70, 3325, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 15   score 750   Number of defeats "+EC[27], 90, 3327);
+      text("Size 20   ATK 15   score 750   Number of defeats "+save.getDefeat("Tarbo"), 90, 3327);
     }
-    if (EC[28]==0) {
+    if (save.getDefeat("Stone")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("28. Stone", 55, 3400);
@@ -1002,9 +965,9 @@ void draw() {
       rect(70, 3425, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 20+4×4   score 750   Number of defeats "+EC[28], 90, 3427);
+      text("Size 20   ATK 20+4×4   score 750   Number of defeats "+save.getDefeat("Stone"), 90, 3427);
     }
-    if (EC[29]==0) {
+    if (save.getDefeat("Mirror")==0) {
       fill(105, 82, 255);
       textSize(17);
       text("29. Mirror", 55, 3500);
@@ -1013,9 +976,9 @@ void draw() {
       rect(70, 3525, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK 20+2×2   score 750   Number of defeats "+EC[29], 90, 3527);
+      text("Size 20   ATK 20+2×2   score 750   Number of defeats "+save.getDefeat("Mirror"), 90, 3527);
     }
-    if (EC[30]==0) {
+    if (save.getDefeat("Metal")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("30. Metal", 55, 3600);
@@ -1024,9 +987,9 @@ void draw() {
       rect(70, 3625, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size 20   ATK ???_   score ???   Number of defeats "+EC[30], 90, 3627);
+      text("Size 20   ATK ???_   score ???   Number of defeats "+save.getDefeat("Metal"), 90, 3627);
     }
-    if (EC[31]==0) {
+    if (save.getDefeat("??????")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("31.  ??????", 55, 3700);
@@ -1037,7 +1000,7 @@ void draw() {
       textSize(15);
       text("???", 90, 3727);
     }
-    if (EC[32]==0) {
+    if (save.getDefeat("Zero")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("0.  Zero", 55, 3800);
@@ -1046,9 +1009,9 @@ void draw() {
       rect(70, 3825, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size20 ATK Power up   Number of defeats"+EC[32], 90, 3827);
+      text("Size20 ATK Power up   Number of defeats"+save.getDefeat("Zero"), 90, 3827);
     }
-    if (EC[33]==0) {
+    if (save.getDefeat("Current")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("01.  Current", 55, 3900);
@@ -1057,9 +1020,9 @@ void draw() {
       rect(70, 3925, 20, 20);
       fill(105, 82, 255);
       textSize(15);
-      text("Size20 ATK Power up   Number of defeats"+EC[33], 90, 3927);
+      text("Size20 ATK Power up   Number of defeats"+save.getDefeat("Current"), 90, 3927);
     }
-    if (EC[34]==0) {
+    if (save.getDefeat("Angel")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("02.  Angel", 55, 4000);
@@ -1068,9 +1031,9 @@ void draw() {
       rect(70, 4025, 20, 20);
       fill(105,82,255);
       textSize(15);
-      text("Size20 ATK 60   Number of defeats"+EC[34], 90, 4027);
+      text("Size20 ATK 60   Number of defeats"+save.getDefeat("Angel"), 90, 4027);
     }
-     if (EC[35]==0) {
+     if (save.getDefeat("Barrier")>0) {
       fill(105, 82, 255);
       textSize(17);
       text("03.  Barrier", 55, 4100);
@@ -1079,7 +1042,7 @@ void draw() {
       rect(70, 4125, 20, 20);
       fill(105,82,255);
       textSize(15);
-      text("Size20 ATK 10+2  Number of defeats"+EC[35], 90, 4127);
+      text("Size20 ATK 10+2  Number of defeats"+save.getDefeat("Barrier"), 90, 4127);
     }
 
     fill(cR[97], cG[97], cB[97]);
@@ -1122,14 +1085,14 @@ void draw() {
     fill(0, 255, 0);
     text(NOWtime, 0-(width/2-320)+5, height-(height/2-320)-5);
     fill(0, 0, 255);
-    text("LEVEL"+LEVEL, 30-textWidth(str(LEVEL)), 27);
-    text("EXP"+nf(level,0,2)+"/"+LEVEL*100, 195, 27);
-    SP=LEVEL*5;
+    text("LEVEL"+save.level, 30-textWidth(str(save.level)), 27);
+    text("EXP"+nf(save.experience,0,2)+"/"+save.level*100, 195, 27);
+    SP=save.level*5;
     fill(0);
     stroke(0, 255, 255);
     rect(140, 20, 100, 10);
     fill(0, 255, 255);
-    rect(90+level/(2*LEVEL), 20, level/LEVEL, 10);
+    rect(90+save.experience/(2*save.level), 20, save.experience/save.level, 10);
     if (MENU) {
       fill(0, 155);
       noStroke();
@@ -1137,7 +1100,7 @@ void draw() {
       if (mousePressed&&mouseX<width-240) {
         MENU=false;
       }
-      for (int m=0; m<6+floor(Charpter/10); m++) {
+      for (int m=0; m<6+floor(save.chapter/10); m++) {
         String ms="";
         noFill();
         stroke(RGB[m], RGBA[m]);
@@ -1268,7 +1231,7 @@ void draw() {
       noStroke();
     }
     rect(290+width/2, 0-(height/2-357), 28, 28);
-    if (Charpter>=0) {
+    if (save.chapter>=0) {
       fill(rgb[88]);
       stroke(0, 245, 100);
       rect(600, 20, 30, 30);
@@ -1348,13 +1311,13 @@ void draw() {
         } else {
           B2=0;
         }
-        if (S*4+B!=4&S*4+B!=7&&S*4+B!=6||(Charpter>(4+S*4+B)+10*scene2&&S*4+B==6)) {
+        if (S*4+B!=4&S*4+B!=7&&S*4+B!=6||(save.chapter>(4+S*4+B)+10*scene2&&S*4+B==6)) {
           fill(rgb[92+S*4+B]);
           stroke(0, 245, 100);
           rect(-120+B*250+B2, 640-S*40, 240, 35);
         }
         if (mouseX>=-240+width/2-320+B*250+B2&&0+width/2-320+B*250+B2>=mouseX&&mouseY>=623+height/2-320-S*40&&657+height/2-320-S*40>=mouseY
-          &&menu<=0&&menu>-7&&S*4+B!=4&&S*4+B!=7&&((S*4+B!=6)||(Charpter>(4+S*4+B)+10*scene2&&S*4+B==6))) {
+          &&menu<=0&&menu>-7&&S*4+B!=4&&S*4+B!=7&&((S*4+B!=6)||(save.chapter>(4+S*4+B)+10*scene2&&S*4+B==6))) {
           rgb[92+S*4+B]=color(26, 203, 255);
           if (mousePressed) {
             switch(S*4+B) {
@@ -1445,14 +1408,14 @@ void draw() {
         } else {
           rgb[92+S*4+B]=color(0, 0, 0);
         }
-        if (S*4+B!=6||(Charpter>(4+S*4+B)+10*scene2&&S*4+B==6)) {
+        if (S*4+B!=6||(save.chapter>(4+S*4+B)+10*scene2&&S*4+B==6)) {
           textSize(17);
           fill(0, 0, 255);
           textAlign(CENTER);
           text(ms, -120+B*240+B2*1.2, 640-S*40+5);
         }
         if (SAT||SA) {
-          data_save(0);
+          save.save();
           SAT=false;
           if (!SA) {
             scene=-1;
@@ -1468,7 +1431,7 @@ void draw() {
       }
     }
     textAlign(LEFT);
-    if (Charpter>=0) {
+    if (save.chapter>=0) {
       fill(rgb[89]);
       if (cef) {
         stroke(255, 0, 0);
@@ -1500,7 +1463,7 @@ void draw() {
 
     for (int S=0; S<2; S++) {
       for (int B=scene2*10; B<scene2*10+5; B++) {
-        if (Charpter>=B+S*5&&scene2>=0) {
+        if (save.chapter>=B+S*5&&scene2>=0) {
           fill(rgb[B+S*5]);
           stroke(0, 245, 100);
           rect(130+S*380, 200+(B-scene2*10)*40, 240, 35);
@@ -1510,7 +1473,7 @@ void draw() {
           text(stage, 100+S*380, 204+(B-scene2*10)*40);
           if (mouseX>=10+width/2-320+S*380&&250+width/2-320+S*380>=mouseX&&mouseY>=183+height/2-320+(B-scene2*10)*40&&217+height/2-320+(B-scene2*10)*40>=mouseY&&menu<=0&&menu>-7) {
             rgb[B+S*5]=color(26, 203, 255);
-            if (mousePressed&&Charpter>=B&&menu<=0&&menu>-7) {
+            if (mousePressed&&save.chapter>=B&&menu<=0&&menu>-7) {
               scene=-1;
               SCENE=B+S*5+3;
               RTT=0;
@@ -1724,7 +1687,7 @@ void draw() {
     text("Key "+skill[1]+":Balia", 370, 250);
     textSize(17);
     text("Key "+skill[2]+":Power generation", 370, 280);
-    if (Charpter>=15) {
+    if (save.chapter>=15) {
       textSize(17);
       text("Key "+skill[4]+":Night vision", 370, 310);
     } else {
@@ -1784,17 +1747,17 @@ void draw() {
       scene=-1;
       menu=0;
     }
-    if (MYGEN==0) {
+    if (save.generation==0) {
       fill(cR[0], cG[0], cB[0]);
       stroke(0, 245, 100);
       rect(200, height/5*2, 100, 35);
     }
     textSize(17);
-    if (GENL>=1&&MYGEN==0) {
+    if (GENL>=1&&save.generation==0) {
       fill(0, 255, 0);
       text("NEXT ->", 170, height/5*2+5);
     } else {
-      if (MYGEN==0) {
+      if (save.generation==0) {
         fill(255, 0, 0);
         text("LEVEL:12", 170, 25);
       } else {
@@ -1819,20 +1782,20 @@ void draw() {
       cB[0]=0;
     }
     if (mouseX>=150&&250>=mouseX&&mouseY>=height/5*2-17&&height/5*2+17>=mouseY&&mousePressed) {
-      MYGEN=1;
+      save.generation=1;
       GENS=1;
     }
-    if (MYGEN==1) {
+    if (save.generation==1) {
       fill(cR[1], cG[1], cB[1]);
       stroke(0, 245, 100);
       rect(400, height/5*2, 100, 35);
     }
     textSize(17);
-    if (GENL>=2&&MYGEN==1) {
+    if (GENL>=2&&save.generation==1) {
       fill(0, 255, 0);
       text("NEXT ->", 370, height/5*2+5);
     } else {
-      if (MYGEN==1) {
+      if (save.generation==1) {
         fill(255, 0, 0);
         text("LEVEL:24", 370, 25);
       } else {
@@ -1857,7 +1820,7 @@ void draw() {
       cB[1]=0;
     }
     if (mouseX>=350&&450>=mouseX&&mouseY>=height/5*2-17&&height/5*2+17>=mouseY&&mousePressed) {
-      MYGEN=2;
+      save.generation=2;
       GENS=2;
     }
 
@@ -1865,10 +1828,10 @@ void draw() {
     stroke(0, 255, 0);
     noFill();
     ellipse(100, height/5*2, 25, 25);
-    if (MYGEN>=1) {
+    if (save.generation>=1) {
       rect(300, height/5*2, 25, 25);
     }
-    if (MYGEN>=2) {
+    if (save.generation>=2) {
       triangle(487.5, height/5*2+(25/3), 512.5, height/5*2+(25/3), 500, height/5*2-(2*25/3));
     }
 
@@ -1876,10 +1839,10 @@ void draw() {
     textSize(17);
     textAlign(CENTER);
     text("gen 1", 100, height/5*2+35);
-    if (MYGEN>=1) {
+    if (save.generation>=1) {
       text("gen 2", 300, height/5*2+35);
     }
-    if (MYGEN>=2) {
+    if (save.generation>=2) {
       text("gen 3", 500, height/5*2+35);
     }
   } else {
@@ -1920,7 +1883,7 @@ void draw() {
     }
     rectMode(CENTER);
     translate(HAM, HAU);
-    switch(HL) {
+    switch(save.HP_level) {
     case 1:
       {
         if (items[0]>=5&&items[1]>=2) {
@@ -1929,16 +1892,16 @@ void draw() {
           textSize(20);
           text("HP 100 -> 105", 260, 120);
           textSize(15);
-          text(ITEMS[0]+"×5", 265, 145);
-          text(ITEMS[1]+"×2", 265, 165);
+          text(item_names[0]+"×5", 265, 145);
+          text(item_names[1]+"×2", 265, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("HP 100 -> 105", 260, 120);
           textSize(15);
-          text(ITEMS[0]+"×5", 265, 145);
-          text(ITEMS[1]+"×2", 265, 165);
+          text(item_names[0]+"×5", 265, 145);
+          text(item_names[1]+"×2", 265, 165);
         }
         break;
       }
@@ -1950,16 +1913,16 @@ void draw() {
           textSize(20);
           text("HP 105 -> 112", 260, 120);
           textSize(15);
-          text(ITEMS[0]+"×7", 265, 145);
-          text(ITEMS[1]+"×4", 265, 165);
+          text(item_names[0]+"×7", 265, 145);
+          text(item_names[1]+"×4", 265, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("HP 105 -> 112", 260, 120);
           textSize(15);
-          text(ITEMS[0]+"×7", 265, 145);
-          text(ITEMS[1]+"×4", 265, 165);
+          text(item_names[0]+"×7", 265, 145);
+          text(item_names[1]+"×4", 265, 165);
         }
         break;
       }
@@ -1971,16 +1934,16 @@ void draw() {
           textSize(20);
           text("HP 112 -> 117", 260, 120);
           textSize(15);
-          text(ITEMS[1]+"×5", 265, 145);
-          text(ITEMS[2]+"×2", 265, 165);
+          text(item_names[1]+"×5", 265, 145);
+          text(item_names[2]+"×2", 265, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("HP 112 -> 117", 260, 120);
           textSize(15);
-          text(ITEMS[1]+"×5", 265, 145);
-          text(ITEMS[2]+"×2", 265, 165);
+          text(item_names[1]+"×5", 265, 145);
+          text(item_names[2]+"×2", 265, 165);
         }
         break;
       }
@@ -1992,16 +1955,16 @@ void draw() {
           textSize(20);
           text("HP 117 -> 120", 260, 120);
           textSize(15);
-          text(ITEMS[2]+"×7", 265, 145);
-          text(ITEMS[3]+"×2", 265, 165);
+          text(item_names[2]+"×7", 265, 145);
+          text(item_names[3]+"×2", 265, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("HP 117 -> 120", 260, 120);
           textSize(15);
-          text(ITEMS[2]+"×7", 265, 145);
-          text(ITEMS[3]+"×2", 265, 165);
+          text(item_names[2]+"×7", 265, 145);
+          text(item_names[3]+"×2", 265, 165);
         }
         break;
       }
@@ -2013,16 +1976,16 @@ void draw() {
           textSize(20);
           text("HP 120 -> 125", 260, 120);
           textSize(15);
-          text(ITEMS[23]+"×10", 265, 145);
-          text(ITEMS[4]+"×3", 265, 165);
+          text(item_names[23]+"×10", 265, 145);
+          text(item_names[4]+"×3", 265, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("HP 120 -> 125", 260, 120);
           textSize(15);
-          text(ITEMS[23]+"×10", 265, 145);
-          text(ITEMS[4]+"×3", 265, 165);
+          text(item_names[23]+"×10", 265, 145);
+          text(item_names[4]+"×3", 265, 165);
         }
         break;
       }
@@ -2077,7 +2040,7 @@ void draw() {
     }
     if (mouseX>=10+HAM&&250+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePressed&&menu<=0&&menu>-7)
     {
-      switch(HL) {
+      switch(save.HP_level) {
       case 1:
         {
           if (items[0]>=5&&items[1]>=2) {
@@ -2115,7 +2078,7 @@ void draw() {
         }
       }
     }
-    switch(AL) {
+    switch(save.ATK_level) {
     case 1:
       {
         if (items[23]>=7&&items[3]>=1) {
@@ -2124,16 +2087,16 @@ void draw() {
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+1), 750, 120);
           textSize(15);
-          text(ITEMS[23]+"×7", 755, 145);
-          text(ITEMS[3]+"×1", 755, 165);
+          text(item_names[23]+"×7", 755, 145);
+          text(item_names[3]+"×1", 755, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+1), 750, 120);
           textSize(15);
-          text(ITEMS[23]+"×7", 755, 145);
-          text(ITEMS[3]+"×1", 755, 165);
+          text(item_names[23]+"×7", 755, 145);
+          text(item_names[3]+"×1", 755, 165);
         }
         break;
       }
@@ -2145,16 +2108,16 @@ void draw() {
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+2), 750, 120);
           textSize(15);
-          text(ITEMS[20]+"×3", 755, 145);
-          text(ITEMS[5]+"×1", 755, 165);
+          text(item_names[20]+"×3", 755, 145);
+          text(item_names[5]+"×1", 755, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+2), 750, 120);
           textSize(15);
-          text(ITEMS[20]+"×3", 755, 145);
-          text(ITEMS[5]+"×1", 755, 165);
+          text(item_names[20]+"×3", 755, 145);
+          text(item_names[5]+"×1", 755, 165);
         }
         break;
       }
@@ -2166,18 +2129,18 @@ void draw() {
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+3), 750, 120);
           textSize(15);
-          text(ITEMS[27]+"×5", 755, 145);
-          text(ITEMS[19]+"×3", 755, 165);
-          text(ITEMS[5]+"×5", 755, 185);
+          text(item_names[27]+"×5", 755, 145);
+          text(item_names[19]+"×3", 755, 165);
+          text(item_names[5]+"×5", 755, 185);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+3), 750, 120);
           textSize(15);
-          text(ITEMS[27]+"×5", 755, 145);
-          text(ITEMS[19]+"×3", 755, 165);
-          text(ITEMS[5]+"×5", 755, 185);
+          text(item_names[27]+"×5", 755, 145);
+          text(item_names[19]+"×3", 755, 165);
+          text(item_names[5]+"×5", 755, 185);
         }
         break;
       }
@@ -2189,16 +2152,16 @@ void draw() {
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+4), 750, 120);
           textSize(15);
-          text(ITEMS[16]+"×1", 995, 145);
-          text(ITEMS[13]+"×2", 755, 165);
+          text(item_names[16]+"×1", 995, 145);
+          text(item_names[13]+"×2", 755, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+2), 750, 120);
           textSize(15);
-          text(ITEMS[16]+"×1", 755, 145);
-          text(ITEMS[13]+"×2", 755, 165);
+          text(item_names[16]+"×1", 755, 145);
+          text(item_names[13]+"×2", 755, 165);
         }
         break;
       }
@@ -2210,8 +2173,8 @@ void draw() {
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+5), 400, 120);
           textSize(15);
-          text(ITEMS[23]+"×10", 405, 145);
-          text(ITEMS[4]+"×3", 405, 165);
+          text(item_names[23]+"×10", 405, 145);
+          text(item_names[4]+"×3", 405, 165);
         }
         break;
       }
@@ -2219,25 +2182,25 @@ void draw() {
 
     default:
       {
-        if ((items[23]<7||items[3]<1)&&AL==1||(items[20]<3||items[5]<1)&&AL==2||(items[27]<5||items[19]<3||items[5]<5)&&AL==3||(items[2]<7||items[3]<2)&&AL==4||(items[23]<10||items[4]<3)&&AL==5) {
+        if ((items[23]<7||items[3]<1)&&save.ATK_level==1||(items[20]<3||items[5]<1)&&save.ATK_level==2||(items[27]<5||items[19]<3||items[5]<5)&&save.ATK_level==3||(items[2]<7||items[3]<2)&&save.ATK_level==4||(items[23]<10||items[4]<3)&&save.ATK_level==5) {
           ups2=false;
 
-          if (AL==3)
-            if (AL==4) {
+          if (save.ATK_level==3)
+            if (save.ATK_level==4) {
               fill(255, 0, 0);
               textSize(20);
               text("HP 117 -> 120", 400, 120);
               textSize(15);
-              text(ITEMS[2]+"×7", 405, 145);
-              text(ITEMS[3]+"×2", 405, 165);
+              text(item_names[2]+"×7", 405, 145);
+              text(item_names[3]+"×2", 405, 165);
             }
-          if (AL==5) {
+          if (save.ATK_level==5) {
             fill(255, 0, 0);
             textSize(20);
             text("HP 120 -> 125", 400, 120);
             textSize(15);
-            text(ITEMS[23]+"×10", 405, 145);
-            text(ITEMS[4]+"×3", 405, 165);
+            text(item_names[23]+"×10", 405, 145);
+            text(item_names[4]+"×3", 405, 165);
           }
         }
         break;
@@ -2267,7 +2230,7 @@ void draw() {
     }
     if (mouseX>=500+HAM&&740+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePress&&menu<=0&&menu>-7)
     {
-      switch(AL) {
+      switch(save.ATK_level) {
       case 1:
         {
           if (items[23]>=7&&items[3]>=1) {
@@ -2291,131 +2254,131 @@ void draw() {
         }
       case 4:
         {
-          if (items[16]>=1&&items[13]>=2&&AL==4) {
+          if (items[16]>=1&&items[13]>=2&&save.ATK_level==4) {
             AUP=true;
           }
           break;
         }
       case 5:
         {
-          if (items[23]>=10&&items[4]>=3&&AL==5) {
+          if (items[23]>=10&&items[4]>=3&&save.ATK_level==5) {
             AUP=true;
           }
         }
       }
     }
-    switch(DL) {
+    switch(save.DEF_level) {
     case 1:
       {
-        if (items[18]>=7&&items[24]>=10&&DL==1) {
+        if (items[18]>=7&&items[24]>=10&&save.DEF_level==1) {
           ups3=true;
           fill(0, 255, 0);
           textSize(20);
           text("DEF "+DEF+" -> "+(DEF+1), 1250, 120);
           textSize(15);
-          text(ITEMS[18]+"×7", 1255, 145);
-          text(ITEMS[24]+"×10", 1255, 165);
+          text(item_names[18]+"×7", 1255, 145);
+          text(item_names[24]+"×10", 1255, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("DEF "+DEF+" -> "+(DEF+1), 1250, 120);
           textSize(15);
-          text(ITEMS[18]+"×7", 1255, 145);
-          text(ITEMS[24]+"×10", 1255, 165);
+          text(item_names[18]+"×7", 1255, 145);
+          text(item_names[24]+"×10", 1255, 165);
         }
         break;
       }
     case 2:
       {
-        if (items[32]>=3&&items[33]>=5&&DL==2) {
+        if (items[32]>=3&&items[33]>=5&&save.DEF_level==2) {
           ups3=true;
           fill(0, 255, 0);
           textSize(20);
           text("DEF "+DEF+" -> "+(DEF+1), 1250, 120);
           textSize(15);
-          text(ITEMS[32]+"×3", 1255, 145);
-          text(ITEMS[33]+"×5", 1255, 165);
+          text(item_names[32]+"×3", 1255, 145);
+          text(item_names[33]+"×5", 1255, 165);
         } else
         {
           fill(255, 0, 0);
           textSize(20);
           text("DEF "+DEF+" -> "+(DEF+1), 1250, 120);
           textSize(15);
-          text(ITEMS[32]+"×3", 1255, 145);
-          text(ITEMS[33]+"×5", 1255, 165);
+          text(item_names[32]+"×3", 1255, 145);
+          text(item_names[33]+"×5", 1255, 165);
         }
         break;
       }
     case 3:
       {
-        if (items[27]>=5&&items[19]>=3&&items[5]>=5&&AL==3) {
+        if (items[27]>=5&&items[19]>=3&&items[5]>=5&&save.ATK_level==3) {
           ups2=true;
           fill(0, 255, 0);
           textSize(20);
           text("ATK "+ATK+" -> "+(ATK+3), 990, 120);
           textSize(15);
-          text(ITEMS[27]+"×5", 995, 145);
-          text(ITEMS[19]+"×3", 995, 165);
-          text(ITEMS[23]+"×30", 995, 185);
+          text(item_names[27]+"×5", 995, 145);
+          text(item_names[19]+"×3", 995, 165);
+          text(item_names[23]+"×30", 995, 185);
         }
       }
     case 4:
       {
-        if (items[2]>=7&&items[3]>=2&&AL==4) {
+        if (items[2]>=7&&items[3]>=2&&save.ATK_level==4) {
           ups2=true;
           fill(0, 255, 0);
           textSize(20);
           text("HP 117 -> 120", 400, 120);
           textSize(15);
-          text(ITEMS[2]+"×7", 995, 145);
-          text(ITEMS[3]+"×2", 995, 145);
+          text(item_names[2]+"×7", 995, 145);
+          text(item_names[3]+"×2", 995, 145);
         }
       }
     case 5:
       {
-        if (items[23]>=10&&items[4]>=3&&AL==5) {
+        if (items[23]>=10&&items[4]>=3&&save.ATK_level==5) {
           ups2=true;
           fill(0, 255, 0);
           textSize(20);
           text("HP 120 -> 125", 400, 120);
           textSize(15);
-          text(ITEMS[23]+"×10", 405, 145);
-          text(ITEMS[4]+"×3", 405, 165);
+          text(item_names[23]+"×10", 405, 145);
+          text(item_names[4]+"×3", 405, 165);
         }
       }
 
 
     case 0:
       {
-        if ((items[18]<7||items[24]<10)&&AL==1||(items[32]<3||items[33]<5)&&AL==2||(items[27]<5||items[19]<3||items[5]<5)&&AL==3||(items[2]<7||items[3]<2)&&AL==4||(items[23]<10||items[4]<3)&&AL==5) {
+        if ((items[18]<7||items[24]<10)&&save.ATK_level==1||(items[32]<3||items[33]<5)&&save.ATK_level==2||(items[27]<5||items[19]<3||items[5]<5)&&save.ATK_level==3||(items[2]<7||items[3]<2)&&save.ATK_level==4||(items[23]<10||items[4]<3)&&save.ATK_level==5) {
           ups3=false;
 
 
-          if (DL==3) {
+          if (save.DEF_level==3) {
             fill(255, 0, 0);
             textSize(20);
             text("ATK "+ATK+" -> "+(ATK+3), 990, 120);
             textSize(15);
-            text(ITEMS[27]+"×5", 995, 145);
-            text(ITEMS[19]+"×3", 995, 165);
-            text(ITEMS[5]+"×5", 995, 185);
+            text(item_names[27]+"×5", 995, 145);
+            text(item_names[19]+"×3", 995, 165);
+            text(item_names[5]+"×5", 995, 185);
           }
-          if (DL==4) {
+          if (save.DEF_level==4) {
             fill(255, 0, 0);
             textSize(20);
             text("HP 117 -> 120", 400, 120);
             textSize(15);
-            text(ITEMS[2]+"×7", 405, 145);
-            text(ITEMS[3]+"×2", 405, 165);
+            text(item_names[2]+"×7", 405, 145);
+            text(item_names[3]+"×2", 405, 165);
           }
-          if (DL==5) {
+          if (save.DEF_level==5) {
             fill(255, 0, 0);
             textSize(20);
             text("HP 120 -> 125", 400, 120);
             textSize(15);
-            text(ITEMS[23]+"×10", 405, 145);
-            text(ITEMS[4]+"×3", 405, 165);
+            text(item_names[23]+"×10", 405, 145);
+            text(item_names[4]+"×3", 405, 165);
           }
         }
       }
@@ -2444,36 +2407,36 @@ void draw() {
     }
     if (mouseX>=1010+HAM&&1250+HAM>=mouseX&&mouseY>=183+HAU&&217+HAU>=mouseY&&mousePress&&menu<=0&&menu>-7)
     {
-      switch(DL) {
+      switch(save.DEF_level) {
       case 1:
         {
-          if (items[18]>=7&&items[24]>=10&&DL==1) {
+          if (items[18]>=7&&items[24]>=10&&save.DEF_level==1) {
             DUP=true;
           }
           break;
         }
       case 2:
         {
-          if (items[32]>=3&&items[33]>=5&&DL==2) {
+          if (items[32]>=3&&items[33]>=5&&save.DEF_level==2) {
             DUP=true;
           }
           break;
         }
       case 3:
         {
-          if (items[27]>=5&&items[19]>=3&&items[5]>=5&&AL==3) {
+          if (items[27]>=5&&items[19]>=3&&items[5]>=5&&save.ATK_level==3) {
             AUP=true;
           }
         }
       case 4:
         {
-          if (items[2]>=7&&items[3]>=2&&AL==4) {
+          if (items[2]>=7&&items[3]>=2&&save.ATK_level==4) {
             AUP=true;
           }
         }
       case 5:
         {
-          if (items[23]>=10&&items[4]>=3&&AL==5) {
+          if (items[23]>=10&&items[4]>=3&&save.ATK_level==5) {
             AUP=true;
           }
         }
@@ -2489,137 +2452,17 @@ void draw() {
         I2=0;
       }
       try {
-        image(ITMS[I], textWidth(ITEMS[I]+I3[I]+"0")+17, 240+I*35+I2-16);
+        image(ITMS[I], textWidth(item_names[I]+I3[I]+"0")+17, 240+I*35+I2-16);
       }
       catch(Exception a) {
         ITMS[I]=loadImage("NODATA.png");
       }
       fill(0, 155, 255);
       textSize(15);
-      text(ITEMS[I]+":"+items[I], 20, 240+I*35+I2);
+      text(item_names[I]+":"+items[I], 20, 240+I*35+I2);
     }
-    text(ITEMS[2]+"×2", 260, 320);
-    text(ITEMS[18]+"×1 ->", 260, 340);
-    text(ITEMS[3]+"×1", 400, 340);
-    text(ITEMS[0]+"×1 ->", 260, 380);
-    text(ITEMS[23]+"×2", 400, 380);
-    text(ITEMS[1]+"×1 ->", 260, 420);
-    text(ITEMS[24]+"×2", 415, 420);
-    text(ITEMS[20]+"×5", 260, 460);
-    text(ITEMS[21]+"×2", 260, 480);
-    text(ITEMS[4]+"×6 ->", 260, 500);
-    text(ITEMS[5]+"×1", 400, 500);
-    text(ITEMS[5]+"×3", 260, 540);
-    text(ITEMS[20]+"×2", 260, 560);
-    text(ITEMS[30]+"×2", 260, 580);
-    text(ITEMS[28]+"×10 ->", 260, 600);
-    text(ITEMS[6]+"×1", 405, 600);
-    text(ITEMS[26]+"×10 ->", 260, 630);
-    text(ITEMS[32]+"×1", 405, 630);
-    text(ITEMS[27]+"×10 ->", 260, 670);
-    text(ITEMS[33]+"×1", 405, 670);
-    fill(255);
-    textSize(20);              
-    text("Intermediate material", 20, 870);
-
-    if (mouseX>=400+HAM&&500+HAM>=mouseX&&mouseY>=327+HAU&&343+HAU>=mouseY) {
-      if (items[2]>=2&&items[18]>=1) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 510, 340);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(450, 335, 100, 15);
-    if (mouseX>=400+HAM&&500+HAM>=mouseX&&mouseY>=367+HAU&&383+HAU>=mouseY) {
-      if (items[0]>=1) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 510, 380);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(450, 375, 100, 15);
-    if (mouseX>=413+HAM&&543+HAM>=mouseX&&mouseY>=407+HAU&&423+HAU>=mouseY) {
-      if (items[1]>=1) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 553, 420);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(478, 415, 130, 15);
-    if (mouseX>=400+HAM&&540+HAM>=mouseX&&mouseY>=487+HAU&&503+HAU>=mouseY) {
-      if (items[20]>=5&&items[21]>=2&&items[4]>=6) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 550, 500);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(470, 495, 140, 15);
-    if (mouseX>=403+HAM&&567+HAM>=mouseX&&mouseY>=587+HAU&&603+HAU>=mouseY) {
-      if (items[5]>=3&&items[20]>=2&&items[30]>=2&&items[28]>=10) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 577, 600);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(487, 595, 164, 15);
-    if (mouseX>=403+HAM&&503+HAM>=mouseX&&mouseY>=617+HAU&&633+HAU>=mouseY) {
-      if (items[26]>=10) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 550, 630);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(453, 625, 100, 15);
-    if (mouseX>=402+HAM&&508+HAM>=mouseX&&mouseY>=657+HAU&&673+HAU>=mouseY) {
-      if (items[27]>=10) {
-        fill(0, 255, 0);
-        textSize(15);
-        text("Craft", 550, 670);
-        fill(0, 255, 0, 100);
-      } else {
-        fill(255, 0, 0, 100);
-      }
-    } else {
-      noFill();
-    }
-    noStroke();
-    rect(456, 665, 104, 15);
+    recipes.display(new PVector(300,320));
+    recipes.update(new PVector(300+HAM,320+HAU));
   }
   if (cheet==5) {
     text("BREAK MODDE", 10, 20);
@@ -2668,9 +2511,9 @@ void draw() {
       cB[99]=0;
     }
     if (mouseX>=10+width/2-320&&250+width/2-320>=mouseX&&mouseY>=183+height/2-320&&217+height/2-320>=mouseY&&mousePressed) {
-      Charpter=39;
+      save.chapter=39;
     }
-    if (Charpter>=39) {
+    if (save.chapter>=39) {
       fill(0, 255, 0);
     } else {
       fill(255, 0, 0);
@@ -2693,7 +2536,7 @@ void draw() {
       cB[98]=0;
     }
     if (mouseX>=10+width/2-320&&250+width/2-320>=mouseX&&mouseY>=223+height/2-320&&257+height/2-320>=mouseY&&mousePressed) {
-      Charpter=0;
+      save.chapter=0;
     }
     text(CHT, 200, 20);
     text("CHEET", 115, 20);
@@ -2728,11 +2571,11 @@ void draw() {
           try {
             CHTL=0;
             SCHT=split(CHT, ' ');
-            LEVEL=int(SCHT[1]);
+            save.level=int(SCHT[1]);
             CHT="";
             CMS=true;
             CMST=0;
-            level=0;
+            save.experience=0;
           }
           catch(Exception e) {
             CMSF=true;
@@ -2849,7 +2692,7 @@ void draw() {
           try {
             CHTL=0;
             SCHT=split(CHT, ' ');
-            MYGEN=int(SCHT[1]);
+            save.generation=int(SCHT[1]);
             CHT="";
             CMS=true;
             CMST=0;
@@ -3016,7 +2859,7 @@ void draw() {
     }
     int atk=0;
     int def=0;
-    switch(HL) {
+    switch(save.HP_level) {
     case 1:
       {
         GH=100;
@@ -3048,7 +2891,7 @@ void draw() {
         break;
       }
     }
-    switch(AL) {
+    switch(save.ATK_level) {
     case 1:
       {
         atk=0;
@@ -3080,7 +2923,7 @@ void draw() {
         break;
       }
     }
-    switch(DL) {
+    switch(save.DEF_level) {
     case 1:
       {
         def=0;
@@ -3129,7 +2972,7 @@ void draw() {
     BA=0;
     timelock=0;
     NC=0;
-    if (Cef==0&&Charpter==0)CEF();
+    if (Cef==0&&save.chapter==0)CEF();
     CC=0;
     Poi=false;
     fire=false;
@@ -3140,13 +2983,13 @@ void draw() {
     Mir=false;
     Zer=false;
     G=GH;
-    ATK=3+floor(LEVEL/6.0)+atk;
-    DEF=floor(LEVEL/10.0)+def;
+    ATK=3+floor(save.level/6.0)+atk;
+    DEF=floor(save.level/10.0)+def;
     if (CATK>0)ATK=CATK;
     if (CDEF>0)DEF=CDEF;
     H=G;
     scon=0;
-    GENL=LEVEL/12;
+    GENL=save.level/12;
     if (SCENE==(7)) {
       Outtime=100;
     } else if (SCENE==(12|33)) {
@@ -3253,8 +3096,8 @@ void draw() {
     }
     textSize(11);
     if (Time<=0.1) {
-      SP=LEVEL*100;
-      Enerugy=LEVEL*100*ENES;
+      SP=save.level*100;
+      Enerugy=save.level*100*ENES;
     }
     if (menu==0) {
       if (DP<=0) {
@@ -3371,9 +3214,9 @@ void draw() {
           case 1:t="S";break;
           case 2:t="C";break;
           case 3:t="G";break;
-          case 4:t="N";if(Charpter<15)continue;break;
-          case 5:t="H";if(Charpter<11)continue;break;
-          case 6:t="J";if(Charpter<2)continue;break;
+          case 4:t="N";if(save.chapter<15)continue;break;
+          case 5:t="H";if(save.chapter<11)continue;break;
+          case 6:t="J";if(save.chapter<2)continue;break;
         }
         fill(100,100);
         rect(20,height-220-60*i,40,40);
@@ -3517,18 +3360,16 @@ void draw() {
         fill(255, 158, 0);
         textSize(20);
         text("EXP+"+W/100, 270, 500);
-        EXP+=level;
-        if (Charpter==0)a[0]=0;
+        if (save.chapter==0)a[0]=0;
         if (a[0]==a[1]) {
-          Charpter=Charpter+1;
+          save.chapter=save.chapter+1;
           a[0]=a[0]+1;
           a[1]=0;
         }
       }
       if (Time>=Gt+7) {
-        data_save(0);
-        level+=W/100;
-        exp+=EXP;
+        save.save();
+        save.experience+=W/100;
         H=100;
         W=0;
         DD=15;
@@ -3538,10 +3379,9 @@ void draw() {
         RTT=0;
         Time=0;
         menu=0;
-        if (LEVEL*100<=level) {
-          EXP=0;
-          level=level-LEVEL*100;
-          LEVEL=LEVEL+1;
+        if (save.level*100<=save.experience) {
+          save.experience=save.experience-save.level*100;
+          save.level=save.level+1;
         }
         SCENE=0;
         scene=-1;
@@ -3648,9 +3488,9 @@ void draw() {
       if (menu==0) {
         rect(width-140+(H/G*100)/2, 25, H/G*100, 10);
         fill(127, 188, 206, Vol2);
-        rect(width-140+SP/(2*LEVEL), 35, SP/LEVEL, 5);
+        rect(width-140+SP/(2*save.level), 35, SP/save.level, 5);
         fill(255, 200, 10, Vol2);
-        rect(width-140+Enerugy/(2*LEVEL), 45, Enerugy/LEVEL, 10);
+        rect(width-140+Enerugy/(2*save.level), 45, Enerugy/save.level, 10);
       }
       random(1, 3);
       JCT++;
@@ -3668,16 +3508,16 @@ void draw() {
       }
       if (menu==0) {
         if (scene==22){
-          W+=max(0,10-floor(LEVEL/10.0));
+          W+=max(0,10-floor(save.level/10.0));
         }else if(scene==27){
-          W+=max(0,17.5-floor(LEVEL/10.0));
+          W+=max(0,17.5-floor(save.level/10.0));
         }else if(scene==32){
-          W+=max(0,25-floor(LEVEL/10.0));
+          W+=max(0,25-floor(save.level/10.0));
         }
-        if (SP<=LEVEL*100&&AA!=1&&AA!=5) {
+        if (SP<=save.level*100&&AA!=1&&AA!=5) {
           SP=SP+0.5;
         }
-        if (Enerugy<LEVEL*100*ENES) {
+        if (Enerugy<save.level*100*ENES) {
           Enerugy=Enerugy+0.05*CE;
         }
         if (JUST&&JT<=30) {
@@ -3699,9 +3539,9 @@ void draw() {
         String IGTS="";
         for (int I=0; I<35; I++) {
           if (itget[I]) {
-            IGTS=ITEMS[I]+items[I];
+            IGTS=item_names[I]+items[I];
             Itemget.add(IGTS);
-            if (Itemget.indexOf(ITEMS[I]+items[I])!=-1) {
+            if (Itemget.indexOf(item_names[I]+items[I])!=-1) {
               Itemgets[I][items[I]]=true;
               Item[items[I]]=items[I]-BItem[I];
             }
@@ -3712,7 +3552,7 @@ void draw() {
           if (Itemgets[I][items[I]]&&igt[I]<30) {
             fill(255);
             textSize(12);
-            text(ITEMS[I]+"×"+Gitem[I], width/2, 40+Itemget.indexOf(ITEMS[I]+items[I])*15);
+            text(item_names[I]+"×"+Gitem[I], width/2, 40+Itemget.indexOf(item_names[I]+items[I])*15);
             igt[I]=igt[I]+1;
           }
           if (Itemgets[I][items[I]]&&Itemgets[I][Aitem[I]]||igt[I]>=30) {
@@ -3872,7 +3712,7 @@ void draw() {
           JUST=true;
           JCT=0;
         }
-        if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=400&&LEVEL<30&&!VSCR||CC<=600&&CC>0&&LEVEL<30&&!VSCR) {
+        if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=400&&save.level<30&&!VSCR||CC<=600&&CC>0&&save.level<30&&!VSCR) {
           Pup=true;
           AA=3;
           BB=1;
@@ -3880,7 +3720,7 @@ void draw() {
           Ene=2;
           PUP();
         }
-        if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=800&&LEVEL>=30&&!VSCR||CC<=600&&CC>0&&LEVEL>=30&&!VSCR) {
+        if ((keyPressed)&&(key==skill[0])&&(BB==0)&&SP>=800&&save.level>=30&&!VSCR||CC<=600&&CC>0&&save.level>=30&&!VSCR) {
           Pup2=true;
           AA=6;
           BB=1;
@@ -3922,7 +3762,7 @@ void draw() {
           AA=0;
           BB=0;
         }
-        if (Charpter>=15&&keyPressed&&key==skill[4]&&!VSCR) {
+        if (save.chapter>=15&&keyPressed&&key==skill[4]&&!VSCR) {
           if(!NV&&NT==0&&SP>=10){
             NV=true;
           }
@@ -3953,7 +3793,7 @@ void draw() {
           AA2=0;
           SOP=0;
         }
-        Enerugy=constrain(Enerugy, -100, LEVEL*100*ENES);
+        Enerugy=constrain(Enerugy, -100, save.level*100*ENES);
         if (keyPressed&&key==skill[2]&&Enerugy<-10&&!VSCR) {
           Enerugy=Enerugy+0.08;
           AA2=-5;
@@ -5110,13 +4950,18 @@ void draw() {
           }
         }
       }
-      switch(GENS) {
+      switch(save.generation) {
       case 0:
         {
           ellipse(loc.x, loc.y, size, size);
           break;
         }
       case 1:
+        {
+          rect(loc.x, loc.y, size, size);
+          break;
+        }
+      case 2:
         {
           rect(loc.x, loc.y, size, size);
           break;
@@ -5227,7 +5072,7 @@ void draw() {
           GBptime++;
           noStroke();
           fill(200,0,200,200);
-          arc(loc.x,loc.y,30,30,radians(180),radians(180+GBptime*3));
+          arc(loc.x,loc.y,25,25,radians(180),radians(180+GBptime*3));
           if(GBptime==120){
             GBptime=0;
             if (Enerugy>100&&SP>=10) {
@@ -5240,6 +5085,8 @@ void draw() {
         GBptime=constrain(GBptime,0,120);
         if(addGB){
           GB.add(new GravityBall(this));
+          Enerugy-=100;
+          SP-=10;
           addGB=false;
         }
       if (Time>=Gt) {
@@ -6797,8 +6644,15 @@ void draw() {
     }
 
     void update() {
+      float tmp=vel;
+      for(GravityBall gb:GB){
+        if(!isMine&&gb.active()&&dist(loc.x,loc.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel/=3;
+        }
+      }
       loc.y += vel;
       loc.x+=vel2;
+      vel=tmp;
       if (LOCK&&isMine) {
         float mlo;
         float mlo2;
@@ -6845,6 +6699,14 @@ void draw() {
     }
 
     void display4() {
+      float tmp=vel4;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc4.x,loc4.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel4/=3;
+        }
+      }
+      loc4.y += vel4;
+      vel4=tmp;
       if (isMine4) {
         stroke(0, 0, 255);
       } else {
@@ -6896,7 +6758,14 @@ void draw() {
     }
 
     void update5() {
+      float tmp=vel5;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc5.x,loc5.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel5/=3;
+        }
+      }
       loc5.y += vel5;
+      vel5=tmp;
       if ((vel5 > 0 && loc5.y > height) || (vel5 < 0 && loc5.y < 0)) {
         isDead5 = true;
         if (H<=0||Time>=Gt||Time<=3.0) {
@@ -6938,7 +6807,14 @@ void draw() {
     }
 
     void update6() {
+      float tmp=vel6;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc6.x,loc6.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel6/=3;
+        }
+      }
       loc6.y += vel6;
+      vel6=tmp;
       if ((vel6 > 0 && loc6.y > height) || (vel6 < 0 && loc6.y < 0)) {
         isDead6 = true;
         if (H<=0||Time>=Gt||Time<=3.0) {
@@ -6980,7 +6856,14 @@ void draw() {
     }
 
     void update3() {
+      float tmp=vel3;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc3.x,loc3.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel3/=3;
+        }
+      }
       loc3.y += vel3;
+      vel3=tmp;
       if ((vel3 > 0 && loc3.y > height) || (vel3 < 0 && loc3.y < 0)) {
         isDead3 = true;
         if (H<=0||Time>=Gt-0.08||Time<=3.0) {
@@ -8265,11 +8148,7 @@ void draw() {
       HP=4+floor((scene-3)/3);
       size2 = 23;
       loc2 = new PVector(random(size2 / 2, width - size2 / 2), -size2 / 2);
-      if (GBD&&dist(loc2.x, loc2.y, GRBX, GRBY)<=GBR) {
-        vel2=8/3;
-      } else {
-        vel2 = 8;
-      }
+      vel2=8;
       coolingTime2 = int(random(100));
       isDead2 = false;
       A2=isDead2;
@@ -8288,10 +8167,11 @@ void draw() {
     void update2() {
       loc2.y += vel2;
       hps[HPA]=HP;
-      if (GBD&&dist(loc2.x, loc2.y, GRBX, GRBY)<=GBR) {
-        vel2=8/3;
-      } else {
-        vel2 = 8;
+      vel2=8;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc2.x,loc2.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel2/=3;
+        }
       }
       if (loc2.y > height) {
         isDead2 = true; 
@@ -8322,7 +8202,7 @@ void draw() {
           if (AA!=1)H=H+2;
           if (AA==1)DD=DD+3;
           Ar[1]=1;
-          EC[1]=EC[1]+1;
+          save.incDefeat("Special attack");
           DP=DP-1;
           if (Item>20&&Item<=50) {
             items[1]=items[1]+1;
@@ -8345,7 +8225,7 @@ void draw() {
             ITC=ITC+1;
             itget[18]=true;
           }
-          if (EC[1]==1) {
+          if (save.getDefeat("Special attack")==1) {
             CEF();
           }
           isDead2 = true;
@@ -8371,11 +8251,7 @@ void draw() {
       HP=6+floor((scene-3)/5);
       size3 = 20;
       loc3 = new PVector(random(size3 / 2, width - size3 / 2), -size3 / 2);
-      if (GBD&&dist(loc3.x, loc3.y, GRBX, GRBY)<=GBR) {
-        vel3=4/3;
-      } else {
-        vel3 = 4;
-      }
+      vel3 = 4;
       coolingTime3 = int(random(2));
       isDead3 = false;
       A3=isDead3;
@@ -8394,10 +8270,11 @@ void draw() {
     void update3() {
       loc3.y += vel3;
       hps[HPA]=HP;
-      if (GBD&&dist(loc3.x, loc3.y, GRBX, GRBY)<=GBR) {
-        vel3=4/3;
-      } else {
-        vel3 = 4;
+      vel3=4;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc3.x,loc3.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel3/=3;
+        }
       }
       if (loc3.y > height) {
         isDead3 = true;
@@ -8432,7 +8309,7 @@ void draw() {
           }
           if (AA==1)DD=DD+8;
           Ar[2]=1;
-          EC[2]=EC[2]+1;
+          save.incDefeat("Rare");
           DP=DP-3;
           if (Item>=63&&Item<78) {
             items[4]=items[4]+1;
@@ -8448,7 +8325,7 @@ void draw() {
             ITC=ITC+1;
             itget[20]=true;
           }
-          if (EC[2]==1) {
+          if (save.getDefeat("Rare")==1) {
             CEF();
           }
           isDead3 = true;
@@ -8474,11 +8351,7 @@ void draw() {
       HP=7+floor((scene-3)/4);
       size4 = 20;
       loc4 = new PVector(random(size4 / 2, width - size4 / 2), -size4 / 2);
-      if (GBD&&dist(loc4.x, loc4.y, GRBX, GRBY)<=GBR) {
-        vel4=4/3;
-      } else {
-        vel4 = 4;
-      }
+      vel4=4;
       coolingTime4 = int(random(2));
       isDead4 = false;
       A4=isDead4;
@@ -8501,10 +8374,11 @@ void draw() {
     void update4() {
       loc4.y += vel4;
       hps[HPA]=HP;
-      if (GBD&&dist(loc4.x, loc4.y, GRBX, GRBY)<=GBR) {
-        vel4=4/3;
-      } else {
-        vel4 = 4;
+      vel4=4;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc4.x,loc4.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel4/=3;
+        }
       }
       if (loc4.y > height) {
         isDead4 = true;
@@ -8539,7 +8413,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Poisen");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -8555,7 +8429,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Poisen")==1) {
             CEF();
           }
           isDead4 = true;
@@ -8685,7 +8559,7 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[4]=1;
-          EC[4]=EC[4]+1;
+          save.incDefeat("Normal Boss");
           DP=DP-15;
           if (Item>=15) {
             items[21]=items[21]+1;
@@ -8708,7 +8582,7 @@ void draw() {
             ITC=ITC+2;
             itget[1]=true;
           }
-          if (EC[4]==1) {
+          if (save.getDefeat("Normal Boss")==1) {
             CEF();
           }
           Time=Gt;
@@ -8857,7 +8731,7 @@ void draw() {
           if (AA==1)DD=DD+100;
           Time=Gt;
           Ar[5]=1;
-          EC[5]=EC[5]+1;
+          save.incDefeat("Normal Boss++");
           DP=DP-25;
           BA=BA-1;
           items[21]=items[21]+2;
@@ -8882,7 +8756,7 @@ void draw() {
             ITC=ITC+1;
             itget[26]=true;
           }
-          if (EC[5]==1) {
+          if (save.getDefeat("Normal Boss++")==1) {
             CEF();
           }
           isDead6 = true;
@@ -8903,16 +8777,13 @@ void draw() {
     int HP;
     int HPA=0;
     float Item=random(100);
+    float RANDOMx=random(-2,2);
 
     Enemy7() {
       HP=8+floor((scene-3)/4);
       size7 = 20;
       loc7 = new PVector(random(size7 / 2, width - size7 / 2), -size7 / 2);
-      if (GBD&&dist(loc7.x, loc7.y, GRBX, GRBY)<=GBR) {
-        vel7=3.8/3;
-      } else {
-        vel7 = 3.8;
-      }
+      vel7=3.8;
       coolingTime7 = int(random(2));
       isDead7 = false;
       A7=isDead7;
@@ -8931,10 +8802,12 @@ void draw() {
     void update7() {
       loc7.y += vel7;
       hps[HPA]=HP;
-      if (GBD&&dist(loc7.x, loc7.y, GRBX, GRBY)<=GBR) {
-        vel7=3.8/3;
-      } else {
-        vel7 = 3.8;
+      if(RTT%200==0)RANDOMx=random(-2,2);
+      vel7=3.8;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc7.x,loc7.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel7/=3;
+        }
       }
       loc7.x += RANDOMx;
       constrain(loc7.x, 20, 620);
@@ -8975,9 +8848,9 @@ void draw() {
           }
           if (AA==1)DD=DD+5;
           Ar[6]=1;
-          EC[6]=EC[6]+1;
+          save.incDefeat("Cluster");
           DP=DP-2;
-          if (EC[6]==1) {
+          if (save.getDefeat("Cluster")==1) {
             CEF();
           }
           if (Item<6) {
@@ -9030,11 +8903,7 @@ void draw() {
       HP=5+floor((scene-3)/4);
       size = 20;
       loc = new PVector(random(size / 2, width - size / 2), -size / 2);
-      if (GBD&&dist(loc.x, loc.y, GRBX, GRBY)<=GBR) {
-        vel=1;
-      } else {
-        vel = 3;
-      }
+      vel=3;
       coolingTime = int(random(100));
       isDead = false;
       DP=DP+1;
@@ -9054,10 +8923,11 @@ void draw() {
     void update() {
       loc.y += vel;
       hps[HPA]=HP;
-      if (GBD&&dist(loc.x, loc.y, GRBX, GRBY)<=GBR) {
-        vel=1;
-      } else {
-        vel = 3;
+      vel=3;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc.x,loc.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel/=3;
+        }
       }
       if (loc.y > height) {
         isDead = true;
@@ -9090,7 +8960,7 @@ void draw() {
           if (AA!=1)H=H+1;
           if (AA==1)DD=DD+1;
           Ar[0]=1;
-          EC[0]=EC[0]+1;
+          save.incDefeat("Normal");
           DP=DP-1;
           if (Item<=30) {
             items[0]=items[0]+1;
@@ -9111,7 +8981,7 @@ void draw() {
             Gitem[18]=Gitem[18]+1;
             itget[18]=true;
           }
-          if (EC[0]==1) {
+          if (save.getDefeat("Normal")==1) {
             CEF();
           }
           isDead = true;
@@ -9271,9 +9141,9 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[8]=1;
-          EC[8]=EC[8]+1;
+          save.incDefeat("Normal Boss α");
           DP=DP-20;
-          if (EC[8]==1) {
+          if (save.getDefeat("Normal Boss α")==1) {
             CEF();
           }
           dethlevel=dethlevel+1;
@@ -9386,9 +9256,9 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[9]=1;
-          EC[9]=EC[9]+1;
+          save.incDefeat("Normal Boss β");
           DP=DP-20;
-          if (EC[9]==1) {
+          if (save.getDefeat("Normal Boss β")==1) {
             CEF();
           }
           dethlevel=dethlevel+1;
@@ -9490,9 +9360,9 @@ void draw() {
           }
           if (AA==1)DD=DD+3;
           Ar[10]=1;
-          EC[10]=EC[10]+1;
+          save.incDefeat("Transparent");
           DP=DP-2;
-          if (EC[10]==1) {
+          if (save.getDefeat("Transparent")==1) {
             CEF();
           }
           if (Item<10) {
@@ -9662,9 +9532,9 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[11]=1;
-          EC[11]=EC[11]+1;
+          save.incDefeat("Charge");
           DP=DP-2;
-          if (EC[11]==1) {
+          if (save.getDefeat("Charge")==1) {
             CEF();
           }
           isDead11 = true;
@@ -9750,9 +9620,9 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[12]=1;
-          EC[12]=EC[12]+1;
+          save.incDefeat("Fire");
           DP=DP-2;
-          if (EC[12]==1) {
+          if (save.getDefeat("Fire")==1) {
             CEF();
           }
           isDead12 = true;
@@ -9899,10 +9769,10 @@ void draw() {
           if (AA==1)DD=DD+100;
           Time=Gt;
           Ar[13]=1;
-          EC[13]=EC[13]+1;
+          save.incDefeat("Transparent Boss");
           DP=DP-35;
           BA=BA-1;
-          if (EC[13]==1) {
+          if (save.getDefeat("Transparent Boss")==1) {
             CEF();
           }
           isDead13 = true;
@@ -9988,9 +9858,9 @@ void draw() {
           }
           if (AA==1)DD=DD+5;
           Ar[14]=1;
-          EC[14]=EC[14]+1;
+          save.incDefeat("Thunder");
           DP=DP-4;
-          if (EC[12]==1) {
+          if (save.getDefeat("Thunder")==1) {
             CEF();
           }
           isDead12 = true;
@@ -10080,7 +9950,7 @@ void draw() {
           if (AA!=1)H=H+1;
           if (AA==1)DD=DD+1;
           Ar[0]=1;
-          EC[0]=EC[0]+1;
+          save.incDefeat("Upward Compatible");
           DP=DP-1;
           if (Item<=30) {
             items[0]=items[0]+1;
@@ -10101,7 +9971,7 @@ void draw() {
             Gitem[18]=1;
             itget[18]=true;
           }
-          if (EC[0]==1) {
+          if (save.getDefeat("Upward Compatible")==1) {
             CEF();
           }
           isDead15 = true;
@@ -10182,7 +10052,7 @@ void draw() {
           if (AA!=1)H=H+1;
           if (AA==1)DD=DD+1;
           Ar[0]=1;
-          EC[0]=EC[0]+1;
+          save.incDefeat("Upward Compatible+++");
           DP=DP-1;
           if (Item<=30) {
             items[0]=items[0]+1;
@@ -10203,7 +10073,7 @@ void draw() {
             Gitem[18]=1;
             itget[18]=true;
           }
-          if (EC[0]==1) {
+          if (save.getDefeat("Upward Compatible+++")==1) {
             CEF();
           }
           isDead16 = true;
@@ -10258,7 +10128,7 @@ void draw() {
       for (Bullet b : myBullets) {
         if ((loc17.x - size17 / 2 <= b.loc.x && b.loc.x <= loc17.x + size17 / 2)
           && (loc17.y - size17 / 2 <= b.loc.y && b.loc.y <= loc17.y + size17 / 2)) {
-          HP=HP-(1+floor(LEVEL/6));
+          HP=HP-(1+floor(save.level/6));
           W=W+80;
           b.isDead=true;
         }
@@ -10270,7 +10140,7 @@ void draw() {
           }
           if (AA==1)DD=DD+8;
           Ar[2]=1;
-          EC[2]=EC[2]+1;
+          save.incDefeat("Recovery");
           DP=DP-3;
           isDead17 = true;
           b.isDead = true;
@@ -10324,7 +10194,7 @@ void draw() {
       for (Bullet b : myBullets) {
         if ((loc18.x - size18 / 2 <= b.loc.x && b.loc.x <= loc18.x + size18 / 2)
           && (loc18.y - size18 / 2 <= b.loc.y && b.loc.y <= loc18.y + size18 / 2)) {
-          HP=HP-(1+floor(LEVEL/6));
+          HP=HP-(1+floor(save.level/6));
           W=W+80;
           b.isDead=true;
         }
@@ -10337,7 +10207,7 @@ void draw() {
           }
           if (AA==1)DD=DD+8;
           Ar[1]=1;
-          EC[10]=EC[0]+1;
+          save.incDefeat("Flash");
           DP=DP-3;
           isDead18 = true;
           b.isDead = true;
@@ -10430,7 +10300,7 @@ void draw() {
           }
           if (AA==1)DD=DD+8;
           Ar[2]=1;
-          EC[2]=EC[2]+1;
+          save.incDefeat("Plasma");
           DP=DP-3;
           if (Item>=63&&Item<78) {
             items[4]=items[4]+1;
@@ -10446,7 +10316,7 @@ void draw() {
             ITC=ITC+1;
             itget[20]=true;
           }
-          if (EC[2]==1) {
+          if (save.getDefeat("Plasma")==1) {
             CEF();
           }
           isDead19 = true;
@@ -10538,7 +10408,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Freeze");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -10554,7 +10424,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Freeze")==1) {
             CEF();
           }
           isDead20 = true;
@@ -10645,9 +10515,9 @@ void draw() {
           }
           if (AA==1)DD=DD+3;
           Ar[22]=1;
-          EC[22]=EC[10]+1;
+          save.incDefeat("Completely Transparent");
           DP=DP-2;
-          if (EC[10]==1) {
+          if (save.getDefeat("Completely Transparent")==1) {
             CEF();
           }
           if (Item<5) {
@@ -10764,9 +10634,9 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[23]=1;
-          EC[23]=EC[23]+1;
+          save.incDefeat("Fire Boss");
           DP=DP-20;
-          if (EC[23]==1) {
+          if (save.getDefeat("Fire Boss")==1) {
             CEF();
           }
           dethlevel=dethlevel+1;
@@ -10882,9 +10752,9 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[24]=1;
-          EC[24]=EC[24]+1;
+          save.incDefeat("Freeze Boss");
           DP=DP-20;
-          if (EC[24]==1) {
+          if (save.getDefeat("Freeze Boss")==1) {
             CEF();
           }
           dethlevel=dethlevel+1;
@@ -10987,7 +10857,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Multi-Attribute");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -11003,7 +10873,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Multi-Attribute")==1) {
             CEF();
           }
           isDead24 = true;
@@ -11128,7 +10998,7 @@ void draw() {
           }
           if (AA==1)DD=DD+100;
           Ar[26]=1;
-          EC[26]=EC[26]+1;
+          save.incDefeat("Thunder Boss");
           DP=DP-15;
           if (Item>=15) {
             items[21]=items[21]+1;
@@ -11151,7 +11021,7 @@ void draw() {
             ITC=ITC+2;
             itget[1]=true;
           }
-          if (EC[4]==1) {
+          if (save.getDefeat("Thunder Boss")==1) {
             CEF();
           }
           Time=Gt;
@@ -11251,9 +11121,9 @@ void draw() {
           }
           if (AA==1)DD=DD+5;
           Ar[27]=1;
-          EC[27]=EC[27]+1;
+          save.incDefeat("Tornado");
           DP=DP-2;
-          if (EC[27]==1) {
+          if (save.getDefeat("Tornado")==1) {
             CEF();
           }
           if (Item<16) {
@@ -11295,11 +11165,7 @@ void draw() {
       HP=15+floor((scene-3)/4);
       size27 = 20;
       loc27 = new PVector(random(size27 / 2, width - size27 / 2), -size27 / 2);
-      if (GBD&&dist(loc27.x, loc27.y, GRBX, GRBY)<=GBR) {
-        vel27=4/3;
-      } else {
-        vel27 = 4;
-      }
+      vel27 = 4;
       coolingTime27 = int(random(2));
       isDead27 = false;
       A4=isDead27;
@@ -11322,10 +11188,11 @@ void draw() {
     void update27() {
       loc27.y += vel27;
       hps[HPA]=HP;
-      if (GBD&&dist(loc27.x, loc27.y, GRBX, GRBY)<=GBR) {
-        vel27=4/3;
-      } else {
-        vel27 = 4+y;
+      vel27 = 4+y;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc27.x,loc27.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel27/=3;
+        }
       }
       if (loc27.y > height) {
         y=y+1;
@@ -11362,7 +11229,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Tarbo");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -11378,7 +11245,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Tarbo")==1) {
             CEF();
           }
           isDead27 = true;
@@ -11411,11 +11278,7 @@ void draw() {
       HP=13+floor((scene-3)/3);
       size28 = 20;
       loc28 = new PVector(random(size28 / 2, width - size28 / 2), -size28 / 2);
-      if (GBD&&dist(loc28.x, loc28.y, GRBX, GRBY)<=GBR) {
-        vel28=8/3;
-      } else {
-        vel28 = 8;
-      }
+      vel28=8;
       coolingTime28 = int(random(100));
       isDead28 = false;
       A2=isDead28;
@@ -11429,15 +11292,18 @@ void draw() {
       noFill();
       stroke(#64420A);
       rect(loc28.x, loc28.y, size28, size28);
-      if (MLy>loc28.y)ho=MLx-loc28.x;
-      ho=constrain(ho, -vel28*0.8+(MLy/loc28.y), vel28*0.8-(MLy/loc28.y));
-      if (MLy>loc28.y)ho2=MLy-loc28.y;
+      ho=MLx-loc28.x;
+      ho2=MLy-loc28.y;
+      if (MLy>loc28.y){
+        ho=constrain(ho, -vel28*0.8*min(0.5,20/ho2), vel28*0.8*min(0.5,20/ho2));
+      }else{
+        ho*=0.05;
+      }
       ho2=constrain(ho2, 0, 1);
       loc28.y+=ho2;
       loc28.x+=ho;
-
+      vel28=8;
       HO++;
-      loc28.y += vel28;
       if ((vel28 > 0 && loc28.y > height) || (vel28 < 0 && loc28.y < 0)) {
         isDead28 = true;
         if (H<=0||Time>=Gt||Time<=3.0) {
@@ -11449,13 +11315,14 @@ void draw() {
 
 
     void update28() {
-      loc28.y += vel28;
       hps[HPA]=HP;
-      if (GBD&&dist(loc28.x, loc28.y, GRBX, GRBY)<=GBR) {
-        vel28=8/3;
-      } else {
-        vel28 = 8;
+      vel28 = 8;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc28.x,loc28.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel28/=3;
+        }
       }
+      loc28.y += vel28;
       if (loc28.y > height) {
         isDead28 = true; 
         DP=DP-1;
@@ -11485,7 +11352,7 @@ void draw() {
           if (AA!=1)H=H+10;
           if (AA==1)DD=DD+3;
           Ar[1]=1;
-          EC[1]=EC[1]+1;
+          save.incDefeat("Stone");
           DP=DP-1;
           if (Item>20&&Item<=50) {
             items[1]=items[1]+1;
@@ -11508,7 +11375,7 @@ void draw() {
             ITC=ITC+1;
             itget[18]=true;
           }
-          if (EC[1]==1) {
+          if (save.getDefeat("Stone")==1) {
             CEF();
           }
           isDead28 = true;
@@ -11534,11 +11401,7 @@ void draw() {
       HP=22+floor((scene-3)/4);
       size29 = 20;
       loc29 = new PVector(random(size29 / 2, width - size29 / 2), -size29 / 2);
-      if (GBD&&dist(loc29.x, loc29.y, GRBX, GRBY)<=GBR) {
-        vel29=4/3;
-      } else {
-        vel29 = 4;
-      }
+      vel29 = 4;
       coolingTime29 = int(random(2));
       isDead29 = false;
       A4=isDead29;
@@ -11562,10 +11425,11 @@ void draw() {
     void update29() {
       loc29.y += vel29;
       hps[HPA]=HP;
-      if (GBD&&dist(loc29.x, loc29.y, GRBX, GRBY)<=GBR) {
-        vel29=4/3;
-      } else {
-        vel29 = 4;
+      vel29=4;
+      for(GravityBall gb:GB){
+        if(gb.active()&&dist(loc29.x,loc29.y,gb.pos.x,gb.pos.y)<=gb.r*0.5){
+          vel29/=3;
+        }
       }
       if (loc29.y > height) {
         isDead29 = true;
@@ -11605,7 +11469,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Mirror");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -11621,7 +11485,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Mirror")==1) {
             CEF();
           }
           isDead29 = true;
@@ -11717,7 +11581,7 @@ void draw() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Metal");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -11733,7 +11597,7 @@ void draw() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Metal")==1) {
             CEF();
           }
           isDead30 = true;
@@ -11876,7 +11740,7 @@ void update31() {
           }
           if (AA==1)DD=DD+100;
           Ar[26]=1;
-          EC[26]=EC[26]+1;
+          save.incDefeat("??????");
           DP=DP-15;
           if (Item>=15) {
             items[21]=items[21]+1;
@@ -11899,7 +11763,7 @@ void update31() {
             ITC=ITC+2;
             itget[1]=true;
           }
-          if (EC[4]==1) {
+          if (save.getDefeat("??????")==1) {
             CEF();
           }
           Time=Gt;
@@ -12004,7 +11868,7 @@ void update31() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Zero");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -12020,7 +11884,7 @@ void update31() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Zero")==1) {
             CEF();
           }
           isDead32 = true;
@@ -12120,7 +11984,7 @@ void update31() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Current");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -12136,7 +12000,7 @@ void update31() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Current")==1) {
             CEF();
           }
           isDead33 = true;
@@ -12231,7 +12095,7 @@ void update31() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Angel");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -12247,7 +12111,7 @@ void update31() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Angel")==1) {
             CEF();
           }
           isDead34 = true;
@@ -12358,7 +12222,7 @@ void update31() {
           }
           if (AA==1)DD=DD+4;
           Ar[3]=1;
-          EC[3]=EC[3]+1;
+          save.incDefeat("Barrier");
           DP=DP-2;
           if (Item<25) {
             items[2]=items[2]+1;
@@ -12374,7 +12238,7 @@ void update31() {
             ITC=ITC+1;
             itget[22]=true;
           }
-          if (EC[3]==1) {
+          if (save.getDefeat("Barrier")==1) {
             CEF();
           }
           isDead35 = true;

@@ -1,0 +1,57 @@
+{
+  "recipes":{
+    "names":["Steel ingot","Titanium ingot","Ion battery","Super computer","Quantum computer","High precision lens","Silver ingot","Gold ingot"],
+    "Steel ingot":{
+      "materials":["Iron scrap"],
+      "Iron scrap":2,
+      "return":1
+    },
+    "Titanium ingot":{
+      "materials":["Titanium scrap"],
+      "Titanium scrap":2,
+      "return":1
+    },
+    "Ion battery":{
+      "materials":["Battery","Iridium debri"],
+      "Battery":1,
+      "Iridium debri":1,
+      "return":1
+    },
+    "Super computer":{
+      "materials":["Computer","Cooling pipe","Copper"],
+      "Computer":3,
+      "Cooling pipe":4,
+      "Copper":2,
+      "return":1
+    },
+    "Quantum computer":{
+      "materials":["Super computer","Cooling pipe","High power magnetron"],
+      "Super computer":2,
+      "Cooling pipe":3,
+      "High power magnetron":3,
+      "return":1
+    },
+    "Computer":{
+      "materials":["Semiconductor","Gold debri"],
+      "Semiconductor":4,
+      "Gold debri":2,
+      "return":1
+    },
+    "High precision lens":{
+      "materials":["Lens","Computer"],
+      "Lens":1,
+      "Computer":2,
+      "return":1
+    },
+    "Silver ingot":{
+      "materials":["Silver scrap"],
+      "Silver scrap":3,
+      "return":1
+    },
+    "Gold ingot":{
+      "materials":["Gold debri"],
+      "Gold debri":3,
+      "return":1
+    }
+  }
+}

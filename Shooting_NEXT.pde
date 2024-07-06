@@ -58,7 +58,6 @@ float DP;
 int Bullet_type=0;
 int screent=0;
 int count=0;
-int MYGEN=0;
 int CMST=0;
 int CATK=0;
 int CDEF=0;
@@ -103,7 +102,7 @@ void keyPressed() {
     screen=true;
   }
   if (scene>=3&&menu==0||scene>=3&&menu==10||scene>=3&&menu==-10||scene>=3&&menu==-100) {
-    if (key==skill[5]&&Charpter>10)LOCK=!LOCK;
+    if (key==skill[5]&&save.chapter>10)LOCK=!LOCK;
   }
   if (menu==-7) {
     CHEET_W();
@@ -173,7 +172,7 @@ void keyReleased() {
 }
 void mouseReleased() {
   if (HUP) {
-    switch(HL) {
+    switch(save.HP_level) {
     case 1:
       {
         items[0]=items[0]-5;
@@ -210,11 +209,11 @@ void mouseReleased() {
         break;
       }
     }
-    HL=HL+1;
+    save.HP_level=save.HP_level+1;
     HUP=false;
   }
   if (AUP) {
-    switch(AL) {
+    switch(save.ATK_level) {
     case 1:
       {
         items[23]=items[23]-7;
@@ -246,18 +245,18 @@ void mouseReleased() {
       }
     case 5:
       {
-        if (AL==5) {
+        if (save.ATK_level==5) {
           items[23]=items[23]-10;
           items[4]=items[4]-3;
           GH=GH+5;
         }
       }
     }
-    AL=AL+1;
+    save.ATK_level=save.ATK_level+1;
     AUP=false;
   }
   if (DUP) {
-    switch(DL) {
+    switch(save.DEF_level) {
     case 1:
       {
         items[18]=items[18]-7;
@@ -274,7 +273,7 @@ void mouseReleased() {
       }
     case 3:
       {
-        if (DL==3) {
+        if (save.DEF_level==3) {
           items[27]=items[27]-5;
           items[19]=items[19]-3;
           items[5]=items[5]-5;
@@ -283,7 +282,7 @@ void mouseReleased() {
       }
     case 4:
       {
-        if (DL==4) {
+        if (save.DEF_level==4) {
           items[2]=items[2]-7;
           items[3]=items[3]-2;
           GH=GH+3;
@@ -291,14 +290,14 @@ void mouseReleased() {
       }
     case 5:
       {
-        if (DL==5) {
+        if (save.DEF_level==5) {
           items[23]=items[23]-10;
           items[4]=items[4]-3;
           GH=GH+5;
         }
       }
     }
-    DL=DL+1;
+    save.DEF_level=save.DEF_level+1;
     DUP=false;
   }
   if (scene==0&&mouseX>=width-44&&mouseX<=width-16&&mouseY>=23&&mouseY<=51&&menu<=0&&menu>-7) {
@@ -452,6 +451,10 @@ class GravityBall {
 
   void resetage() {
     age=0;
+  }
+  
+  boolean active(){
+    return age>stopage;
   }
 
   boolean ismax() {

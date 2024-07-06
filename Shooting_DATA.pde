@@ -1,235 +1,332 @@
 
 String Garbagecan;
-String Key[];
 int scon=0;
 int Times[];
-void data_save(int Type){
-  switch(Type){
-  case 0:Times[data]=year();
-         Times[data+3]=month();
-         Times[data+6]=day();
-         Times[data+9]=hour();
-         Times[data+12]=minute();
-         break;
-  case 1:Times[data]=0;
-         Times[data+3]=0;
-         Times[data+6]=0;
-         Times[data+9]=0;
-         Times[data+12]=0;
-         break;
-  case 2:Times[data]=0;
-         Times[data+3]=0;
-         Times[data+6]=0;
-         Times[data+9]=0;
-         Times[data+12]=0;
-         break;
-  case 3:Times[data]=0;
-         Times[data+3]=0;
-         Times[data+6]=0;
-         Times[data+9]=0;
-         Times[data+12]=0;
-         break;
-   case 4:Times[data]=0;
-         Times[data+3]=0;
-         Times[data+6]=0;
-         Times[data+9]=0;
-         Times[data+12]=0;
-         break;
-   
-   
-  }
-  String KEY[]={str(Charpter)+","+str(LEVEL)+","+str(a[0])+","+str(level)+","+EC[0]+","+EC[1]+","+EC[2]+","+EC[3]+","+EC[4]+","+EC[5]+","+EC[6]+","+EC[7]+","+Times[data]+","+Times[data+3]+","+Times[data+6]+","+Times[data+9]+","+Times[data+12]+","+EC[8]+","+EC[9]+","+HL+","+items[0]+","+items[1]+","+items[2]+","+items[3]+","+items[4]+","
-  +items[5]+","+items[6]+","+items[7]+","+items[8]+","+items[9]+","+items[10]+","+items[11]+","+items[12]+","+items[13]+","+items[14]+","+items[15]+","+items[16]+","+items[17]+","+items[18]+","+items[19]+","+items[20]+","+items[21]+","+items[22]+","+items[23]+","+items[24]+","+items[25]+","+items[26]+","+items[27]+","+items[28]+","+items[29]+","+items[30]+","
-  +AL+","+items[31]+","+items[32]+","+items[33]+","+items[34]+","+DL+","+MYGEN};
-  if(data==1){saveStrings("AP1",KEY);}
-  if(data==2){saveStrings("AP2",KEY);}
-  if(data==3){saveStrings("AP3",KEY);}
-}
 
 void data_read(int data_type){
-switch(data_type){
-case 1:{Key=loadStrings("AP1");
-        break;}
-case 2:{Key=loadStrings("AP2");
-        break;}
-case 3:{Key=loadStrings("AP3");
-        break;}
-}
-if(Key==null){
-Charpter=0;
-LEVEL=5;
-a[0]=0;
-level=0;
-HL=1;
-AL=1;
-DL=1;
-MYGEN=0;
-for(int ITEM:items){
-items[ITEM]=0;
-}
-for(int ec:EC){
-EC[ec]=0;
-}
-}else{String KEy[]=split(Key[0],',');
-Charpter=int(KEy[0]);
-LEVEL=int(KEy[1]);
-a[0]=int(KEy[2]);
-level=int(KEy[3]);
-EC[0]=int(KEy[4]);
-EC[1]=int(KEy[5]);
-EC[2]=int(KEy[6]);
-EC[3]=int(KEy[7]);
-EC[4]=int(KEy[8]);
-EC[5]=int(KEy[9]);
-EC[6]=int(KEy[10]);
-EC[7]=int(KEy[11]);
-EC[8]=int(KEy[17]);
-EC[9]=int(KEy[18]);
-HL=int(KEy[19]);
-items[0]=int(KEy[20]);
-items[1]=int(KEy[21]);
-items[2]=int(KEy[22]);
-items[3]=int(KEy[23]);
-items[4]=int(KEy[24]);
-items[5]=int(KEy[25]);
-items[6]=int(KEy[26]);
-items[7]=int(KEy[27]);
-items[8]=int(KEy[28]);
-items[9]=int(KEy[29]);
-items[10]=int(KEy[30]);
-items[11]=int(KEy[31]);
-items[12]=int(KEy[32]);
-items[13]=int(KEy[33]);
-items[14]=int(KEy[34]);
-items[15]=int(KEy[35]);
-items[16]=int(KEy[36]);
-items[17]=int(KEy[37]);
-items[18]=int(KEy[38]);
-items[19]=int(KEy[39]);
-items[20]=int(KEy[40]);
-items[21]=int(KEy[41]);
-items[22]=int(KEy[42]);
-items[23]=int(KEy[43]);
-items[24]=int(KEy[44]);
-items[25]=int(KEy[45]);
-items[26]=int(KEy[46]);
-items[27]=int(KEy[47]);
-items[28]=int(KEy[48]);
-items[29]=int(KEy[49]);
-items[30]=int(KEy[50]);
-AL=int(KEy[51]);
-items[31]=int(KEy[52]);
-items[32]=int(KEy[53]);
-items[33]=int(KEy[54]);
-items[34]=int(KEy[55]);
-DL=int(KEy[56]);
-MYGEN=int(KEy[57]);
-
-
-}
-switch(data_type){
-case 1:{data=1;break;}
-case 2:{data=2;break;}
-case 3:{data=3;break;}
-}
-SCENE=0;scene=-1;RTT=0;scon=0;
+  switch(data_type){
+    case 1:save=saves[0];break;
+    case 2:save=saves[1];break;
+    case 3:save=saves[2];break;
+  }
+  switch(data_type){
+    case 1:data=1;break;
+    case 2:data=2;break;
+    case 3:data=3;break;
+  }
+  SCENE=0;scene=-1;RTT=0;scon=0;
 }
 
 void ENEMY(float... E){
-float[] Es=E;
-for(int e=0;e<Es.length;e++){
-b[e]=Es[e];
-}
+  float[] Es=E;
+  for(int e=0;e<Es.length;e++){
+    b[e]=Es[e];
+  }
 }
 
 void Data_reset(int Delete){
-Charpter=0;
-LEVEL=5;
-a[0]=0;
-level=0;
-HL=1;
-AL=1;
-DL=1;
-MYGEN=0;
-for(int i=0;i<35;i++){
-items[i]=1000000;
-}
-for(int ec:EC){
-EC[ec]=0;
-}
-data_save(1);
-switch(Delete){
-case 1:year1=0;month1=0;day1=0;hour1=0;minute1=0;break;
-case 2:year2=0;month2=0;day2=0;hour2=0;minute2=0;break;
-case 3:year3=0;month3=0;day3=0;hour3=0;minute3=0;break;
-}
+  dates[Delete-1].reset();
+  saves[Delete-1].reset();
 }
 
 void Data_rerord(int Road_type){
-switch(Road_type){
-case 1:{Key=loadStrings("AP1");
-        if(Key!=null){year1=year();
-        month1=month();
-        day1=day();
-        hour1=hour();
-        minute1=minute();}
-        break;}
-case 2:{Key=loadStrings("AP2");
-        if(Key!=null){year2=year();
-        month2=month();
-        day2=day();
-        hour2=hour();
-        minute2=minute();}
-        break;}
-case 3:{Key=loadStrings("AP3");
-        if(Key!=null){year3=year();
-        month3=month();
-        day3=day();
-        hour3=hour();
-        minute3=minute();}
-        break;}
-case 4:{Key=loadStrings("AP1");
-        if(Key!=null){year1=0;
-        month1=0;
-        day1=0;
-        hour1=0;
-        minute1=0;}
-        break;}
-case 5:{Key=loadStrings("AP2");
-        if(Key!=null){year2=0;
-        month2=0;
-        day2=0;
-        hour2=0;
-        minute2=0;}
-        break;}
-case 6:{Key=loadStrings("AP3");
-        if(Key!=null){year3=0;
-        month3=0;
-        day3=0;
-        hour3=0;
-        minute3=0;}
-        break;}
-case 7:{Key=loadStrings("AP1");
-        if(Key!=null){year1=0;
-        month1=0;
-        day1=0;
-        hour1=0;
-        minute1=0;}
-        break;}
-case 8:{Key=loadStrings("AP2");
-        if(Key!=null){year2=0;
-        month2=0;
-        day2=0;
-        hour2=0;
-        minute2=0;}
-        break;}
-case 9:{Key=loadStrings("AP3");
-        if(Key!=null){year3=0;
-        month3=0;
-        day3=0;
-        hour3=0;
-        minute3=0;}
-        break;}
+  switch(Road_type){
+    case 1:dates[0].now();break;
+    case 2:dates[1].now();break;
+    case 3:dates[2].now();break;
+    case 4:dates[0].reset();break;
+    case 5:dates[1].reset();break;
+    case 6:dates[2].reset();break;
+    case 7:dates[0].reset();break;
+    case 8:dates[1].reset();break;
+    case 9:dates[2].reset();break;
+  }
+  scon=0;
 }
-scon=0;
+
+class SDate{
+  int _year=0;
+  int _month=0;
+  int _day=0;
+  int _hour=0;
+  int _minute=0;
+  
+  int idx=0;
+  
+  Save parent;
+  
+  SDate(Save s,int idx){
+    _year=s.src.getInt("year");
+    _month=s.src.getInt("month");
+    _day=s.src.getInt("day");
+    _hour=s.src.getInt("hour");
+    _minute=s.src.getInt("minute");
+    this.idx=idx;
+    parent=s;
+  }
+  
+  void display(float x,float y){
+    text(_year+"/"+_month+"/"+_day+" "+_hour+":"+_minute,x,y);
+  }
+  
+  void reset(){
+    _year=_month=_day=_hour=_minute=0;
+    save();
+  }
+  
+  void now(){
+    _year=year();
+    _month=month();
+    _day=day();
+    _hour=hour();
+    _minute=minute();
+    save();
+  }
+  
+  void save(){
+    parent.src.setInt("year",_year);
+    parent.src.setInt("month",_month);
+    parent.src.setInt("day",_day);
+    parent.src.setInt("hour",_hour);
+    parent.src.setInt("minute",_minute);
+  }
+}
+
+class Save{
+  int chapter=0;
+  
+  int level=5;
+  float experience=0;
+  int generation=0;
+  
+  int HP_level=1;
+  int ATK_level=1;
+  int DEF_level=1;
+  
+  HashMap<String,Integer> item_counts=new HashMap<String,Integer>();
+  HashMap<String,Integer> defeat=new HashMap<String,Integer>();
+  
+  String path;
+  JSONObject src;
+  
+  Save(){}
+  
+  Save(String path){
+    src=loadJSONObject(path);
+    
+    chapter=src.getInt("chapter");
+    
+    level=src.getInt("level");
+    experience=src.getFloat("exp");
+    generation=src.getInt("generation");
+    
+    HP_level=src.getInt("HP_level");
+    ATK_level=src.getInt("ATK_level");
+    DEF_level=src.getInt("DEF_level");
+    
+    JSONObject itm=src.getJSONObject("items");
+    for(int i=0;i<items.length;i++){
+      if(itm.hasKey(item_names[i])){
+        item_counts.put(item_names[i],itm.getInt(item_names[i]));
+        items[i]=item_counts.get(item_names[i]);
+      }else{
+        item_counts.put(item_names[i],0);
+      }
+    }
+    
+    JSONObject def=src.getJSONObject("defeat");
+    for(Object s:def.keys()){
+      String name=(String)s;
+      defeat.put(name,def.getInt(name));
+    }
+    
+    this.path=path;
+  }
+  
+  void reset(){
+    chapter=0;
+    level=5;
+    experience=0;
+    generation=0;
+    HP_level=0;
+    ATK_level=0;
+    DEF_level=0;
+    
+    item_counts.clear();
+    for(int i=0;i<items.length;i++){
+      items[i]=0;
+    }
+    defeat.clear();
+    saveJSONObject(JSONObject.parse("{\"chapter\":0,\"level\":5,\"exp\":0.0,\"generation\":0,\"HP_level\":1,\"ATK_level\":1,\"DEF_level\":1,\"year\":0,\"month\":0,\"day\":0,\"hour\":0,\"minute\":0,\"items\":{},\"defeat\":{}}"),path);
+  }
+  
+  void save(){
+    src.setInt("chapter",chapter);
+    src.setInt("level",level);
+    src.setFloat("exp",experience);
+    src.setInt("generation",generation);
+    src.setInt("HP_level",HP_level);
+    src.setInt("ATK_level",ATK_level);
+    src.setInt("DEF_level",DEF_level);
+    
+    for(int i=0;i<items.length;i++){
+      item_counts.put(item_names[i],items[i]);
+    }
+    
+    JSONObject a=src.getJSONObject("items");
+    for(int i=0;i<item_names.length;i++){
+      a.setInt(item_names[i],items[i]);
+    }
+    src.setJSONObject("items",a);
+    
+    a=src.getJSONObject("defeat");
+    for(String s:defeat.keySet()){
+      a.setInt(s,defeat.get(s));
+    }
+    src.setJSONObject("defeat",a);
+    
+    SDate d=new SDate(this,0);
+    d.now();
+    d.save();
+    
+    saveJSONObject(src,path);
+  }
+  
+  int getDefeat(String s){
+    if(defeat.get(s)==null){
+      return 0;
+    }else{
+      return defeat.get(s);
+    }
+  }
+  
+  void incDefeat(String s){
+    if(defeat.get(s)==null){
+      defeat.put(s,1);
+    }else{
+      defeat.put(s,defeat.get(s)+1);
+    }
+  }
+}
+
+class Recipes{
+  ArrayList<Recipe> recipes=new ArrayList<Recipe>();
+  
+  Recipes(String path){
+    textSize(15);
+    JSONObject recipe=loadJSONObject(path).getJSONObject("recipes");
+    JSONArray n=recipe.getJSONArray("names");
+    for(int i=0;i<n.size();i++){
+      String s=n.getString(i);
+      recipes.add(new Recipe(recipe.getJSONObject(s),s));
+    }
+  }
+  
+  void display(PVector offset){
+    for(Recipe r:recipes){
+      r.display(offset);
+      offset.add(0,r.keys.length*20+20);
+    }
+  }
+  
+  void update(PVector offset){
+    for(Recipe r:recipes){
+      r.update(offset);
+      offset.add(0,r.keys.length*20+20);
+    }
+  }
+}
+
+class Recipe{
+  JSONObject src;
+  String name;
+  String[] keys;
+  
+  PVector offset;
+  PVector button;
+  float button_x;
+  boolean craftable;
+  
+  boolean focus=false;
+  
+  Recipe(JSONObject src,String name){
+    this.src=src;
+    this.name=name;
+    JSONArray a=src.getJSONArray("materials");
+    keys=new String[a.size()];
+    float max_width=0;
+    for(int i=0;i<keys.length;i++){
+      keys[i]=a.getString(i);
+      max_width=max(max_width,textWidth(keys[i]));
+    }
+    button=new PVector(max_width+100,keys.length*10);
+    button_x=textWidth("Craft");
+  }
+  
+  HashMap<String,Boolean> validate(Save s){
+    JSONObject a=s.src.getJSONObject("items");
+    for(int i=0;i<item_names.length;i++){
+      a.setInt(item_names[i],items[i]);
+    }
+    s.src.setJSONObject("items",a);
+    
+    HashMap<String,Boolean> res=new HashMap<String,Boolean>();
+    for(String k:keys){
+      int num=0;
+      if(s.src.getJSONObject("items").hasKey(k))num=s.src.getJSONObject("items").getInt(k);
+      res.put((String)k,num>=src.getInt((String)k));
+    }
+    return res;
+  }
+  
+  void display(PVector offset){
+    textSize(15);
+    HashMap<String,Boolean> available=validate(save);
+    float y=0;
+    craftable=true;
+    for(String s:keys){
+      if(available.get(s)){
+        fill(0,255,0);
+      }else{
+        fill(255,0,0);
+        craftable=false;
+      }
+      text(s+" ×"+src.getInt(s),offset.x,offset.y+y);
+      y+=20;
+    }
+    if(craftable){
+      fill(0,255,0);
+      stroke(0,255,0);
+    }else{
+      fill(255,0,0);
+      stroke(255,0,0);
+    }
+    textAlign(CENTER);
+    text("->",offset.x+button.x,offset.y+button.y);
+    text("Craft",offset.x+button.x,offset.y+button.y-20);
+    textAlign(LEFT);
+    text(name+" ×"+src.getInt("return"),offset.x+button.x+100,offset.y+button.y);
+    noFill();
+    if(focus)rect(offset.x+button.x,offset.y+button.y-27.5,button_x,15);
+  }
+  
+  void update(PVector offset){
+    focus=false;
+    if(offset.x+button.x-button_x*0.5<=mouseX&&mouseX<=offset.x+button.x+button_x*0.5&&offset.y+button.y-35<=mouseY&&mouseY<=offset.y+button.y-20){
+      focus=true;
+      if(craftable&&mousePress){
+        for(int i=0;i<item_names.length;i++){
+          for(String s:keys){
+            if(s.equals(item_names[i])){
+              items[i]-=src.getInt(s);
+            }
+          }
+          if(name.equals(item_names[i])){
+            items[i]+=src.getInt("return");
+          }
+        }
+        validate(save);
+      }
+    }
+  }
 }
