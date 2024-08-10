@@ -1,11 +1,11 @@
 {
   "1": {
     "date": {
-      "month": 6,
-      "hour": 13,
+      "month": 8,
+      "hour": 23,
       "year": 2024,
-      "day": 24,
-      "minute": 19
+      "day": 10,
+      "minute": 14
     },
     "mission": {
       "1": {
@@ -54,6 +54,7 @@
     "progress": 3,
     "exp": 0
   },
+  "haptics": true,
   "3": {
     "date": {
       "month": null,

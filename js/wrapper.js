@@ -1,4 +1,16 @@
 let ref_applet;
+let apple;
+
+function setReference(s){
+  ref_applet=s;
+  const agent=navigator.userAgent.toLowerCase();
+  if(agent.indexOf("macintosh") != -1 ||
+     agent.indexOf("ipad") != -1 ||
+     agent.indexOf("iphone") != -1 ||
+     agent.indexOf("ipod") != -1){
+    apple=true;
+  }
+}
 
 function loadJSONObject(path){
   const path_arr=path.split("/");
@@ -180,4 +192,49 @@ function getNanoSeconds(){
 
 function getChar(s){
   return s.charCodeAt(0);
+}
+
+function loaded(){
+  document.getElementById('fullScreen').addEventListener('click', function(){
+    document.body.requestFullscreen();
+    setTimeout(()=>{
+      ref_applet.setup();
+    },20);
+  });
+  document.getElementById('reload').addEventListener('click', function(){
+    location.reload();
+  });
+  // document.getElementById("app").addEventListener("click",(el,ev)=>{
+  //   ref_applet.setMousePress(true);
+  //   if(!initialized){
+  //     ref_applet.loadSound();
+  //     initialized=true;
+  //   }
+  // });
+  // document.getElementById("app").addEventListener("mousedown",(el,ev)=>{
+  //   ref_applet.JSMousePressed();
+  // });
+  resized();
+}
+
+addEventListener('resize',resized);
+
+function getDPR(){
+  return window.devicePixelRatio||1;
+}
+
+function resized(){
+  const canvas=document.getElementById("app");
+  const ctx=canvas.getContext("2d");
+
+  let w=window.innerWidth;
+  let h=window.innerHeight;
+
+  canvas.style.width=w+'px';
+  canvas.style.height=h+'px';
+
+  canvas.width=w*getDPR();
+  canvas.height=h*getDPR();
+
+  //ctx.scale(getDPR(),getDPR());console.log(getDPR(),window.devicePixelRatio||1)
 }

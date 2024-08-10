@@ -176,3 +176,9 @@ class EntityProcess implements Runnable{
 boolean isApple(){
   return false;
 }
+
+void loaded(){};
+
+float getDPR(){
+  return 1;
+}

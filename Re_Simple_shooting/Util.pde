@@ -19,8 +19,8 @@ class Movement{
   Movement(){}
   
   Movement(PVector velocity,PVector accel,float limit){
-    this.velocity=velocity;
-    this.accel=accel;
+    this.velocity=new PVector(velocity.x,velocity.y);
+    this.accel=new PVector(accel.x,accel.y);
     this.limit=limit;
   }
   
@@ -28,14 +28,15 @@ class Movement{
     velocity.mult(smooth);
     velocity.add(accel);
     if(limit>=0)velocity.limit(limit);
+    accel.set(0,0,0);
   }
   
   void setAccel(PVector a){
-    accel=a;
+    accel.set(a.x,a.y,a.z);
   }
   
   void setVelocity(PVector v){
-    velocity=v;
+    velocity.set(v.x,v.y,v.z);
   }
   
   void setLimitSpeed(float s){

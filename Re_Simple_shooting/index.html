@@ -19,33 +19,18 @@ function hideScrollBar()
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="./css/app.css?v=1.0">
-  <script defer src="./js/wrapper.js"></script>
-  <script defer src="./js/processing.min.js"></script>
+  <script src="./js/processing.min.js"></script>
+  <script src="./js/wrapper.js"></script>
   <script>
-    const dpr = window.devicePixelRatio || 1;
     window.addEventListener("load",function(){
-      const canvas=document.getElementById("app");
-      canvas.width = window.innerWidth*dpr;
-      canvas.height = window.innerHeight*dpr;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
+      resized();
       setTimeout(()=>{
         ref_applet.setup();
       },10);
-			document.getElementById('re-fullScreen').addEventListener('click', function(){
-				document.body.requestFullscreen();
-        setTimeout(()=>{
-          ref_applet.setup();
-        },20);
-			});
-			document.getElementById('re-reload').addEventListener('click', function(){
-        location.reload();
-			});
     });
   </script>
 </head>
 <body onLoad="hideScrollBar()">
-
   <div id="wrapper" style="font-family: sans-serif;">
     <canvas id="app" data-processing-sources="Re_Simple_shooting.pde Enemy.pde Event.pde Bullet.pde Particle.pde GUI.pde Game.pde Util.pde Strategy.pde"></canvas>
   </div>

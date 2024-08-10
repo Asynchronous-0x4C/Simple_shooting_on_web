@@ -57,17 +57,18 @@ int cores=4;
 float scaling=1;
 
 void settings(){
-  size(innerWidth-1,innerHeight-1,P2D);
+  size(innerWidth,innerHeight,P2D);
 }
 
 void setup(){
   settings();
   if(isWeb()){
     scaling=min(1,(innerHeight-1)/720.0);
-    width*=1f/scaling;
-    height*=1f/scaling;
+    width*=1/scaling;
+    height*=1/scaling;
   }
   setReference(this);
+  loaded();
   initData();
   initStrategy();
   setNextStrategy(strategies.get("start"));
@@ -75,6 +76,7 @@ void setup(){
 }
 
 void draw(){
+  scale(getDPR());
   mouse.set(mouseX,mouseY);
   mouse.div(scaling);
   mouseHover=false;

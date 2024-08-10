@@ -24,9 +24,14 @@
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="css/app.css">
   <title>Simple_shooting</title>
+  <script src="js/processing.min.js"></script>
   <script src="./js/wrapper.js"></script>
   <script type="text/javascript">
     window.addEventListener("load",function(){
+      resized();
+      setTimeout(()=>{
+        ref_applet.setup();
+      },10);
 			document.getElementById('fullScreen').addEventListener('click', function(){
 				document.body.requestFullscreen();
         setTimeout(()=>{
@@ -38,7 +43,6 @@
 			});
     });
   </script>
-  <script defer src="js/processing.min.js"></script>
 </head>
 <body onLoad="hideScrollBar()">
   <script>

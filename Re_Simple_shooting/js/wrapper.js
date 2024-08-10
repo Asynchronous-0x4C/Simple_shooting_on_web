@@ -250,7 +250,16 @@ function getVibration(){
   return vibrate;
 }
 
-window.addEventListener("load",()=>{
+function loaded(){
+  document.getElementById('re-fullScreen').addEventListener('click', function(){
+    document.body.requestFullscreen();
+    setTimeout(()=>{
+      ref_applet.setup();
+    },20);
+  });
+  document.getElementById('re-reload').addEventListener('click', function(){
+    location.reload();
+  });
   document.getElementById("app").addEventListener("click",(el,ev)=>{
     ref_applet.setMousePress(true);
     if(!initialized){
@@ -261,7 +270,8 @@ window.addEventListener("load",()=>{
   document.getElementById("app").addEventListener("mousedown",(el,ev)=>{
     ref_applet.JSMousePressed();
   });
-});
+  resized();
+}
 
 function startEntityProcess(s){
   const collision=s.gameState=="shooting";
@@ -303,15 +313,37 @@ function waitEntityProcess(s){
 
 addEventListener("pointerdown",e=>{
   pointers[e.pointerId]={press:true,pressed:true,x:e.clientX,y:e.clientY};
-  console.log(e.pointerId);
+  //console.log(e.pointerId);
 });
 
 addEventListener("pointermove",e=>{
   pointers[e.pointerId]={press:false,pressed:true,x:e.clientX,y:e.clientY};
-  console.log(e.pointerId);
+  //console.log(e.pointerId);
 });
 
 addEventListener("pointerup",e=>{
   pointers[e.pointerId]={press:false,pressed:false,x:e.clientX,y:e.clientY};
-  console.log(e.pointerId);
-})
+  //console.log(e.pointerId);
+});
+
+addEventListener('resize',resized);
+
+function getDPR(){
+  return window.devicePixelRatio||1;
+}
+
+function resized(){
+  const canvas=document.getElementById("app");
+  const ctx=canvas.getContext("2d");
+
+  let w=window.innerWidth;
+  let h=window.innerHeight;
+
+  canvas.style.width=w+'px';
+  canvas.style.height=h+'px';
+
+  canvas.width=w*getDPR();
+  canvas.height=h*getDPR();
+
+  //ctx.scale(getDPR(),getDPR());console.log(getDPR(),window.devicePixelRatio||1)
+}

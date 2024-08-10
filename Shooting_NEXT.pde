@@ -461,3 +461,15 @@ class GravityBall {
     return age==maxage;
   }
 }
+
+void bg(color c){
+  pushMatrix();
+  resetMatrix();
+  scale(getDPR());
+  fill(c);
+  noStroke();
+  rectMode(CORNER);
+  rect(0,0,width,height);
+  rectMode(CENTER);
+  popMatrix();
+}

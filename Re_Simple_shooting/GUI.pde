@@ -465,7 +465,9 @@ class FlowText extends GameComponent{
   }
   
   void display(){
-    if(font!=null)textFont(font);
+    if(font!=null){
+      textFont(font);
+    }
     textSize(size.x);
     textAlign(style);
     fill_by_color(material.getSurface());

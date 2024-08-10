@@ -207,12 +207,14 @@ int q=0;
 boolean fullsc;
 
 void settings(){
-  size(innerWidth-1,innerHeight-1);
+  size(innerWidth,innerHeight);
 }
 
 void setup() {
   settings();
   frameRate(60);
+  setReference(this);
+  loaded();
   // Mouse=loadImage("Mouse2.0gen2.png");
   // getSurface().setCursor(Mouse, 1, 1);
   // Mouse2=loadImage("Mouse2.0gen2x2.png");
@@ -361,6 +363,7 @@ void setup() {
 }
 
 void draw() {
+  scale(getDPR());
   pushMatrix();
   if (keyPressed&&keyCode==SHIFT&&screenst<=6) {
     screenshot=true;
@@ -379,7 +382,7 @@ void draw() {
   SC2=SC*-1;
   a[0]=save.chapter;
   if (scene==-2) {
-    background(0);
+    bg(0);
     fill(0, 255, 206);
     stroke(0, 255, 206);
     textSize(20);
@@ -519,7 +522,7 @@ void draw() {
     }
   }
   if (scene==-3) {
-    background(50);
+    bg(50);
     Vol2=496-Vol;
     if (save.chapter==0)Ar[i]=0;
     SC=constrain(SC, 0, 4000);
@@ -1067,7 +1070,7 @@ void draw() {
     }
   }
   if (scene==0&&scene2>=0&&menu<=0&&menu>-7) {
-    background(0, 0, 0, 100);
+    bg(0);
     scon++;
     if (minute()>=10&&second()>=10) {
       NOWtime=year()+"/"+month()+"/"+day()+" "+hour()+":"+minute()+":"+second();
@@ -1656,7 +1659,7 @@ void draw() {
     }
   }
   if (scene==-5) {
-    background(0, 0, 30);
+    bg(color(0, 0, 30));
     fill(cR[97], cG[97], cB[97]);
     stroke(0, 245, 100);
     rect(430, 20, 100, 35);
@@ -1702,7 +1705,7 @@ void draw() {
     text("Tab key:Open the menu", 370, 400);
   }
   if (scene==-31) {
-    background(124, 145, 157);
+    bg(color(124, 145, 157));
     fill(rgb[97]);
     stroke(0, 245, 100);
     rect(430, 20, 100, 35);
@@ -1724,7 +1727,7 @@ void draw() {
   }
   if (scene2==-1&&scene==-300) {
     textAlign(LEFT);
-    background(75, 68, 118);
+    bg(color(75, 68, 118));
     fill(cR[97], cG[97], cB[97]);
     stroke(0, 245, 100);
     rect(430, 20, 100, 35);
@@ -1849,7 +1852,7 @@ void draw() {
     textAlign(LEFT);
   }
   if (scene2==-1&&scene==1) {
-    background(0, 100);
+    bg(0);
     fill(0,200);
     stroke(0,255,0);
     rectMode(CORNER);
@@ -2494,7 +2497,7 @@ void draw() {
     CHT="";
   }
   if (menu==-7) {
-    background(0);
+    bg(0);
     fill(cR[99], cG[99], cB[99]);
     stroke(0, 245, 100);
     rect(130, 200, 240, 35);
@@ -2850,7 +2853,7 @@ void draw() {
     }
   }  
   if (scene==-1) {
-    background(0);
+    bg(0);
     //getSurface().setCursor(Mouse, 1, 1);
     for (int I=0; I<50; I++) {
       Gitem[I]=0;
@@ -3008,7 +3011,7 @@ void draw() {
     if (RTT>=60)scene=SCENE;
   }
   if (scene>=3&&menu==1) {
-    background(0, 0, 0, 200);
+    bg(0);
     fill(cR[0], cG[0], cB[0]);
     stroke(0, 245, 100);
     rect(320, 200, 240, 35);
@@ -3090,9 +3093,9 @@ void draw() {
     strokeWeight(1);
     //getSurface().setCursor(Mouse2, 1, 1);
     if (NV) {
-      background(100);
+      bg(100);
     } else {
-      background(0);
+      bg(0);
     }
     textSize(11);
     if (Time<=0.1) {

@@ -77,11 +77,47 @@ class BossParticle extends Particle{
   }
 }
 
+class ColoredParticle extends Particle{
+  
+  ColoredParticle(PVector pos,PVector vel,float maxlife,float size,float angle,Color albedo,Color emission){
+    position=new PVector(pos.x,pos.y);
+    movement=new Movement(vel,new PVector(0,0),-1);
+    this.life=this.maxLife=maxlife;
+    this.size=size;
+    this.angle=angle;
+    material=new Material(albedo,emission);
+  }
+  
+  void update(){
+    super.update();
+    if(life<0)isDead=true;
+  }
+}
+
 abstract class ParticleGenerator extends Entity{
   ArrayList<Particle> particle=new ArrayList<Particle>();
   Collider range;
   Supplier<PVector> velocity;
   Supplier<Float> life;
+  
+  void display(){
+    for(Particle p:particle)p.display();
+  }
+  
+  void displayShadow(){
+    for(Particle p:particle)p.displayShadow();
+  }
+  
+  void update(){
+    ArrayList<Particle> next=new ArrayList<Particle>();
+    for(Particle p:particle){
+      p.update();
+      if(p.life>0)next.add(p);
+    }
+    particle=next;
+    if(particle.isEmpty())isDead=true;
+    currentFrame=frameCount;
+  }
 }
 
 class MenuParticleGenerator extends ParticleGenerator{
@@ -99,21 +135,8 @@ class MenuParticleGenerator extends ParticleGenerator{
   }
   
   void update(){
-    ArrayList<Particle> next=new ArrayList<Particle>();
-    for(Particle p:particle){
-      p.update();
-      if(p.life>0)next.add(p);
-    }
-    particle=next;
-    currentFrame=frameCount;
-  }
-  
-  void display(){
-    for(Particle p:particle)p.display();
-  }
-  
-  void displayShadow(){
-    for(Particle p:particle)p.displayShadow();
+    super.update();
+    isDead=false;
   }
 }
 
@@ -131,25 +154,6 @@ class EntityParticleGenerator extends ParticleGenerator{
     for(int i=0;i<count;i++)particle.add(new EntityParticle(this));
     return this;
   }
-  
-  void update(){
-    ArrayList<Particle> next=new ArrayList<Particle>();
-    for(Particle p:particle){
-      p.update();
-      if(p.life>0)next.add(p);
-    }
-    particle=next;
-    if(particle.isEmpty())isDead=true;
-    currentFrame=frameCount;
-  }
-  
-  void display(){
-    for(Particle p:particle)p.display();
-  }
-  
-  void displayShadow(){
-    for(Particle p:particle)p.displayShadow();
-  }
 }
 
 class BossParticleGenerator extends ParticleGenerator{
@@ -166,24 +170,5 @@ class BossParticleGenerator extends ParticleGenerator{
     if(freq>=random(0,1)){
       particle.add(new BossParticle(this));
     }
-  }
-  
-  void update(){
-    ArrayList<Particle> next=new ArrayList<Particle>();
-    for(Particle p:particle){
-      p.update();
-      if(p.life>0)next.add(p);
-    }
-    particle=next;
-    if(particle.isEmpty())isDead=true;
-    currentFrame=frameCount;
-  }
-  
-  void display(){
-    for(Particle p:particle)p.display();
-  }
-  
-  void displayShadow(){
-    for(Particle p:particle)p.displayShadow();
   }
 }

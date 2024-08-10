@@ -95,13 +95,14 @@ abstract class Agent extends Entity{
 
 abstract class Enemy extends Agent{
   float mass=20;
+  PVector base_accel=new PVector(0,0.2);
   
   Enemy(Color bodyColor,float size,ArrayList<Entity> entityList){
     this.entityList=entityList;
     material=new Material(bodyColor,new Color(0));
     this.size=size;
     collider=new Rectangle(position,new PVector(size,size),0);
-    movement=new Movement(new PVector(0,0),new PVector(0,0.1),3+random(-moveRange,moveRange)*0.5);
+    movement=new Movement(new PVector(0,0),base_accel,3+random(-moveRange,moveRange)*0.5);
   }
   
   void setMass(float m){
@@ -110,6 +111,7 @@ abstract class Enemy extends Agent{
   
   void update(){
     movement.update();
+    movement.setAccel(base_accel);
     PVector vel=new PVector(movement.velocity.x,movement.velocity.y);
     vel.mult(fgMag);
     position.add(vel);

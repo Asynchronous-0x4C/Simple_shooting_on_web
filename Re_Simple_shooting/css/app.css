@@ -63,3 +63,10 @@ span{
 #re-reload:hover{
   background-color: rgba(60, 60, 60, 0.7);
 }
+
+#app{
+  position: absolute;
+  image-rendering: pixelated;
+  width: 100%;
+  height: 100%;
+}

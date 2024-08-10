@@ -212,3 +212,34 @@ class Lost_Signal extends Boss{
     }));
   }
 }
+
+//5->10
+
+class Slide extends ShotEnemy{
+  float s_cooltime=random(50,100);
+  
+  Slide(ArrayList<Entity> entityList){
+    super(new Color(0,128,255,200),20,entityList);
+    setHP(5);
+  }
+  
+  void update(){
+    super.update();
+    if(s_cooltime<0){
+      float a=random(0,TWO_PI);
+      float m=random(2,3);
+      movement.accel.add(cos(a)*m,sin(a)*m);
+      for(int i=0;i<round(m);i++){
+        float rnd=random(-0.5,0.5);
+        entityList.add(new ColoredParticle(position,new PVector(cos(a+PI+rnd)*m*0.5,sin(a+PI+rnd)*m*0.5),30,6,random(0,TWO_PI),new Color(255,64,0),new Color(255,64,0)));
+      }
+      s_cooltime=random(50,150);
+    }
+    s_cooltime-=gameMag;
+  }
+  
+  void shot(){
+    float a=radians(random(-5,5))+PI*0.5;
+    entityList.add(new NormalBullet(new PVector(cos(a)*6,sin(a)*6),this));
+  }
+}
